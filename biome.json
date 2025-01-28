@@ -7,11 +7,12 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": []
+    "ignore": ["./src-tauri/**", "./public/**", "./dist/**", "./pnpm-lock.yaml"]
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "ignore": ["./src-tauri/**", "./public/**", "./dist/**", "./pnpm-lock.yaml"]
   },
   "organizeImports": {
     "enabled": true

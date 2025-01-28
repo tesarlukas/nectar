@@ -12,7 +12,7 @@ const extensions = [StarterKit];
 
 const content = "<p>Hello World!</p>";
 
-export const Tiptap = () => {
+export const Editor = () => {
   const editor = useEditor({
     extensions,
     content,

@@ -22,10 +22,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     /* Base path is important here for some reason */
-    "baseUrl": "./src",
+    "baseUrl": ".",
     /* Paths for the imports */
     "paths": {
-      "@/*": "./src/*"
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [

@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function App() {
   return (
-    <main className="h-screen flex justify-center bg-fuchsia-100 p-4">
+    <main className="h-screen justify-center bg-fuchsia-100 p-4">
       <Editor />
     </main>
   );

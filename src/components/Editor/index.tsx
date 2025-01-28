@@ -1,9 +1,10 @@
+import { saveNote } from "@/utils/fs";
+import { BaseDirectory } from "@tauri-apps/plugin-fs";
 import {
   FloatingMenu,
   BubbleMenu,
   EditorContent,
   useEditor,
-  Extension,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
@@ -27,6 +28,13 @@ export const Editor = () => {
     editor?.commands.focus();
   };
 
+  const handleSave = async () => {
+    console.log("editor json", editor?.getJSON());
+    console.log("dir", BaseDirectory.Desktop);
+
+    saveNote("first_name", editor?.getJSON());
+  };
+
   return (
     <>
       <EditorContent
@@ -36,6 +44,9 @@ export const Editor = () => {
       />
       <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
       <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
+      <button type="button" className="bg-yellow-200" onClick={handleSave}>
+        Hello
+      </button>
     </>
   );
 };

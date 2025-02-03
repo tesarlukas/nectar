@@ -11,10 +11,16 @@
     "fs:default",
     "fs:allow-write-text-file",
     "fs:write-all",
+    "fs:read-all",
+    "fs:allow-rename",
+    "fs:allow-mkdir",
+    "fs:allow-exists",
+    "fs:allow-watch",
+    "fs:read-dirs",
     "fs:write-files",
     {
       "identifier": "fs:scope",
-      "allow": [{ "path": "$APPDATA" }, { "path": "$APPDATA/**" }]
+      "allow": [{ "path": "$APPDATA" }, { "path": "$APPDATA/**" }, { "path": "**/*"}]
     }
   ]
 }

@@ -1,8 +1,14 @@
-import { ColorScheme, ThemeFlavour, type ColorThemeVariables } from "../types";
+import { writeJson } from "@/utils/fs";
+import {
+  ColorScheme,
+  type ColorTheme,
+  ThemeFlavour,
+  type ColorThemeVariables,
+} from "../types";
 import { colorThemes } from "../variants";
 
 export const useColorTheme = () => {
-  const updateColorTheme = (
+  const updateColorTheme = async (
     colorScheme: ColorScheme = ColorScheme.Light,
     flavour: ThemeFlavour = ThemeFlavour.Standard,
   ) => {
@@ -14,7 +20,22 @@ export const useColorTheme = () => {
     for (const [colorVarKey, colorVar] of colorTheme) {
       document.documentElement.style.setProperty(colorVarKey, colorVar);
     }
+
+    await writeTheme(flavour, colorThemes[flavour]);
   };
+
+  const writeTheme = async (colorThemeName: string, colorTheme: ColorTheme) => {
+    try {
+      await writeJson("appearance", "colorTheme", {
+        colorThemeName: colorThemeName,
+        colorTheme: colorTheme,
+      });
+    } catch (errors) {
+      console.error("Something went wrong in the writeTheme");
+    }
+  };
+
+  const readTheme = () => {};
 
   return { updateColorTheme };
 };

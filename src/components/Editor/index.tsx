@@ -7,9 +7,10 @@ import {
   useEditor,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { Image } from "@tiptap/extension-image";
 
 // define your extension array
-const extensions = [StarterKit];
+const extensions = [StarterKit, Image];
 
 const content = "<p>Hello World!</p>";
 

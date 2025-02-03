@@ -24,9 +24,12 @@ export const useColorTheme = () => {
     await writeTheme(flavour, colorThemes[flavour]);
   };
 
-  const writeTheme = async (colorThemeName: string, colorTheme: ColorTheme) => {
+  const writeTheme = async (
+    colorThemeName: string,
+    colorTheme: ColorTheme,
+  ): Promise<void> => {
     try {
-      await writeJson("appearance", "colorTheme", {
+      await writeJson(["settings", "appearance"], "colorTheme", {
         colorThemeName: colorThemeName,
         colorTheme: colorTheme,
       });

@@ -5,6 +5,38 @@ import {
   mkdir,
   exists,
 } from "@tauri-apps/plugin-fs";
+import { join } from "@tauri-apps/api/path";
+
+export const writeJson = async (
+  locationDirs: string[],
+  filename: string,
+  content: unknown,
+) => {
+  try {
+    const contentString = JSON.stringify(content);
+    const fullLocationPath = await join(...locationDirs);
+    const fullPath = await join(...locationDirs, `${filename}.json`);
+
+    const doesDirExist = await exists(fullLocationPath, {
+      baseDir: BaseDirectory.AppData,
+    });
+
+    if (!doesDirExist) {
+      await mkdir(fullLocationPath, {
+        baseDir: BaseDirectory.AppData,
+        recursive: true,
+      });
+    }
+
+    await writeTextFile(`${fullPath}`, contentString, {
+      baseDir: BaseDirectory.AppData,
+    });
+  } catch (errors) {
+    console.error("Failed to write json file", errors);
+
+    throw errors;
+  }
+};
 
 // Save note
 export const saveNote = async (noteId: string, content: unknown) => {
@@ -29,32 +61,5 @@ export const loadNote = async (noteId: string) => {
   } catch (error) {
     console.error("Failed to load note:", error);
     return null;
-  }
-};
-
-export const writeJson = async (
-  location: string,
-  filename: string,
-  content: unknown,
-) => {
-  try {
-    const contentString = JSON.stringify(content);
-
-    const doesDirExist = await exists(location, {
-      baseDir: BaseDirectory.AppData,
-    });
-
-    if (!doesDirExist) {
-      await mkdir(location, {
-        baseDir: BaseDirectory.AppData,
-        recursive: true,
-      });
-    }
-
-    await writeTextFile(`${location}/${filename}.json`, contentString, {
-      baseDir: BaseDirectory.AppData,
-    });
-  } catch (errors) {
-    console.error("Failed to save json", errors);
   }
 };

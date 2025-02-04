@@ -50,3 +50,7 @@ export interface ColorTheme {
   [ColorScheme.Dark]: ColorThemeVariables;
 }
 
+export interface StoredColorTheme {
+  name: ThemeFlavour;
+  colorTheme: ColorTheme;
+}

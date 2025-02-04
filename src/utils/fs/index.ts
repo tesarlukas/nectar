@@ -7,11 +7,11 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 
-export const writeJson = async (
+export const writeJson = async <T>(
   locationDirs: string[],
   filename: string,
-  content: unknown,
-) => {
+  content: T,
+): Promise<void> => {
   try {
     const contentString = JSON.stringify(content);
     const fullLocationPath = await join(...locationDirs);
@@ -36,6 +36,14 @@ export const writeJson = async (
 
     throw errors;
   }
+};
+
+export const readJson = async (path: string): Promise<string> => {
+  const jsonContent = await readTextFile(path, {
+    baseDir: BaseDirectory.AppData,
+  });
+
+  return jsonContent;
 };
 
 // Save note

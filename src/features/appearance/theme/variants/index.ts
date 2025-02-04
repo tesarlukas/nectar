@@ -11,3 +11,6 @@ export const colorThemes: ColorThemes = {
   [ThemeFlavour.Standard]: standard,
   [ThemeFlavour.Extra]: extra,
 };
+
+// NOTE: not used yet
+//export const DEFAULT_COLOR_THEME = colorThemes[ThemeFlavour.Standard];

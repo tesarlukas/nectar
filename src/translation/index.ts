@@ -1,0 +1,31 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+
+import en from "./languages/en.json";
+import cs from "./languages/cs.json";
+import sk from "./languages/cs.json";
+
+const resources = {
+  en: {
+    translation: en,
+  },
+  cs: {
+    translation: cs,
+  },
+  sk: {
+    translation: sk,
+  },
+};
+
+i18n.use(initReactI18next).init({
+  lng: "en",
+  fallbackLng: "en",
+  resources,
+
+  interpolation: {
+    escapeValue: false,
+  },
+});
+console.log("this happens");
+
+export default i18n;

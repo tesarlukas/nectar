@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useColorTheme } from "../../theme/hooks/useColorTheme";
-import type { ThemeFlavour } from "../../theme/types";
+import { useColorTheme } from "../../colorTheme/hooks/useColorTheme";
+import type { ThemeFlavour } from "../../colorTheme/types";
 
 export const AppearanceSettings = () => {
   const { updateColorTheme, readTheme } = useColorTheme();

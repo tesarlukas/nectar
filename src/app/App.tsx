@@ -1,17 +1,11 @@
-import { Editor } from "@/components/Editor";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/Resizable";
-import { AppearanceSettings } from "@/features/appearance/views/AppearanceSettings";
 import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Provider } from "./provider";
 import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTheme";
+import { HashRouter as Router, Routes, Route } from "react-router";
+import { EditorView } from "@/features/editor/views/EditorView";
+import { Settings } from "@/features/settings/views/Settings";
 
 export default function App() {
-  const { t } = useTranslation();
   const { updateColorTheme } = useColorTheme();
 
   useEffect(() => {
@@ -23,16 +17,14 @@ export default function App() {
   }, []);
 
   return (
-    <main className="h-screen justify-center bg-fuchsia-100 p-4">
+    <main className="h-screen justify-center bg-fuchsia-100">
       <Provider>
-        <Editor />
-        <AppearanceSettings />
-        <div>{t("helloWorld")}</div>
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel>One</ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel>Two</ResizablePanel>
-        </ResizablePanelGroup>
+        <Router>
+          <Routes>
+            <Route path="/" element={<EditorView />} />
+            <Route path="settings" element={<Settings />} />
+          </Routes>
+        </Router>
       </Provider>
     </main>
   );

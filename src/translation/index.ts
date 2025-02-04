@@ -26,6 +26,5 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
 });
-console.log("this happens");
 
 export default i18n;

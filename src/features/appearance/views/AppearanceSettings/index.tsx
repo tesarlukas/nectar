@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useColorTheme } from "../../colorTheme/hooks/useColorTheme";
 import type { ThemeFlavour } from "../../colorTheme/types";
+import { Button } from "@/components/ui/Button";
 
 export const AppearanceSettings = () => {
   const { updateColorTheme, readTheme } = useColorTheme();
@@ -13,17 +14,9 @@ export const AppearanceSettings = () => {
   return (
     <>
       <div className="flex-col">
-        <button
-          type="button"
-          onClick={() => updateColorTheme()}
-          className="bg-primary-0"
-        >
-          Press me
-        </button>
-        <button type="button" onClick={selectedTheme} className="bg-primary-3">
-          Obtain theme
-        </button>
         <div>{colorTheme}</div>
+        <Button onClick={() => updateColorTheme()}>Set Theme</Button>
+        <Button onClick={selectedTheme}>Obtain Theme</Button>
       </div>
     </>
   );

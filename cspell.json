@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
-  "words": ["tauri", "oklch"],
+  "words": ["tauri", "oklch", "topbar"],
   "ignorePaths": ["node_modules"]
 }

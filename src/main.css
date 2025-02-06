@@ -1,38 +1,36 @@
 @import "tailwindcss";
 
+:root {
+  --radius: 0.5rem;
+}
+
 @theme {
-  --color-primary-0: var(--color-primary-0);
-  --color-primary-1: var(--color-primary-1);
-  --color-primary-2: var(--color-primary-2);
-  --color-primary-3: var(--color-primary-3);
-  --color-primary-4: var(--color-primary-4);
-  --color-primary-5: var(--color-primary-5);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-secondary-0: var(--color-secondary-0);
-  --color-secondary-1: var(--color-secondary-1);
-  --color-secondary-2: var(--color-secondary-2);
-  --color-secondary-3: var(--color-secondary-3);
-  --color-secondary-4: var(--color-secondary-4);
-  --color-secondary-5: var(--color-secondary-5);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
 
-  --color-accent-0: var(--color-accent-0);
-  --color-accent-1: var(--color-accent-1);
-  --color-accent-2: var(--color-accent-2);
-  --color-accent-3: var(--color-accent-3);
-  --color-accent-4: var(--color-accent-4);
-  --color-accent-5: var(--color-accent-5);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
 
-  --color-warn-0: var(--color-warn-0);
-  --color-warn-1: var(--color-warn-1);
-  --color-warn-2: var(--color-warn-2);
-  --color-warn-3: var(--color-warn-3);
-  --color-warn-4: var(--color-warn-4);
-  --color-warn-5: var(--color-warn-5);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
 
-  --color-danger-0: var(--color-danger-0);
-  --color-danger-1: var(--color-danger-1);
-  --color-danger-2: var(--color-danger-2);
-  --color-danger-3: var(--color-danger-3);
-  --color-danger-4: var(--color-danger-4);
-  --color-danger-5: var(--color-danger-5);
+  --color-border: var(--border);
+
+  --color-input: var(--input);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-ring: var(--ring);
+
+  --radius: var(--radius);
 }

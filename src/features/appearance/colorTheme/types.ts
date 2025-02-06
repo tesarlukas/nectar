@@ -9,40 +9,31 @@ export enum ColorScheme {
 }
 
 export interface ColorThemeVariables {
-  "--color-primary-0": string;
-  "--color-primary-1": string;
-  "--color-primary-2": string;
-  "--color-primary-3": string;
-  "--color-primary-4": string;
-  "--color-primary-5": string;
+  "--background": string;
+  "--foreground": string;
 
-  "--color-secondary-0": string;
-  "--color-secondary-1": string;
-  "--color-secondary-2": string;
-  "--color-secondary-3": string;
-  "--color-secondary-4": string;
-  "--color-secondary-5": string;
+  "--muted": string;
+  "--muted-foreground": string;
 
-  "--color-accent-0": string;
-  "--color-accent-1": string;
-  "--color-accent-2": string;
-  "--color-accent-3": string;
-  "--color-accent-4": string;
-  "--color-accent-5": string;
+  "--card": string;
+  "--card-foreground": string;
 
-  "--color-warn-0": string;
-  "--color-warn-1": string;
-  "--color-warn-2": string;
-  "--color-warn-3": string;
-  "--color-warn-4": string;
-  "--color-warn-5": string;
+  "--popover": string;
+  "--popover-foreground": string;
 
-  "--color-danger-0": string;
-  "--color-danger-1": string;
-  "--color-danger-2": string;
-  "--color-danger-3": string;
-  "--color-danger-4": string;
-  "--color-danger-5": string;
+  "--border": string;
+  "--input": string;
+
+  "--primary": string;
+  "--primary-foreground": string;
+
+  "--secondary": string;
+  "--secondary-foreground": string;
+
+  "--destructive": string;
+  "--destructive-foreground": string;
+
+  "--ring": string;
 }
 
 export interface ColorTheme {

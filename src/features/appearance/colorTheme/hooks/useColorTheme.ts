@@ -77,7 +77,11 @@ export const useColorTheme = () => {
     }
   };
 
-  const initializeTheme = () => {};
+  const initializeTheme = () => {
+    const root = document.documentElement;
+
+    root.classList.add("dark");
+  };
 
   return {
     updateColorTheme,

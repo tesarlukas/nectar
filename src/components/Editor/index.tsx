@@ -1,5 +1,4 @@
 import { saveNote } from "@/utils/fs";
-import { BaseDirectory } from "@tauri-apps/plugin-fs";
 import {
   FloatingMenu,
   BubbleMenu,
@@ -8,7 +7,6 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
-import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 import Code from "@tiptap/extension-code";
 
@@ -37,10 +35,10 @@ export const Editor = () => {
   };
 
   return (
-    <>
+    <div className="h-full p-4">
       <EditorContent
         editor={editor}
-        className="w-full bg-background h-1/2"
+        className="w-full h-full bg-background"
         onClick={handleEditorOnClick}
       />
       <div>
@@ -49,9 +47,6 @@ export const Editor = () => {
       <div>
         <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
       </div>
-      <Button type="button" onClick={handleSave}>
-        Save
-      </Button>
-    </>
+    </div>
   );
 };

@@ -10,6 +10,7 @@ import { colorThemes } from "../variants";
 import { path } from "@tauri-apps/api";
 
 export const useColorTheme = () => {
+  /** @deprecated there is a different theming option created */
   const updateColorTheme = async (
     colorScheme: ColorScheme = ColorScheme.Light,
     flavour: ThemeFlavour = ThemeFlavour.Standard,
@@ -40,7 +41,7 @@ export const useColorTheme = () => {
         },
       );
     } catch (errors) {
-      console.error("Something went wrong in the writeTheme: ", errors);
+      console.error("Something went wrong in the writeTheme", errors);
     }
   };
 
@@ -56,5 +57,33 @@ export const useColorTheme = () => {
     }
   };
 
-  return { updateColorTheme, readTheme };
+  const setColorScheme = (colorScheme: ColorScheme) => {
+    const root = document.documentElement;
+
+    root.classList.remove("dark", "light");
+    root.classList.add(colorScheme);
+  };
+
+  const toggleColorScheme = () => {
+    const root = document.documentElement;
+    console.log("classList", root.classList);
+
+    if (root.classList.contains("light")) {
+      root.classList.remove("light");
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+      root.classList.add("light");
+    }
+  };
+
+  const initializeTheme = () => {};
+
+  return {
+    updateColorTheme,
+    readTheme,
+    toggleColorScheme,
+    initializeTheme,
+    setColorScheme,
+  };
 };

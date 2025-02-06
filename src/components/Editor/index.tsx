@@ -9,9 +9,11 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
 import { useNavigate } from "react-router";
+import { Button } from "../ui/button";
+import Code from "@tiptap/extension-code";
 
 // define your extension array
-const extensions = [StarterKit, Image];
+const extensions = [StarterKit, Image, Code];
 
 const content = "<p>Hello World!</p>";
 
@@ -31,19 +33,14 @@ export const Editor = () => {
   };
 
   const handleSave = async () => {
-    console.log("editor json", editor?.getJSON());
-    console.log("dir", BaseDirectory.Desktop);
-
     saveNote("first_name", editor?.getJSON());
   };
-
-  const navigate = useNavigate();
 
   return (
     <>
       <EditorContent
         editor={editor}
-        className="w-full bg-blue-200 h-1/2"
+        className="w-full bg-background h-1/2"
         onClick={handleEditorOnClick}
       />
       <div>
@@ -52,12 +49,9 @@ export const Editor = () => {
       <div>
         <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
       </div>
-      <button type="button" className="bg-yellow-200" onClick={handleSave}>
-        Hello
-      </button>
-      <button type="button" onClick={() => navigate("/settings")}>
-        Settings
-      </button>
+      <Button type="button" onClick={handleSave}>
+        Save
+      </Button>
     </>
   );
 };

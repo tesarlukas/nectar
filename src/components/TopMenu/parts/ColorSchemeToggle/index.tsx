@@ -1,14 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTheme";
-import { ColorScheme } from "@/features/appearance/colorTheme/types";
 
 // TODO: This is a tri-mode colorscheme toggle for the future
 //

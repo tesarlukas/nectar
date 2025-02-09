@@ -1,4 +1,5 @@
 {
   "nectar": "Nektar",
-  "helloWorld": "Ahoj světe!"
+  "helloWorld": "Ahoj světe!",
+  "wordCount": "Počet slov"
 }

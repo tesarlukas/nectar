@@ -23,16 +23,58 @@ dependencies:
   '@tauri-apps/plugin-opener':
     specifier: ^2.2.5
     version: 2.2.5
+  '@tiptap/extension-blockquote':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-bold':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
   '@tiptap/extension-bullet-list':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)
   '@tiptap/extension-code':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-code-block':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
+  '@tiptap/extension-document':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-dropcursor':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
+  '@tiptap/extension-gapcursor':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
+  '@tiptap/extension-hard-break':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-heading':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-horizontal-rule':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
   '@tiptap/extension-image':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-italic':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
   '@tiptap/extension-list-item':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-ordered-list':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-paragraph':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-strike':
+    specifier: ^2.11.5
+    version: 2.11.5(@tiptap/core@2.11.5)
+  '@tiptap/extension-text':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)
   '@tiptap/pm':
@@ -41,9 +83,6 @@ dependencies:
   '@tiptap/react':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)(react-dom@19.0.0)(react@19.0.0)
-  '@tiptap/starter-kit':
-    specifier: ^2.11.5
-    version: 2.11.5
   class-variance-authority:
     specifier: ^0.7.1
     version: 0.7.1
@@ -1978,16 +2017,6 @@ packages:
       '@tiptap/core': 2.11.5(@tiptap/pm@2.11.5)
     dev: false
 
-  /@tiptap/extension-history@2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5):
-    resolution: {integrity: sha512-b+wOS33Dz1azw6F1i9LFTEIJ/gUui0Jwz5ZvmVDpL2ZHBhq1Ui0/spTT+tuZOXq7Y/uCbKL8Liu4WoedIvhboQ==}
-    peerDependencies:
-      '@tiptap/core': ^2.7.0
-      '@tiptap/pm': ^2.7.0
-    dependencies:
-      '@tiptap/core': 2.11.5(@tiptap/pm@2.11.5)
-      '@tiptap/pm': 2.11.5
-    dev: false
-
   /@tiptap/extension-horizontal-rule@2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5):
     resolution: {integrity: sha512-3up2r1Du8/5/4ZYzTC0DjTwhgPI3dn8jhOCLu73m5F3OGvK/9whcXoeWoX103hYMnGDxBlfOje71yQuN35FL4A==}
     peerDependencies:
@@ -2046,14 +2075,6 @@ packages:
       '@tiptap/core': 2.11.5(@tiptap/pm@2.11.5)
     dev: false
 
-  /@tiptap/extension-text-style@2.11.5(@tiptap/core@2.11.5):
-    resolution: {integrity: sha512-YUmYl0gILSd/u/ZkOmNxjNXVw+mu8fpC2f8G4I4tLODm0zCx09j9DDEJXSrM5XX72nxJQqtSQsCpNKnL0hfeEQ==}
-    peerDependencies:
-      '@tiptap/core': ^2.7.0
-    dependencies:
-      '@tiptap/core': 2.11.5(@tiptap/pm@2.11.5)
-    dev: false
-
   /@tiptap/extension-text@2.11.5(@tiptap/core@2.11.5):
     resolution: {integrity: sha512-Gq1WwyhFpCbEDrLPIHt5A8aLSlf8bfz4jm417c8F/JyU0J5dtYdmx0RAxjnLw1i7ZHE7LRyqqAoS0sl7JHDNSQ==}
     peerDependencies:
@@ -2102,32 +2123,6 @@ packages:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       use-sync-external-store: 1.4.0(react@19.0.0)
-    dev: false
-
-  /@tiptap/starter-kit@2.11.5:
-    resolution: {integrity: sha512-SLI7Aj2ruU1t//6Mk8f+fqW+18uTqpdfLUJYgwu0CkqBckrkRZYZh6GVLk/02k3H2ki7QkFxiFbZrdbZdng0JA==}
-    dependencies:
-      '@tiptap/core': 2.11.5(@tiptap/pm@2.11.5)
-      '@tiptap/extension-blockquote': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-bold': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-bullet-list': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-code': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-code-block': 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
-      '@tiptap/extension-document': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-dropcursor': 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
-      '@tiptap/extension-gapcursor': 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
-      '@tiptap/extension-hard-break': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-heading': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-history': 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
-      '@tiptap/extension-horizontal-rule': 2.11.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
-      '@tiptap/extension-italic': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-list-item': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-ordered-list': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-paragraph': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-strike': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-text': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/extension-text-style': 2.11.5(@tiptap/core@2.11.5)
-      '@tiptap/pm': 2.11.5
     dev: false
 
   /@types/babel__core@7.20.5:

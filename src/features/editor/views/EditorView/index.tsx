@@ -1,4 +1,3 @@
-import { Editor } from "@/components/Editor";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -6,7 +5,8 @@ import {
 } from "@/components/ui/resizable";
 import { FileTree } from "./parts/FileTree";
 import { BottomMenu } from "@/components/BottomMenu";
-import { useEditor } from "@/components/Editor/hooks/useEditor";
+import { useEditor } from "./parts/Editor/hooks/useEditor";
+import { Editor } from "./parts/Editor";
 
 export const EditorView = () => {
   const { editor, handleEditorOnClick } = useEditor();

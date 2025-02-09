@@ -5,6 +5,7 @@ import { EditorView } from "@/features/editor/views/EditorView";
 import { Settings } from "@/features/settings/views/Settings";
 import { TopMenu } from "@/components/TopMenu";
 import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTheme";
+import { Layout } from "@/features/layout/views/Layout";
 
 export default function App() {
   const { initializeTheme } = useColorTheme();
@@ -16,11 +17,12 @@ export default function App() {
   return (
     <main className="flex flex-col h-screen bg-background">
       <Provider>
-        <TopMenu />
         <Router>
           <Routes>
-            <Route path="/" element={<EditorView />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<EditorView />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
           </Routes>
         </Router>
       </Provider>

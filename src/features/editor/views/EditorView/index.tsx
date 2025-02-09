@@ -6,8 +6,11 @@ import {
 } from "@/components/ui/resizable";
 import { FileTree } from "./parts/FileTree";
 import { BottomMenu } from "@/components/BottomMenu";
+import { useEditor } from "@/components/Editor/hooks/useEditor";
 
 export const EditorView = () => {
+  const { editor, handleEditorOnClick } = useEditor();
+
   return (
     <>
       <div className="flex flex-col h-full">
@@ -15,7 +18,7 @@ export const EditorView = () => {
           <FileTree />
           <ResizableHandle />
           <ResizablePanel defaultSize={50} minSize={25}>
-            <Editor />
+            <Editor editor={editor} onClick={handleEditorOnClick} />
           </ResizablePanel>
         </ResizablePanelGroup>
         <BottomMenu wordCount={0} />

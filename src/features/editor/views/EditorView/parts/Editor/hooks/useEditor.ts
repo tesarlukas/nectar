@@ -17,6 +17,7 @@ import Italic from "@tiptap/extension-italic";
 import Strike from "@tiptap/extension-strike";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Gapcursor from "@tiptap/extension-gapcursor";
+import CharacterCount from "@tiptap/extension-character-count";
 
 const extensions = [
   // StarterKit breakdown
@@ -49,6 +50,7 @@ const extensions = [
 
   // Additional extensions
   Image,
+  CharacterCount,
 ];
 
 const content =

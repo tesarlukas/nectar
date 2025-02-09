@@ -15,13 +15,15 @@ export const EditorView = () => {
     <>
       <div className="flex flex-col h-full">
         <ResizablePanelGroup direction="horizontal">
-          <FileTree />
+          <ResizablePanel defaultSize={20} minSize={10}>
+            <FileTree />
+          </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel defaultSize={50} minSize={25}>
+          <ResizablePanel defaultSize={80} minSize={25}>
             <Editor editor={editor} onClick={handleEditorOnClick} />
           </ResizablePanel>
         </ResizablePanelGroup>
-        <BottomMenu wordCount={0} />
+        <BottomMenu charCount={editor?.storage.characterCount.characters()} />
       </div>
     </>
   );

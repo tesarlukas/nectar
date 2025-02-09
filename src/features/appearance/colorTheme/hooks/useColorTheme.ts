@@ -1,4 +1,4 @@
-import { readJson, writeJson } from "@/utils/fs";
+import { readJson, writeJson } from "@/utils/jsonHelpers";
 import {
   ColorScheme,
   type ColorTheme,
@@ -66,7 +66,6 @@ export const useColorTheme = () => {
 
   const toggleColorScheme = () => {
     const root = document.documentElement;
-    console.log("classList", root.classList);
 
     if (root.classList.contains("light")) {
       root.classList.remove("light");

@@ -18,7 +18,7 @@ export const EditorView = () => {
             <Editor />
           </ResizablePanel>
         </ResizablePanelGroup>
-        <BottomMenu />
+        <BottomMenu wordCount={0} />
       </div>
     </>
   );

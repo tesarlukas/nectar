@@ -1,4 +1,3 @@
-import { saveNote } from "@/utils/fs";
 import {
   FloatingMenu,
   BubbleMenu,
@@ -7,7 +6,6 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
-import { Button } from "../ui/button";
 import Code from "@tiptap/extension-code";
 import ListItem from "@tiptap/extension-list-item";
 import BulletList from "@tiptap/extension-bullet-list";
@@ -42,9 +40,9 @@ export const Editor = () => {
     editor?.commands.focus();
   };
 
-  const handleSave = async () => {
-    saveNote("first_name", editor?.getJSON());
-  };
+  //const handleSave = async () => {
+  //  saveNote("first_name", editor?.getJSON());
+  //};
 
   return (
     <div className="h-full p-4">

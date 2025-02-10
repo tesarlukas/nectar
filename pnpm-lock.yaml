@@ -23,6 +23,9 @@ dependencies:
   '@tauri-apps/plugin-opener':
     specifier: ^2.2.5
     version: 2.2.5
+  '@tauri-apps/plugin-sql':
+    specifier: ~2
+    version: 2.2.0
   '@tiptap/extension-blockquote':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)
@@ -1900,6 +1903,12 @@ packages:
 
   /@tauri-apps/plugin-opener@2.2.5:
     resolution: {integrity: sha512-hHsJ9RPWpZvZEPVFaL+d25gABMUMOf/A6ESXnvf/ii9guTukj58WXsAE/SOysXRIhej7kseRCxnOnIMpSCdUsQ==}
+    dependencies:
+      '@tauri-apps/api': 2.2.0
+    dev: false
+
+  /@tauri-apps/plugin-sql@2.2.0:
+    resolution: {integrity: sha512-yGdybpaMENe/p6lTXslvDHYNNvD9qB7palaBBF5fJHdYSkwd3vrLiYU9dFfLwUAwnsBylND55EiivWsjhazejA==}
     dependencies:
       '@tauri-apps/api': 2.2.0
     dev: false

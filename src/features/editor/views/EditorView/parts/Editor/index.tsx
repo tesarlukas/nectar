@@ -12,10 +12,10 @@ export interface EditorProps {
 
 export const Editor = ({ editor, onClick }: EditorProps) => {
   return (
-    <div className="h-full p-4">
+    <div className="flex flex-col h-full p-4">
       <EditorContent
         editor={editor}
-        className="w-full h-full bg-background"
+        className="w-full max-h-full h-full bg-background overflow-scroll"
         onClick={onClick}
       />
       <div>

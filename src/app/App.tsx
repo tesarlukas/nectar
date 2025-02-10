@@ -3,7 +3,6 @@ import { Provider } from "./provider";
 import { HashRouter as Router, Routes, Route } from "react-router";
 import { EditorView } from "@/features/editor/views/EditorView";
 import { Settings } from "@/features/settings/views/Settings";
-import { TopMenu } from "@/components/TopMenu";
 import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTheme";
 import { Layout } from "@/features/layout/views/Layout";
 

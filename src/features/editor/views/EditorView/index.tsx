@@ -13,7 +13,7 @@ export const EditorView = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full min-h-0">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={20} minSize={10}>
             <FileTree />

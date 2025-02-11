@@ -8,8 +8,13 @@ import {
 } from "../types";
 import { colorThemes } from "../variants";
 import { path } from "@tauri-apps/api";
+import type { BaseDirectory } from "@tauri-apps/plugin-fs";
+import { ROOT_DIR } from "@/constants/rootDir";
+import { useHiveStore } from "@/stores/useHiveStore";
 
 export const useColorTheme = () => {
+  const storedHiveName = useHiveStore((state) => state.hiveName);
+
   /** @deprecated there is a different theming option created */
   const updateColorTheme = async (
     colorScheme: ColorScheme = ColorScheme.Light,
@@ -30,15 +35,17 @@ export const useColorTheme = () => {
   const writeTheme = async (
     colorThemeName: ThemeFlavour,
     colorTheme: ColorTheme,
+    baseDir: BaseDirectory = ROOT_DIR,
   ): Promise<void> => {
     try {
       await writeJson<StoredColorTheme>(
-        ["settings", "appearance"],
+        [storedHiveName, "settings"],
         "colorTheme",
         {
           name: colorThemeName,
-          colorTheme: colorTheme,
+          colorTheme,
         },
+        baseDir,
       );
     } catch (errors) {
       console.error("Something went wrong in the writeTheme", errors);
@@ -84,6 +91,7 @@ export const useColorTheme = () => {
 
   return {
     updateColorTheme,
+    writeTheme,
     readTheme,
     toggleColorScheme,
     initializeTheme,

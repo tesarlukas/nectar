@@ -5,12 +5,23 @@ import { EditorView } from "@/features/editor/views/EditorView";
 import { Settings } from "@/features/settings/views/Settings";
 import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTheme";
 import { Layout } from "@/features/layout/views/Layout";
+import { useInitialize } from "@/hooks/useInitialize";
+import { ROOT_DIR } from "@/constants/rootDir";
 
 export default function App() {
   const { initializeTheme } = useColorTheme();
+  const { initHive, initNotes, initSettings } = useInitialize();
 
   useEffect(() => {
     initializeTheme();
+
+    const initializeAsync = async () => {
+      await initHive("MyHive", ROOT_DIR);
+      await initNotes(ROOT_DIR);
+      await initSettings(ROOT_DIR);
+    };
+
+    initializeAsync();
   }, []);
 
   return (

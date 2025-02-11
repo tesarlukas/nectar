@@ -62,11 +62,9 @@ export const useInitialize = () => {
       "settings",
       "colorTheme.json",
     );
-    console.log("colorThemeLocation", colorThemeLocation);
     const doesColorThemeJsonExist = await exists(colorThemeLocation, {
       baseDir,
     });
-    console.log("doesColorThemeJsonExist", doesColorThemeJsonExist);
     if (!doesColorThemeJsonExist) {
       await writeTheme(
         ThemeFlavour.Standard,

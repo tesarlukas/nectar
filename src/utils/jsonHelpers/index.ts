@@ -4,13 +4,14 @@ import {
   mkdir,
   exists,
 } from "@tauri-apps/plugin-fs";
-import { join } from "@tauri-apps/api/path";
+import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 
 export const writeJson = async <T>(
   locationDirs: string[],
   filename: string,
   content: T,
+  baseDir: BaseDirectory = ROOT_DIR,
 ): Promise<void> => {
   try {
     const contentString = JSON.stringify(content);
@@ -18,18 +19,18 @@ export const writeJson = async <T>(
     const fullPath = await join(...locationDirs, `${filename}.json`);
 
     const doesDirExist = await exists(fullLocationPath, {
-      baseDir: ROOT_DIR,
+      baseDir,
     });
 
     if (!doesDirExist) {
       await mkdir(fullLocationPath, {
-        baseDir: ROOT_DIR,
+        baseDir,
         recursive: true,
       });
     }
 
     await writeTextFile(`${fullPath}`, contentString, {
-      baseDir: ROOT_DIR,
+      baseDir,
     });
   } catch (errors) {
     console.error("Failed to write json file", errors);
@@ -38,9 +39,12 @@ export const writeJson = async <T>(
   }
 };
 
-export const readJson = async (path: string): Promise<string> => {
+export const readJson = async (
+  path: string,
+  baseDir: BaseDirectory = ROOT_DIR,
+): Promise<string> => {
   const jsonContent = await readTextFile(path, {
-    baseDir: ROOT_DIR,
+    baseDir,
   });
 
   return jsonContent;

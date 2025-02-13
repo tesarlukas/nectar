@@ -39,13 +39,17 @@ export const writeJson = async <T>(
   }
 };
 
-export const readJson = async (
+export const readJson = async <T>(
   path: string,
   baseDir: BaseDirectory = ROOT_DIR,
-): Promise<string> => {
-  const jsonContent = await readTextFile(path, {
-    baseDir,
-  });
+): Promise<T | undefined> => {
+  try {
+    const jsonContent = JSON.parse((await readTextFile(path, {
+      baseDir,
+    }))) as T;
 
-  return jsonContent;
+    return jsonContent;
+  } catch (errors) {
+    console.error("Failed to read the json file", errors);
+  }
 };

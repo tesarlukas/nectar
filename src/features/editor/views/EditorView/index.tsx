@@ -13,32 +13,57 @@ import { useHiveStore } from "@/stores/useHiveStore";
 import { join } from "@tauri-apps/api/path";
 import { NOTES_PATH } from "@/constants/notesPath";
 import { ROOT_DIR } from "@/constants/rootDir";
+import { useEffect } from "react";
+import type { FileTreeNode } from "./parts/FileExplorer/types";
+import type { JSONContent } from "@tiptap/react";
 
 export const EditorView = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
   const { editor, handleEditorOnClick } = useEditor();
-  const { saveNote, buildDirectoryTree } = useFileExplorer();
+  const {
+    nodes,
+    setNodes,
+    selectedNode,
+    setSelectedNode,
+    buildDirectoryTree,
+    readNote,
+    saveNote,
+    initializeFileTree,
+  } = useFileExplorer();
 
-  const handleOnNoteClick = (content: unknown) => {
-    console.log(content);
-    editor?.commands.setContent(JSON.parse(content))
+  const handleOnNodeClick = async (node: FileTreeNode) => {
+    setSelectedNode(node);
+
+    // if it's not a file, then it's not a note
+    if (!node.isFile) return;
+
+    const noteContent = await readNote<JSONContent>(node.path);
+
+    if (noteContent) editor?.commands.setContent(noteContent);
   };
 
   const handleOnSave = async () => {
+    saveNote<JSONContent>(editor?.getJSON());
+
     const initPath = await join(hiveName, NOTES_PATH);
-
-    saveNote(editor?.getJSON());
-    console.log("what we saving", editor?.getJSON())
-
-    await buildDirectoryTree(initPath, ROOT_DIR);
+    const newNodes = await buildDirectoryTree(initPath, ROOT_DIR);
+    setNodes(newNodes);
   };
+
+  useEffect(() => {
+    initializeFileTree();
+  }, []);
 
   return (
     <>
       <div className="flex flex-col h-full min-h-0">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={20} minSize={10}>
-            <FileExplorer onNoteClick={handleOnNoteClick} />
+            <FileExplorer
+              nodes={nodes}
+              onNodeClick={handleOnNodeClick}
+              selectedNode={selectedNode}
+            />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>

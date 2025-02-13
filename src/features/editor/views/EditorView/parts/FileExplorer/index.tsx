@@ -15,10 +15,10 @@ export const FileExplorer = ({ onNoteClick }: FileExplorerProps) => {
   const hiveName = useHiveStore((state) => state.hiveName);
   const [nodes, setNodes] = useState<FileTreeNode[]>([]);
   const { buildDirectoryTree, readNote } = useFileExplorer();
-  const [selectedPath, setSelectedPath] = useState<string>();
+  const [selectedNode, setSelectedNode] = useState<FileTreeNode>();
 
   const handleOnNodeClick = async (node: FileTreeNode) => {
-    setSelectedPath(node.path);
+    setSelectedNode(node);
     if (node.isFile) {
       const noteContent = await readNote(node.path);
       onNoteClick?.(noteContent);
@@ -44,7 +44,7 @@ export const FileExplorer = ({ onNoteClick }: FileExplorerProps) => {
           key={node.path}
           node={node}
           onNodeClick={handleOnNodeClick}
-          selectedPath={selectedPath}
+          selectedPath={selectedNode?.path}
         />
       ))}
     </div>

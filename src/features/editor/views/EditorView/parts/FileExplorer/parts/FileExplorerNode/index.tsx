@@ -58,7 +58,11 @@ export const FileExplorerNode = ({
             <FileText className="h-4 w-4 mr-2 text-gray-500" />
           )}
 
-          <span className="truncate text-lg">{node.name}</span>
+          <span className="truncate text-lg">
+            {node.isFile
+              ? node.name.substring(0, node.name.lastIndexOf("."))
+              : node.name}
+          </span>
         </div>
       </Button>
 

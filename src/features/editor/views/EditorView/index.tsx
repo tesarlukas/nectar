@@ -16,6 +16,7 @@ import { ROOT_DIR } from "@/constants/rootDir";
 import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/types";
 import type { JSONContent } from "@tiptap/react";
+import { NoteTitle } from "./parts/NoteTitle";
 
 export const EditorView = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
@@ -67,6 +68,7 @@ export const EditorView = () => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
+            <NoteTitle title={selectedNode?.name} />
             <Editor editor={editor} onClick={handleEditorOnClick} />
           </ResizablePanel>
         </ResizablePanelGroup>

@@ -18,6 +18,7 @@
     "fs:allow-watch",
     "fs:read-dirs",
     "fs:write-files",
+    "fs:allow-unwatch",
     {
       "identifier": "fs:scope",
       "allow": [

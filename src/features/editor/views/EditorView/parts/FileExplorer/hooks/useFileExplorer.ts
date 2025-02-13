@@ -3,8 +3,13 @@ import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback } from "react";
 import type { FileTreeNode } from "../types";
+import { readJson, writeJson } from "@/utils/jsonHelpers";
+import { useHiveStore } from "@/stores/useHiveStore";
+import { NOTES_PATH } from "@/constants/notesPath";
 
 export const useFileExplorer = () => {
+  const hiveName = useHiveStore((state) => state.hiveName);
+
   const buildDirectoryTree = useCallback(
     async (
       currentPath: string,
@@ -50,7 +55,20 @@ export const useFileExplorer = () => {
     [],
   );
 
+  const readNote = async (path: string) => {
+    const noteContent = await readJson(path, ROOT_DIR);
+    console.log("what we sending", noteContent);
+
+    return noteContent;
+  };
+
+  const saveNote = async (content: unknown) => {
+    await writeJson([hiveName, NOTES_PATH], "first_note", content, ROOT_DIR);
+  };
+
   return {
     buildDirectoryTree,
+    readNote,
+    saveNote,
   };
 };

@@ -7,14 +7,22 @@ import { NOTES_PATH } from "@/constants/notesPath";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { ROOT_DIR } from "@/constants/rootDir";
 
-export const FileExplorer = () => {
+interface FileExplorerProps {
+  onNoteClick?: (path: string) => void;
+}
+
+export const FileExplorer = ({ onNoteClick }: FileExplorerProps) => {
   const hiveName = useHiveStore((state) => state.hiveName);
   const [nodes, setNodes] = useState<FileTreeNode[]>([]);
-  const { buildDirectoryTree } = useFileExplorer();
+  const { buildDirectoryTree, readNote } = useFileExplorer();
   const [selectedPath, setSelectedPath] = useState<string>();
 
-  const handleOnNodeClick = (node: FileTreeNode) => {
+  const handleOnNodeClick = async (node: FileTreeNode) => {
     setSelectedPath(node.path);
+    if (node.isFile) {
+      const noteContent = await readNote(node.path);
+      onNoteClick?.(noteContent);
+    }
   };
 
   useEffect(() => {
@@ -30,17 +38,15 @@ export const FileExplorer = () => {
   }, []);
 
   return (
-    <div className="h-full p-4">
-      <span className="font-semibold">
-        {nodes.map((node) => (
-          <FileExplorerNode
-            key={node.path}
-            node={node}
-            onNodeClick={handleOnNodeClick}
-            selectedPath={selectedPath}
-          />
-        ))}
-      </span>
+    <div className="h-full p-2">
+      {nodes.map((node) => (
+        <FileExplorerNode
+          key={node.path}
+          node={node}
+          onNodeClick={handleOnNodeClick}
+          selectedPath={selectedPath}
+        />
+      ))}
     </div>
   );
 };

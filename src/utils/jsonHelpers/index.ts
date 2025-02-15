@@ -8,28 +8,28 @@ import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 
 export const writeJson = async <T>(
-  locationDirs: string[],
+  location: string,
   filename: string,
   content: T,
   baseDir: BaseDirectory = ROOT_DIR,
 ): Promise<void> => {
   try {
-    const contentString = JSON.stringify(content);
-    const fullLocationPath = await join(...locationDirs);
-    const fullPath = await join(...locationDirs, `${filename}.json`);
-
-    const doesDirExist = await exists(fullLocationPath, {
+    const doesDirExist = await exists(location, {
       baseDir,
     });
 
     if (!doesDirExist) {
-      await mkdir(fullLocationPath, {
+      await mkdir(location, {
         baseDir,
         recursive: true,
       });
     }
 
-    await writeTextFile(`${fullPath}`, contentString, {
+    // NOTE: it seems the join function is actually pretty smart and does not
+    // append the `.json` to the file if there is already one
+    const fullPath = await join(location, `${filename}.json`);
+    const contentString = JSON.stringify(content);
+    await writeTextFile(fullPath, contentString, {
       baseDir,
     });
   } catch (errors) {
@@ -44,9 +44,11 @@ export const readJson = async <T>(
   baseDir: BaseDirectory = ROOT_DIR,
 ): Promise<T | undefined> => {
   try {
-    const jsonContent = JSON.parse((await readTextFile(path, {
-      baseDir,
-    }))) as T;
+    const jsonContent = JSON.parse(
+      await readTextFile(path, {
+        baseDir,
+      }),
+    ) as T;
 
     return jsonContent;
   } catch (errors) {

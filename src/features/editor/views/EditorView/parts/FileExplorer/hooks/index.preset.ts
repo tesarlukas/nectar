@@ -3,7 +3,7 @@ export const EMPTY_NOTE = {
   content: [
     {
       type: "paragraph",
-      content: []
-    }
-  ]
-} as const;
+      content: [],
+    },
+  ],
+};

@@ -10,7 +10,7 @@ import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useHiveStore } from "@/stores/useHiveStore";
-import { join } from "@tauri-apps/api/path";
+import { join, sep } from "@tauri-apps/api/path";
 import { NOTES_PATH } from "@/constants/notesPath";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useEffect } from "react";
@@ -25,6 +25,7 @@ export const EditorView = () => {
     nodes,
     setNodes,
     selectedNode,
+    addNewNode,
     setSelectedNode,
     buildDirectoryTree,
     readNote,
@@ -45,19 +46,27 @@ export const EditorView = () => {
   };
 
   const handleOnSave = async () => {
-    saveNote<JSONContent>(
-      [hiveName, "notes"],
+    const saveLocation = selectedNode?.value.dirPath
+      ? selectedNode.value.dirPath
+      : await join(hiveName, NOTES_PATH);
+
+    await saveNote<JSONContent>(
+      saveLocation,
       "placeholder_note",
       editor?.getJSON(),
     );
-
-    const initPath = await join(hiveName, NOTES_PATH);
-    const newNodes = await buildDirectoryTree(initPath, ROOT_DIR);
-    setNodes(newNodes);
   };
 
   const handleOnDelete = async (node: FileTreeNode) => {
     await removeNodeByPath(node.value.path);
+  };
+
+  const handleOnCreateFile = async (node: FileTreeNode) => {
+    await addNewNode(
+      selectedNode?.value.path ?? (await join(hiveName, NOTES_PATH)),
+      node.value.name,
+      false,
+    );
   };
 
   useEffect(() => {

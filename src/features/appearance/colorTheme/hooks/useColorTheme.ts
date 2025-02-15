@@ -10,6 +10,7 @@ import { colorThemes } from "../variants";
 import type { BaseDirectory } from "@tauri-apps/plugin-fs";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useHiveStore } from "@/stores/useHiveStore";
+import { join } from "@tauri-apps/api/path";
 
 export const useColorTheme = () => {
   const storedHiveName = useHiveStore((state) => state.hiveName);
@@ -38,7 +39,7 @@ export const useColorTheme = () => {
   ): Promise<void> => {
     try {
       await writeJson<StoredColorTheme>(
-        [storedHiveName, "settings"],
+        await join(storedHiveName, "settings"),
         "colorTheme",
         {
           name: colorThemeName,

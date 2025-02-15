@@ -29,6 +29,7 @@ export const EditorView = () => {
     buildDirectoryTree,
     readNote,
     saveNote,
+    removeNode,
     initializeFileTree,
   } = useFileExplorer();
 
@@ -49,6 +50,12 @@ export const EditorView = () => {
     const initPath = await join(hiveName, NOTES_PATH);
     const newNodes = await buildDirectoryTree(initPath, ROOT_DIR);
     setNodes(newNodes);
+  };
+
+  const handleOnDelete = async (node: FileTreeNode) => {
+    const updatedNodes = await removeNode(nodes, node.path);
+
+    setNodes(updatedNodes);
   };
 
   useEffect(() => {

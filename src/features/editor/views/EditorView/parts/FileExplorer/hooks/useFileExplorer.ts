@@ -1,4 +1,4 @@
-import { readDir } from "@tauri-apps/plugin-fs";
+import { readDir, remove } from "@tauri-apps/plugin-fs";
 import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
@@ -64,9 +64,14 @@ export const useFileExplorer = () => {
   };
 
   const saveNote = async <TContent>(content?: TContent) => {
-    if (!content) return
+    if (!content) return;
 
-    await writeJson<TContent>([hiveName, NOTES_PATH], "first_note", content, ROOT_DIR);
+    await writeJson<TContent>(
+      [hiveName, NOTES_PATH],
+      "first_note",
+      content,
+      ROOT_DIR,
+    );
   };
 
   const initializeFileTree = useCallback(async () => {
@@ -77,6 +82,44 @@ export const useFileExplorer = () => {
     setNodes(builtNodes);
   }, [hiveName, setNodes, buildDirectoryTree]);
 
+  const removeNode = useCallback(
+    async (
+      currentNodes: FileTreeNode[],
+      path: string,
+    ): Promise<FileTreeNode[]> => {
+      const nodeIndex = currentNodes.findIndex((node) => node.path === path);
+
+      // if the node under the specified path is in this level, then remove it
+      // from both the filesystem and from the tree structure
+      if (nodeIndex !== -1) {
+        try {
+          await remove(path, { baseDir: ROOT_DIR, recursive: true });
+
+          return currentNodes.filter((_, index) => index !== nodeIndex);
+        } catch (errors) {
+          console.error(`Error removing node at path ${path}:`, errors);
+        }
+      }
+
+      // if the node is not under the specified path, proceed recursively with
+      // the children of the node
+      return await Promise.all(
+        currentNodes.map(async (node) => {
+          if (node.isDirectory && node.children) {
+            const updatedChildrenNodes = await removeNode(node.children, path);
+            return {
+              ...node,
+              children: updatedChildrenNodes,
+            };
+          }
+
+          return node;
+        }),
+      );
+    },
+    [nodes, setNodes],
+  );
+
   return {
     nodes,
     setNodes,
@@ -85,6 +128,7 @@ export const useFileExplorer = () => {
     buildDirectoryTree,
     readNote,
     saveNote,
+    removeNode,
     initializeFileTree,
   };
 };

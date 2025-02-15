@@ -14,7 +14,7 @@ import { join } from "@tauri-apps/api/path";
 import { NOTES_PATH } from "@/constants/notesPath";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useEffect } from "react";
-import type { FileTreeNode } from "./parts/FileExplorer/types";
+import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import type { JSONContent } from "@tiptap/react";
 import { NoteTitle } from "./parts/NoteTitle";
 
@@ -29,7 +29,7 @@ export const EditorView = () => {
     buildDirectoryTree,
     readNote,
     saveNote,
-    removeNode,
+    removeNodeByPath,
     initializeFileTree,
   } = useFileExplorer();
 
@@ -37,15 +37,19 @@ export const EditorView = () => {
     setSelectedNode(node);
 
     // if it's not a file, then it's not a note
-    if (!node.isFile) return;
+    if (!node.value.isFile) return;
 
-    const noteContent = await readNote<JSONContent>(node.path);
+    const noteContent = await readNote<JSONContent>(node.value.path);
 
     if (noteContent) editor?.commands.setContent(noteContent);
   };
 
   const handleOnSave = async () => {
-    saveNote<JSONContent>(editor?.getJSON());
+    saveNote<JSONContent>(
+      [hiveName, "notes"],
+      "placeholder_note",
+      editor?.getJSON(),
+    );
 
     const initPath = await join(hiveName, NOTES_PATH);
     const newNodes = await buildDirectoryTree(initPath, ROOT_DIR);
@@ -53,9 +57,7 @@ export const EditorView = () => {
   };
 
   const handleOnDelete = async (node: FileTreeNode) => {
-    const updatedNodes = await removeNode(nodes, node.path);
-
-    setNodes(updatedNodes);
+    await removeNodeByPath(node.value.path);
   };
 
   useEffect(() => {
@@ -81,7 +83,9 @@ export const EditorView = () => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
-            {selectedNode?.isFile && <NoteTitle title={selectedNode?.name} />}
+            {selectedNode?.value.isFile && (
+              <NoteTitle title={selectedNode?.value.name} />
+            )}
             <Editor editor={editor} onClick={handleEditorOnClick} />
           </ResizablePanel>
         </ResizablePanelGroup>

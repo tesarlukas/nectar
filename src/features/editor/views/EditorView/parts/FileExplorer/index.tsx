@@ -3,7 +3,7 @@ import {
   type FileExplorerNodeProps,
 } from "./parts/FileExplorerNode";
 import { FileExplorerToolbar } from "./parts/FileExplorerToolbar";
-import type { FileTreeNode } from "./types";
+import type { FileTreeNode } from "./hooks/useFileExplorer";
 
 interface FileExplorerProps
   extends Pick<FileExplorerNodeProps, "onDelete" | "onNodeClick">,
@@ -24,10 +24,10 @@ export const FileExplorer = ({
       <FileExplorerToolbar onRefresh={onRefresh} />
       {nodes.map((node) => (
         <FileExplorerNode
-          key={node.path}
+          key={node.value.path}
           node={node}
           onNodeClick={onNodeClick}
-          selectedPath={selectedNode?.path}
+          selectedPath={selectedNode?.value.path}
           onDelete={onDelete}
         />
       ))}

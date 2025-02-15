@@ -19,7 +19,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import type { FileTreeNode } from "../../types";
+import type { FileTreeNode } from "../../hooks/useFileExplorer";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
@@ -46,8 +46,8 @@ export const FileExplorerNode = ({
 }: FileExplorerNodeProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren =
-    node.isDirectory && node.children && node.children.length > 0;
-  const isSelected = node.path === selectedPath;
+    node.value.isDirectory && node.children && node.children.length > 0;
+  const isSelected = node.value.path === selectedPath;
 
   const handleMainClick = (e: React.MouseEvent) => {
     // Only handle main click if it's not right click
@@ -85,22 +85,25 @@ export const FileExplorerNode = ({
               ) : (
                 <div className="w-5" />
               )}
-              {node.isDirectory ? (
+              {node.value.isDirectory ? (
                 <Folder className="h-4 w-4 mr-2 text-blue-500" />
               ) : (
                 <FileText className="h-4 w-4 mr-2 text-gray-500" />
               )}
               <span className="truncate">
-                {node.isFile
-                  ? node.name.substring(0, node.name.lastIndexOf("."))
-                  : node.name}
+                {node.value.isFile
+                  ? node.value.name.substring(
+                      0,
+                      node.value.name.lastIndexOf("."),
+                    )
+                  : node.value.name}
               </span>
             </div>
           </Button>
         </ContextMenuTrigger>
 
         <ContextMenuContent className="w-48 text-xl">
-          {node.isDirectory && (
+          {node.value.isDirectory && (
             <>
               <ContextMenuItem
                 className="text-base"
@@ -145,7 +148,7 @@ export const FileExplorerNode = ({
         <div className="pl-2">
           {node.children?.map((childNode) => (
             <FileExplorerNode
-              key={childNode.path}
+              key={childNode.value.path}
               node={childNode}
               depth={depth + 1}
               onNodeClick={onNodeClick}

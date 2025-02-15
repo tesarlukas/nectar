@@ -1,4 +1,4 @@
-import { EditableText } from "@/components/EditableText";
+//import { EditableText } from "@/components/EditableText";
 
 interface NoteTitleProps {
   title?: string;

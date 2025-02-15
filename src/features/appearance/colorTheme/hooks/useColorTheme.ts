@@ -1,4 +1,4 @@
-import { readJson, writeJson } from "@/utils/jsonHelpers";
+import { writeJson } from "@/utils/jsonHelpers";
 import {
   ColorScheme,
   type ColorTheme,
@@ -7,7 +7,6 @@ import {
   type StoredColorTheme,
 } from "../types";
 import { colorThemes } from "../variants";
-import { path } from "@tauri-apps/api";
 import type { BaseDirectory } from "@tauri-apps/plugin-fs";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useHiveStore } from "@/stores/useHiveStore";
@@ -52,18 +51,6 @@ export const useColorTheme = () => {
     }
   };
 
-  const readTheme = async (): Promise<StoredColorTheme | undefined> => {
-    try {
-      const theme = await readJson(
-        await path.join(...["settings", "appearance", "colorTheme.json"]),
-      );
-
-      return JSON.parse(theme) as StoredColorTheme;
-    } catch (errors) {
-      console.error("Could not read the color theme:", errors);
-    }
-  };
-
   const setColorScheme = (colorScheme: ColorScheme) => {
     const root = document.documentElement;
 
@@ -92,7 +79,6 @@ export const useColorTheme = () => {
   return {
     updateColorTheme,
     writeTheme,
-    readTheme,
     toggleColorScheme,
     initializeTheme,
     setColorScheme,

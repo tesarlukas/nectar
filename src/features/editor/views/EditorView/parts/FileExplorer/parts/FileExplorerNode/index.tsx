@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/context-menu";
 import type { FileTreeNode } from "../../types";
 
-interface FileExplorerNodeProps {
+export interface FileExplorerNodeProps {
   node: FileTreeNode;
   depth?: number;
   onNodeClick?: (node: FileTreeNode) => void;
@@ -132,7 +132,7 @@ export const FileExplorerNode = ({
           </ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem
-            className="text-destructive text-base"
+            className="text-destructive text-base font-bold data-[highlighted]:bg-destructive"
             onClick={() => onDelete?.(node)}
           >
             <Trash className="mr-2 h-4 w-4" />

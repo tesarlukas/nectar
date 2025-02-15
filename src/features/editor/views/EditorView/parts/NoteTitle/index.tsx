@@ -7,8 +7,8 @@ interface NoteTitleProps {
 export const NoteTitle = ({ title }: NoteTitleProps) => {
   return (
     <>
-      <div className="bg-red-900 h-8 flex flex-row justify-center items-center">
-        <EditableText initialText={title} />
+      <div className="flex flex-pow justify-center items-center text-2xl mt-4">
+        {title}
       </div>
     </>
   );

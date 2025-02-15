@@ -67,7 +67,7 @@ export const FileExplorerNode = ({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 w-full justify-start px-2 hover:bg-muted",
+              "h-8 w-full justify-start px-2 hover:bg-muted text-lg",
               isSelected && "bg-muted",
               depth > 0 && "ml-4",
             )}
@@ -90,7 +90,7 @@ export const FileExplorerNode = ({
               ) : (
                 <FileText className="h-4 w-4 mr-2 text-gray-500" />
               )}
-              <span className="truncate text-base">
+              <span className="truncate">
                 {node.isFile
                   ? node.name.substring(0, node.name.lastIndexOf("."))
                   : node.name}

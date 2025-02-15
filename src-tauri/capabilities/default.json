@@ -33,6 +33,6 @@
         }
       ]
     },
-    "sql:default"
+    "core:webview:allow-set-webview-zoom"
   ]
 }

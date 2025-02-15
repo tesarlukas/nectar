@@ -40,15 +40,14 @@ export const removeNode = <T>(
       return acc;
     }
     if (node.children) {
-      return [
-        ...acc,
-        {
-          ...node,
-          children: removeNode(node.children, predicate),
-        },
-      ];
+      acc.push({
+        value: node.value,
+        children: removeNode(node.children, predicate),
+      });
+      return acc;
     }
-    return [...acc, node];
+    acc.push(node);
+    return acc;
   }, []);
 
 export const addNode = <T>(

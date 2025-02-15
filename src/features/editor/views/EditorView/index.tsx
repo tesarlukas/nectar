@@ -68,12 +68,13 @@ export const EditorView = () => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
-            <NoteTitle title={selectedNode?.name} />
+            {selectedNode?.isFile && <NoteTitle title={selectedNode?.name} />}
             <Editor editor={editor} onClick={handleEditorOnClick} />
           </ResizablePanel>
         </ResizablePanelGroup>
-        <Button onClick={handleOnSave}>Save</Button>
-        <BottomMenu charCount={editor?.storage.characterCount.characters()} />
+        <BottomMenu charCount={editor?.storage.characterCount.characters()}>
+          <Button onClick={handleOnSave}>Save</Button>
+        </BottomMenu>
       </div>
     </>
   );

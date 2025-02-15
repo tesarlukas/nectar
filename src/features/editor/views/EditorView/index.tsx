@@ -55,6 +55,10 @@ export const EditorView = () => {
     initializeFileTree();
   }, []);
 
+  const handleOnRefresh = async () => {
+    await initializeFileTree();
+  };
+
   return (
     <>
       <div className="flex flex-col h-full min-h-0">
@@ -64,6 +68,8 @@ export const EditorView = () => {
               nodes={nodes}
               onNodeClick={handleOnNodeClick}
               selectedNode={selectedNode}
+              onDelete={handleOnDelete}
+              onRefresh={handleOnRefresh}
             />
           </ResizablePanel>
           <ResizableHandle />

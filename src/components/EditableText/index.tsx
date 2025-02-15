@@ -1,59 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
 
 interface EditableTextProps {
   /** Initial text to display */
-  initialText?: string;
+  initialText: string;
   /** Callback fired when text changes and is saved */
   onTextChange?: (newText: string) => void;
-  /** Controls whether the component is in edit mode */
-  isEditing?: boolean;
-  /** Callback fired when editing is completed
-   * @param saved - Whether the changes were saved (true) or cancelled (false)
-   */
-  onEditComplete?: (saved: boolean) => void;
-  /** Additional className for the container */
-  className?: string;
   /** Additional className for the text display */
   textClassName?: string;
   /** Additional className for the input field */
   inputClassName?: string;
-  /** Whether to enable click-to-edit */
-  clickToEdit?: boolean;
-  /** Whether to show the context menu */
-  showContextMenu?: boolean;
-  /** Custom context menu items to add before the rename option */
-  contextMenuItemsBefore?: React.ReactNode;
-  /** Custom context menu items to add after the rename option */
-  contextMenuItemsAfter?: React.ReactNode;
 }
 
-export const EditableText: React.FC<EditableTextProps> = ({
-  initialText = "",
+export const EditableText = ({
+  initialText,
   onTextChange,
-  isEditing = false,
-  onEditComplete,
-  className = "",
   textClassName = "",
   inputClassName = "",
-  clickToEdit = true,
-  showContextMenu = false,
-  contextMenuItemsBefore,
-  contextMenuItemsAfter,
-}) => {
+}: EditableTextProps) => {
   const [text, setText] = useState<string>(initialText);
-  const [isEditMode, setIsEditMode] = useState<boolean>(isEditing);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setIsEditMode(isEditing);
-  }, [isEditing]);
 
   useEffect(() => {
     if (isEditMode && inputRef.current) {
@@ -63,67 +30,54 @@ export const EditableText: React.FC<EditableTextProps> = ({
   }, [isEditMode, text.length]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     if (e.key === "Enter") {
-      handleEditComplete();
+      handleEditComplete(true);
     }
     if (e.key === "Escape") {
       setText(initialText);
-      setIsEditMode(false);
-      onEditComplete?.(false);
+      handleEditComplete(false);
     }
   };
 
-  const handleEditComplete = () => {
+  const handleEditComplete = (shouldSave: boolean) => {
     setIsEditMode(false);
-    onTextChange?.(text);
-    onEditComplete?.(true);
-  };
-
-  const handleBlur = () => {
-    handleEditComplete();
-  };
-
-  const handleClick = () => {
-    if (clickToEdit && !isEditMode) {
-      setIsEditMode(true);
+    if (shouldSave) {
+      onTextChange?.(text);
+    } else {
+      setText(initialText);
     }
   };
 
-  const content = isEditMode ? (
-    <Input
-      ref={inputRef}
-      type="text"
-      value={text}
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-        setText(e.target.value)
-      }
-      onKeyDown={handleKeyDown}
-      onBlur={handleBlur}
-      className={`w-full ${inputClassName}`}
-    />
-  ) : (
-    <span
-      className={`inline-block ${textClassName} ${clickToEdit ? "cursor-pointer" : ""}`}
-      onClick={handleClick}
-    >
-      {text || initialText}
-    </span>
-  );
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditMode(true);
+  };
 
-  if (!showContextMenu) {
-    return content;
+  if (isEditMode) {
+    return (
+      <Input
+        ref={inputRef}
+        type="text"
+        value={text}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setText(e.target.value)
+        }
+        onKeyDown={handleKeyDown}
+        onBlur={() => handleEditComplete(true)}
+        onClick={(e) => e.stopPropagation()}
+        className={`w-full ${inputClassName}`}
+      />
+    );
   }
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger className={className}>{content}</ContextMenuTrigger>
-      <ContextMenuContent>
-        {contextMenuItemsBefore}
-        <ContextMenuItem onSelect={() => setIsEditMode(true)}>
-          Rename
-        </ContextMenuItem>
-        {contextMenuItemsAfter}
-      </ContextMenuContent>
-    </ContextMenu>
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    <span
+      className={`inline-block cursor-pointer ${textClassName}`}
+      onClick={handleClick}
+    >
+      {text}
+    </span>
   );
 };

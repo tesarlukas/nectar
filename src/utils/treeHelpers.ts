@@ -54,8 +54,10 @@ export const addNode = <T>(
   nodes: TreeNode<T>[],
   parentPredicate: (value: T) => boolean,
   newNode: TreeNode<T>,
-): TreeNode<T>[] =>
-  nodes.map((node) => {
+): TreeNode<T>[] => {
+  if (nodes.length === 0) return [newNode];
+
+  return nodes.map((node) => {
     if (parentPredicate(node.value)) {
       return {
         ...node,
@@ -70,6 +72,7 @@ export const addNode = <T>(
     }
     return node;
   });
+};
 
 export const moveNode = <T>(
   nodes: TreeNode<T>[],

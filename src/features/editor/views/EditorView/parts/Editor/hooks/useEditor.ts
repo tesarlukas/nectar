@@ -175,63 +175,8 @@ const extensions = [
 ];
 
 const content = `
-      <h1>Welcome to the Rich Text Editor</h1>
-      <p>This is a demonstration of all available styling features in our editor. Let's explore what it can do!</p>
-      
-      <h2>Text Formatting</h2>
-      <p>You can make text <strong>bold</strong>, <em>italic</em>, or <s>strikethrough</s>. You can also use <code>inline code</code> for technical terms.</p>
-      
-      <h3>Code Blocks</h3>
-      <pre><code>function greet() {
-  console.log("Hello, World!");
-}</code></pre>
-      
-      <h3>Lists</h3>
-      <p>Here's an ordered list of features:</p>
-      <ol>
-        <li>Rich text formatting</li>
-        <li>Code highlighting</li>
-        <li>List support</li>
-      </ol>
-      
-      <p>And here's a bullet list of benefits:</p>
-      <ul>
-        <li>Easy to use</li>
-        <li>Customizable</li>
-        <li>Dark mode support</li>
-      </ul>
-      
-      <h3>Blockquotes</h3>
-      <blockquote>
-        This is a blockquote. It's perfect for highlighting important information or displaying quotes from other sources.
-      </blockquote>
-      
-      <h3>Images</h3>
-      <p>Below is a sample image:</p>
-      <img src="https://picsum.photos/200/300" alt="Sample image" />
-      
-      <h2>Other Elements</h2>
-      <p>You can also add horizontal rules to separate content:</p>
-      <hr/>
-      
-      <h4>Nested Lists</h4>
-      <ul>
-        <li>First level
-          <ul>
-            <li>Second level
-              <ul>
-                <li>Third level</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      
-      <h5>Small Heading</h5>
-      <p>This demonstrates a smaller heading size.</p>
-      
-      <h6>Smallest Heading</h6>
-      <p>And this is the smallest heading available.</p>`;
+<h1>Hello, welcome to the app Nectar!</h1> 
+`;
 
 export const useEditor = () => {
   const editor = useTiptapEditor({
@@ -240,10 +185,11 @@ export const useEditor = () => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none",
+          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-0 focus:outline-none",
         id: "editor",
       },
     },
+    shouldRerenderOnTransaction: false,
   });
 
   const handleEditorOnClick = () => {

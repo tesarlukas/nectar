@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import type { JSONContent } from "@tiptap/react";
 import { NoteTitle } from "./parts/NoteTitle";
+import { EMPTY_NOTE } from "./parts/FileExplorer/hooks/index.preset";
 
 export const EditorView = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
@@ -36,6 +37,7 @@ export const EditorView = () => {
 
   const handleOnNodeClick = async (node: FileTreeNode) => {
     setSelectedNode(node);
+    console.log("selectedNode", selectedNode);
 
     // if it's not a file, then it's not a note
     if (!node.value.isFile) return;
@@ -61,12 +63,18 @@ export const EditorView = () => {
     await removeNodeByPath(node.value.path);
   };
 
-  const handleOnCreateFile = async (node: FileTreeNode) => {
-    await addNewNode(
-      selectedNode?.value.path ?? (await join(hiveName, NOTES_PATH)),
-      node.value.name,
-      false,
-    );
+  const handleOnCreateFile = async (parentNode: FileTreeNode, name: string) => {
+    await addNewNode(parentNode.value.path, name, {
+      isDirectory: false,
+      content: EMPTY_NOTE,
+    });
+  };
+
+  const handleOnCreateDir = async (parentNode: FileTreeNode, name: string) => {
+    await addNewNode(parentNode.value.path, name, {
+      isDirectory: true,
+      content: EMPTY_NOTE,
+    });
   };
 
   useEffect(() => {
@@ -88,6 +96,8 @@ export const EditorView = () => {
               selectedNode={selectedNode}
               onDelete={handleOnDelete}
               onRefresh={handleOnRefresh}
+              onCreateFile={handleOnCreateFile}
+              onCreateDir={handleOnCreateDir}
             />
           </ResizablePanel>
           <ResizableHandle />

@@ -1,4 +1,4 @@
-import { mkdir, readDir, remove } from "@tauri-apps/plugin-fs";
+import { create, mkdir, readDir, remove } from "@tauri-apps/plugin-fs";
 import { type BaseDirectory, join, sep } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
@@ -100,30 +100,30 @@ export const useFileExplorer = () => {
     async <TContent>(
       parentPath: string,
       nodeName: string,
-      isDirectory: boolean,
-      content?: TContent,
+      opts?: Partial<{ isDirectory: boolean; content: TContent }>,
     ): Promise<void> => {
       try {
+        const defaultOpts = {
+          isDirectory: false,
+          content: EMPTY_NOTE as TContent,
+        };
+        const finalOpts = { ...defaultOpts, ...opts };
+
         const fullPath = await join(parentPath, nodeName);
 
         const newFileInfo: FileInfo = {
-          name: `${nodeName}.json`,
-          path: `${fullPath}.json`,
+          name: finalOpts.isDirectory ? nodeName : `${nodeName}.json`,
+          path: finalOpts.isDirectory ? fullPath : `${fullPath}.json`,
           dirPath: parentPath,
-          isDirectory,
-          isFile: !isDirectory,
+          isDirectory: finalOpts.isDirectory,
+          isFile: !finalOpts.isDirectory,
           isSymLink: false,
         };
 
-        // Create the file/directory in the filesystem
-        if (isDirectory) {
-          // set recursive to true just in case the previous dirs would not
-          // exist, which is not likely to happen
-          await mkdir(fullPath, { baseDir: ROOT_DIR, recursive: true });
-        } else {
-          // noteName is the  same as name of the note in this case
-          await createNewNote(parentPath, nodeName, content);
-        }
+        await createNewNoteOrDir(parentPath, nodeName, {
+          isDirectory: finalOpts.isDirectory,
+          content: finalOpts.isDirectory,
+        });
 
         // synchronize with the tree structure
         const newNode = createFileNode(newFileInfo);
@@ -198,7 +198,6 @@ export const useFileExplorer = () => {
   ) => {
     if (!content) return;
     const fullPath = await join(location, name);
-
     const foundNode = findNode(nodes, (info) => info.path === fullPath);
 
     if (foundNode?.value.isFile) {
@@ -206,7 +205,7 @@ export const useFileExplorer = () => {
       return;
     }
 
-    await addNewNode(location, name, false, content);
+    await createNewNoteOrDir(location, name, { isDirectory: false, content });
   };
 
   const readNote = async <TContent>(path: string) => {
@@ -215,17 +214,23 @@ export const useFileExplorer = () => {
     return noteContent;
   };
 
-  const createNewNote = async <TContent>(
+  const createNewNoteOrDir = async <TContent>(
     location: string,
     name: string,
-    content?: TContent,
+    opts?: Partial<{ isDirectory: boolean; content: TContent }>,
   ) => {
-    await writeJson<TContent>(
-      location,
-      name,
-      content ?? (EMPTY_NOTE as TContent),
-      ROOT_DIR,
-    );
+    const defaultOpts = { isDirectory: false, content: EMPTY_NOTE as TContent };
+    const finalOpts = { ...defaultOpts, ...opts };
+
+    if (finalOpts?.isDirectory) {
+      await mkdir(await join(location, name), {
+        baseDir: ROOT_DIR,
+        recursive: true,
+      });
+      return;
+    }
+
+    await writeJson<TContent>(location, name, finalOpts.content, ROOT_DIR);
   };
 
   return {
@@ -242,6 +247,6 @@ export const useFileExplorer = () => {
     initializeFileTree,
     saveNote,
     readNote,
-    createNewNote,
+    createNewNoteOrDir,
   };
 };

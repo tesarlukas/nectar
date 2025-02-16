@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronRight,
   ChevronDown,
@@ -105,20 +105,24 @@ export const FileExplorerNode = ({
                   : node.value.name}
               </span>
             </div>
-
-            {createInput && (
-              <CreateNodeInput
-                type={createInput.type}
-                parentNode={node}
-                onClose={() => setCreateInput(null)}
-                onCreateFile={onCreateFile}
-                onCreateDir={onCreateDir}
-              />
-            )}
           </Button>
+
+          {createInput && (
+            <CreateNodeInput
+              type={createInput.type}
+              parentNode={node}
+              depth={depth}
+              onClose={() => setCreateInput(null)}
+              onCreateFile={onCreateFile}
+              onCreateDir={onCreateDir}
+            />
+          )}
         </ContextMenuTrigger>
 
-        <ContextMenuContent className="w-48 text-xl">
+        <ContextMenuContent
+          className="w-48 text-xl"
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
           {node.value.isDirectory && (
             <>
               <ContextMenuItem
@@ -143,7 +147,7 @@ export const FileExplorerNode = ({
                   });
                 }}
               >
-                <FolderPlus className="mr-2 h-4 w-4" />
+                <FilePlus className="mr-2 h-4 w-4" />
                 New Folder
               </ContextMenuItem>
               <ContextMenuSeparator />

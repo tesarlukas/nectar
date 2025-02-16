@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
+import { cn } from "@/lib/utils";
 
 interface CreateNodeInputProps {
   type: "file" | "directory";
   parentNode: FileTreeNode;
+  depth: number;
   onClose: () => void;
   onCreateFile?: (parentNode: FileTreeNode, name: string) => void;
   onCreateDir?: (parentNode: FileTreeNode, name: string) => void;
@@ -13,6 +15,7 @@ interface CreateNodeInputProps {
 export const CreateNodeInput = ({
   type,
   parentNode,
+  depth,
   onClose,
   onCreateFile,
   onCreateDir,
@@ -22,7 +25,9 @@ export const CreateNodeInput = ({
 
   useEffect(() => {
     // Focus input on mount
-    inputRef.current?.focus();
+    const timeout = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 1);
 
     // Handle clicks outside
     const handleClickOutside = (e: MouseEvent) => {
@@ -32,7 +37,10 @@ export const CreateNodeInput = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [onClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,7 +63,12 @@ export const CreateNodeInput = ({
   };
 
   return (
-    <div className="absolute top-full left-0 mt-px z-50 shadow-lg bg-background border rounded-md w-full">
+    <div
+      className={cn(
+        "relative z-50 mt-1 shadow-lg bg-background border rounded-md w-full",
+        depth > 0 && "ml-4",
+      )}
+    >
       <form onSubmit={handleSubmit}>
         <Input
           ref={inputRef}
@@ -63,7 +76,7 @@ export const CreateNodeInput = ({
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={`New ${type}...`}
-          className="h-8 w-full text-sm"
+          className="h-8 text-sm w-full"
         />
       </form>
     </div>

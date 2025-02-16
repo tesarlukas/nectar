@@ -8,7 +8,7 @@ import type { FileTreeNode } from "./hooks/useFileExplorer";
 interface FileExplorerProps
   extends Pick<
       FileExplorerNodeProps,
-      "onDelete" | "onNodeClick" | "onCreateFile" | "onCreateDir"
+      "onDelete" | "onNodeClick" | "onCreateFile" | "onCreateDir" | "onRename"
     >,
     Pick<FileExplorerToolbar, "onRefresh"> {
   nodes: FileTreeNode[];
@@ -19,6 +19,7 @@ export const FileExplorer = ({
   nodes,
   selectedNode,
   onNodeClick,
+  onRename,
   onDelete,
   onRefresh,
   onCreateFile,
@@ -31,8 +32,9 @@ export const FileExplorer = ({
         <FileExplorerNode
           key={node.value.path}
           node={node}
-          onNodeClick={onNodeClick}
           selectedPath={selectedNode?.value.path}
+          onNodeClick={onNodeClick}
+          onRename={onRename}
           onDelete={onDelete}
           onCreateFile={onCreateFile}
           onCreateDir={onCreateDir}

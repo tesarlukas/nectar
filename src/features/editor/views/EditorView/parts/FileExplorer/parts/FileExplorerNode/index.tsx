@@ -20,14 +20,14 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
-import { CreateNodeInput } from "../CreateNodeInput";
+import { CreateNodeInput, RenameNodeInput } from "../NodeInput";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
   depth?: number;
   onNodeClick?: (node: FileTreeNode) => void;
   selectedPath?: string;
-  onRename?: (node: FileTreeNode) => void;
+  onRename?: (node: FileTreeNode, name: string) => void;
   onDelete?: (node: FileTreeNode) => void;
   onCopy?: (node: FileTreeNode) => void;
   onCreateFile?: (parentNode: FileTreeNode, name: string) => void;
@@ -64,6 +64,8 @@ export const FileExplorerNode = ({
       onNodeClick?.(node);
     }
   };
+
+  const [isRenaming, setIsRenaming] = useState(false);
 
   return (
     <div>
@@ -106,6 +108,15 @@ export const FileExplorerNode = ({
               </span>
             </div>
           </Button>
+          {isRenaming && (
+            <RenameNodeInput
+              type="file"
+              node={node}
+              depth={depth}
+              onClose={() => setIsRenaming(false)}
+              onRename={onRename}
+            />
+          )}
 
           {createInput && (
             <CreateNodeInput

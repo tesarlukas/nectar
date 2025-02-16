@@ -20,6 +20,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
+import { CreateNodeInput } from "../CreateNodeInput";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
@@ -29,8 +30,8 @@ export interface FileExplorerNodeProps {
   onRename?: (node: FileTreeNode) => void;
   onDelete?: (node: FileTreeNode) => void;
   onCopy?: (node: FileTreeNode) => void;
-  onCreateFile?: (parentNode: FileTreeNode) => void;
-  onCreateFolder?: (parentNode: FileTreeNode) => void;
+  onCreateFile?: (parentNode: FileTreeNode, name: string) => void;
+  onCreateDir?: (parentNode: FileTreeNode, name: string) => void;
 }
 
 export const FileExplorerNode = ({
@@ -42,12 +43,17 @@ export const FileExplorerNode = ({
   onDelete,
   onCopy,
   onCreateFile,
-  onCreateFolder,
+  onCreateDir,
 }: FileExplorerNodeProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren =
     node.value.isDirectory && node.children && node.children.length > 0;
   const isSelected = node.value.path === selectedPath;
+
+  const [createInput, setCreateInput] = useState<{
+    isOpen: boolean;
+    type: "file" | "directory";
+  } | null>(null);
 
   const handleMainClick = (e: React.MouseEvent) => {
     // Only handle main click if it's not right click
@@ -67,7 +73,7 @@ export const FileExplorerNode = ({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 w-full justify-start px-2 hover:bg-muted text-lg",
+              "h-8 w-full justify-start px-2 hover:bg-muted text-lg relative",
               isSelected && "bg-muted",
               depth > 0 && "ml-4",
             )}
@@ -99,6 +105,16 @@ export const FileExplorerNode = ({
                   : node.value.name}
               </span>
             </div>
+
+            {createInput && (
+              <CreateNodeInput
+                type={createInput.type}
+                parentNode={node}
+                onClose={() => setCreateInput(null)}
+                onCreateFile={onCreateFile}
+                onCreateDir={onCreateDir}
+              />
+            )}
           </Button>
         </ContextMenuTrigger>
 
@@ -107,14 +123,25 @@ export const FileExplorerNode = ({
             <>
               <ContextMenuItem
                 className="text-base"
-                onClick={() => onCreateFile?.(node)}
+                onClick={() => {
+                  setCreateInput({
+                    isOpen: true,
+                    type: "file",
+                  });
+                }}
               >
                 <FilePlus className="mr-2 h-4 w-4" />
                 New File
               </ContextMenuItem>
+
               <ContextMenuItem
                 className="text-base"
-                onClick={() => onCreateFolder?.(node)}
+                onClick={() => {
+                  setCreateInput({
+                    isOpen: true,
+                    type: "directory",
+                  });
+                }}
               >
                 <FolderPlus className="mr-2 h-4 w-4" />
                 New Folder
@@ -157,7 +184,7 @@ export const FileExplorerNode = ({
               onDelete={onDelete}
               onCopy={onCopy}
               onCreateFile={onCreateFile}
-              onCreateFolder={onCreateFolder}
+              onCreateDir={onCreateDir}
             />
           ))}
         </div>

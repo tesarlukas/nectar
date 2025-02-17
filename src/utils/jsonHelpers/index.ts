@@ -6,6 +6,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
+import { appendJson } from "../nodeHelpers";
 
 export const writeJson = async <T>(
   location: string,
@@ -27,7 +28,7 @@ export const writeJson = async <T>(
 
     // NOTE: it seems the join function is actually pretty smart and does not
     // append the `.json` to the file if there is already one
-    const fullPath = await join(location, `${filename}.json`);
+    const fullPath = await join(location, appendJson(filename));
     const contentString = JSON.stringify(content);
     await writeTextFile(fullPath, contentString, {
       baseDir,

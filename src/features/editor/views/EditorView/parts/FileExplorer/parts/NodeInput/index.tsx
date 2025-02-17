@@ -8,6 +8,7 @@ interface NodeInputProps {
   depth: number;
   onClose: () => void;
   onSubmit: (name: string) => void;
+  defaultValue?: string;
 }
 
 export const NodeInput = ({
@@ -15,8 +16,9 @@ export const NodeInput = ({
   depth,
   onClose,
   onSubmit,
+  defaultValue,
 }: NodeInputProps) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(defaultValue);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -47,7 +49,11 @@ export const NodeInput = ({
 
   const handleOnSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(name);
+    if (name && name.trim().length > 0) {
+      onSubmit(name.trim());
+      return;
+    }
+    onClose();
   };
 
   return (
@@ -86,13 +92,12 @@ export const CreateNodeInput = ({
   onCreateDir,
 }: CreateNodeInputProps) => {
   const handleOnSubmit = (name: string) => {
-    if (name.trim()) {
+    if (name) {
       if (type === "file") {
-        onCreateFile?.(parentNode, name.trim());
+        onCreateFile?.(parentNode, name);
       } else {
-        onCreateDir?.(parentNode, name.trim());
+        onCreateDir?.(parentNode, name);
       }
-      onClose();
     }
   };
 
@@ -120,9 +125,8 @@ export const RenameNodeInput = ({
 }: RenameNodeInputProps) => {
   const handleOnSubmit = (name: string) => {
     if (name.trim()) {
-      onRename?.(node, name.trim());
+      onRename?.(node, name);
     }
-    onClose();
   };
 
   return (
@@ -131,6 +135,7 @@ export const RenameNodeInput = ({
       depth={depth}
       onClose={onClose}
       onSubmit={handleOnSubmit}
+      defaultValue={node.value.name}
     />
   );
 };

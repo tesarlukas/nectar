@@ -10,8 +10,6 @@ import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useHiveStore } from "@/stores/useHiveStore";
-import { join } from "@tauri-apps/api/path";
-import { NOTES_PATH } from "@/constants/notesPath";
 import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import type { JSONContent } from "@tiptap/react";
@@ -23,7 +21,6 @@ export const EditorView = () => {
   const { editor, handleEditorOnClick } = useEditor();
   const {
     nodes,
-    setNodes,
     selectedNode,
     addNewNode,
     setSelectedNode,
@@ -38,7 +35,7 @@ export const EditorView = () => {
     setSelectedNode(node);
 
     // if it's not a file, then it's not a note
-    if (!node.value.isFile) return;
+    if (node.value.isDirectory) return;
 
     const noteContent = await readNote<JSONContent>(node.value.path);
 
@@ -46,15 +43,7 @@ export const EditorView = () => {
   };
 
   const handleOnSave = async () => {
-    const saveLocation = selectedNode?.value.dirPath
-      ? selectedNode.value.dirPath
-      : await join(hiveName, NOTES_PATH);
-
-    await saveNote<JSONContent>(
-      saveLocation,
-      "placeholder_note",
-      editor?.getJSON(),
-    );
+    await saveNote<JSONContent>(selectedNode, editor?.getJSON());
   };
 
   const handleOnDelete = async (node: FileTreeNode) => {
@@ -79,13 +68,13 @@ export const EditorView = () => {
     await renameNodeAndNoteOrDir(node, name);
   };
 
-  useEffect(() => {
-    initializeFileTree();
-  }, []);
-
   const handleOnRefresh = async () => {
     await initializeFileTree();
   };
+
+  useEffect(() => {
+    initializeFileTree();
+  }, []);
 
   return (
     <>

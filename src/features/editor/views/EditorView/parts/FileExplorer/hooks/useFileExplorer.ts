@@ -194,20 +194,17 @@ export const useFileExplorer = () => {
   }, [hiveName, buildDirectoryTree]);
 
   const saveNote = async <TContent>(
-    location: string,
-    name: string,
+    node?: FileTreeNode,
     content?: TContent,
   ) => {
-    if (!content) return;
-    const fullPath = await join(location, name);
-    const foundNode = findNode(nodes, (info) => info.path === fullPath);
+    if (!content || !node) return;
 
-    if (foundNode?.value.isFile) {
-      await writeJson<TContent>(location, name, content, ROOT_DIR);
-      return;
-    }
-
-    await createNewNoteOrDir(location, name, { isDirectory: false, content });
+    await writeJson<TContent>(
+      node.value.dirPath,
+      node.value.name,
+      content,
+      ROOT_DIR,
+    );
   };
 
   const readNote = async <TContent>(path: string) => {

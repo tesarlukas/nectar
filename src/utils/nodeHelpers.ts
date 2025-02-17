@@ -1,5 +1,5 @@
 export const appendJson = (value: string) => {
-  return `${value}.json`;
+  return value.endsWith(".json") ? value : `${value}.json`;
 };
 
 export const stripJson = (value: string) => {

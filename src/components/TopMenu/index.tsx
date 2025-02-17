@@ -8,7 +8,7 @@ import { useHiveStore } from "@/stores/useHiveStore";
 export const TopMenu = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const hiveName = useHiveStore((state) => state.hiveName)
+  const hiveName = useHiveStore((state) => state.hiveName);
   const isInSettings = pathname.includes("settings");
 
   const handleOnSettingsToggle = () => {

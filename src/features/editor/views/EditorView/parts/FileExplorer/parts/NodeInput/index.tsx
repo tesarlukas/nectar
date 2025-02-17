@@ -51,8 +51,8 @@ export const NodeInput = ({
     e.preventDefault();
     if (name && name.trim().length > 0) {
       onSubmit(name.trim());
-      return;
     }
+
     onClose();
   };
 

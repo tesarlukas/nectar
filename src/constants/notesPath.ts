@@ -1,1 +1,1 @@
-export const NOTES_PATH = "notes"
+export const NOTES_PATH = "notes";

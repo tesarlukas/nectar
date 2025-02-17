@@ -9,7 +9,6 @@ import { useEditor } from "./parts/Editor/hooks/useEditor";
 import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
-import { useHiveStore } from "@/stores/useHiveStore";
 import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import type { JSONContent } from "@tiptap/react";
@@ -17,7 +16,6 @@ import { NoteTitle } from "./parts/NoteTitle";
 import { EMPTY_NOTE } from "./parts/FileExplorer/hooks/index.preset";
 
 export const EditorView = () => {
-  const hiveName = useHiveStore((state) => state.hiveName);
   const { editor, handleEditorOnClick } = useEditor();
   const {
     nodes,

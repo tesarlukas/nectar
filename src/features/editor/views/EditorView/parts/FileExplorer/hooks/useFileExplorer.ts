@@ -12,7 +12,6 @@ import {
   //findNode,
   //traverseDFS,
   filterNodes,
-  findNode,
   renameNode,
 } from "@/utils/treeHelpers";
 import { EMPTY_NOTE } from "./index.preset";

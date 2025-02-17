@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ChevronRight,
   ChevronDown,
@@ -7,7 +7,6 @@ import {
   Copy,
   Trash,
   FileEdit,
-  FolderPlus,
   FilePlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

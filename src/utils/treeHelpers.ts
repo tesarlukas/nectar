@@ -74,6 +74,28 @@ export const addNode = <T>(
   });
 };
 
+export const renameNode = <T>(
+  nodes: TreeNode<T>[],
+  predicate: (value: T) => boolean,
+  newValue: T,
+): TreeNode<T>[] => {
+  return nodes.map((node) => {
+    if (predicate(node.value)) {
+      return {
+        ...node,
+        value: newValue,
+      };
+    }
+    if (node.children) {
+      return {
+        ...node,
+        children: renameNode(node.children, predicate, newValue),
+      };
+    }
+    return node;
+  });
+};
+
 export const moveNode = <T>(
   nodes: TreeNode<T>[],
   nodePredicate: (value: T) => boolean,

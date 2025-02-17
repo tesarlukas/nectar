@@ -10,9 +10,8 @@ import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useHiveStore } from "@/stores/useHiveStore";
-import { join, sep } from "@tauri-apps/api/path";
+import { join } from "@tauri-apps/api/path";
 import { NOTES_PATH } from "@/constants/notesPath";
-import { ROOT_DIR } from "@/constants/rootDir";
 import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import type { JSONContent } from "@tiptap/react";
@@ -28,16 +27,15 @@ export const EditorView = () => {
     selectedNode,
     addNewNode,
     setSelectedNode,
-    buildDirectoryTree,
     readNote,
     saveNote,
     removeNodeByPath,
     initializeFileTree,
+    renameNodeAndNoteOrDir,
   } = useFileExplorer();
 
   const handleOnNodeClick = async (node: FileTreeNode) => {
     setSelectedNode(node);
-    console.log("selectedNode", selectedNode);
 
     // if it's not a file, then it's not a note
     if (!node.value.isFile) return;
@@ -77,6 +75,10 @@ export const EditorView = () => {
     });
   };
 
+  const handleOnRename = async (node: FileTreeNode, name: string) => {
+    await renameNodeAndNoteOrDir(node, name);
+  };
+
   useEffect(() => {
     initializeFileTree();
   }, []);
@@ -94,6 +96,7 @@ export const EditorView = () => {
               nodes={nodes}
               onNodeClick={handleOnNodeClick}
               selectedNode={selectedNode}
+              onRename={handleOnRename}
               onDelete={handleOnDelete}
               onRefresh={handleOnRefresh}
               onCreateFile={handleOnCreateFile}

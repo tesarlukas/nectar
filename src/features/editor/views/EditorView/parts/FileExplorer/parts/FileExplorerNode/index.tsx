@@ -166,7 +166,7 @@ export const FileExplorerNode = ({
           )}
           <ContextMenuItem
             className="text-base"
-            onClick={() => onRename?.(node)}
+            onClick={() => setIsRenaming(true)}
           >
             <FileEdit className="mr-2 h-4 w-4" />
             Rename

@@ -1,5 +1,5 @@
-import { create, mkdir, readDir, remove } from "@tauri-apps/plugin-fs";
-import { type BaseDirectory, join, sep } from "@tauri-apps/api/path";
+import { mkdir, readDir, remove, rename } from "@tauri-apps/plugin-fs";
+import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
 import { NOTES_PATH } from "@/constants/notesPath";
@@ -13,8 +13,10 @@ import {
   //traverseDFS,
   filterNodes,
   findNode,
+  renameNode,
 } from "@/utils/treeHelpers";
 import { EMPTY_NOTE } from "./index.preset";
+import { appendJson } from "@/utils/nodeHelpers";
 
 interface FileInfo {
   name: string;
@@ -233,6 +235,33 @@ export const useFileExplorer = () => {
     await writeJson<TContent>(location, name, finalOpts.content, ROOT_DIR);
   };
 
+  const renameNodeAndNoteOrDir = useCallback(
+    async (node: FileTreeNode, name: string) => {
+      const oldPath = node.value.path;
+      const newName = node.value.isDirectory ? name : appendJson(name);
+      const newPath = await join(node.value.dirPath, newName);
+
+      try {
+        await rename(oldPath, newPath, {
+          oldPathBaseDir: ROOT_DIR,
+          newPathBaseDir: ROOT_DIR,
+        });
+      } catch (errors) {
+        console.error("Error renaming the node: ", errors);
+        throw errors;
+      }
+
+      setNodes((currentNodes) =>
+        renameNode(currentNodes, (info) => info.name === node.value.name, {
+          ...node.value,
+          name: newName,
+          path: newPath,
+        }),
+      );
+    },
+    [],
+  );
+
   return {
     nodes,
     setNodes,
@@ -248,5 +277,6 @@ export const useFileExplorer = () => {
     saveNote,
     readNote,
     createNewNoteOrDir,
+    renameNodeAndNoteOrDir,
   };
 };

@@ -52,8 +52,10 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: setup pnpm config
+      - name: setup pnpm registry
         run: pnpm config set "@tiptap-pro:registry" https://registry.tiptap.dev/
+
+      - name: setup pnpm auth
         run: pnpm config set "//registry.tiptap.dev/:_authToken" ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: install frontend dependencies

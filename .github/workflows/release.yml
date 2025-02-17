@@ -53,7 +53,7 @@ jobs:
           workspaces: './src-tauri -> target'
 
       - name: setup pnpm config
-        run: pnpm config set "//registry.tiptap.dev/:_authToken" ${{ secrets.NPM_AUTH_TOKEN }}
+        run: pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.

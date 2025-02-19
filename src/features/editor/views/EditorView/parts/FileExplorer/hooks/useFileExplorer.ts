@@ -18,7 +18,7 @@ import {
   //findNode,
   //traverseDFS,
   filterNodes,
-  renameNode,
+  changeNodeValues,
 } from "@/utils/treeHelpers";
 import { EMPTY_NOTE } from "./index.preset";
 import { appendJson } from "@/utils/nodeHelpers";
@@ -32,7 +32,7 @@ interface FileInfo {
   isFile: boolean;
 }
 
-// Our FileTreeNode now implements the generic TreeNode interface
+// FileTreeNode now implements the generic TreeNode interface
 export type FileTreeNode = TreeNode<FileInfo>;
 
 export const useFileExplorer = () => {
@@ -87,7 +87,7 @@ export const useFileExplorer = () => {
         return [];
       }
     },
-    [createFileNode],
+    [],
   );
 
   const removeNodeByPath = useCallback(async (path: string): Promise<void> => {
@@ -103,9 +103,11 @@ export const useFileExplorer = () => {
     }
   }, []);
 
+  // checked, question is if it wouldn't be better to just build the whole tree
+  // anew
   const addNewNode = useCallback(
     async <TContent>(
-      parentPath: string,
+      location: string,
       nodeName: string,
       opts?: Partial<{ isDirectory: boolean; content: TContent }>,
     ): Promise<void> => {
@@ -116,18 +118,18 @@ export const useFileExplorer = () => {
         };
         const finalOpts = { ...defaultOpts, ...opts };
 
-        const fullPath = await join(parentPath, nodeName);
+        const fullPath = await join(location, nodeName);
 
         const newFileInfo: FileInfo = {
-          name: finalOpts.isDirectory ? nodeName : `${nodeName}.json`,
-          path: finalOpts.isDirectory ? fullPath : `${fullPath}.json`,
-          dirPath: parentPath,
+          name: finalOpts.isDirectory ? nodeName : appendJson(nodeName),
+          path: finalOpts.isDirectory ? fullPath : appendJson(fullPath),
+          dirPath: location,
           isDirectory: finalOpts.isDirectory,
           isFile: !finalOpts.isDirectory,
           isSymLink: false,
         };
 
-        await createNewNoteOrDir(parentPath, nodeName, {
+        await createNewNoteOrDir(location, nodeName, {
           isDirectory: finalOpts.isDirectory,
           content: finalOpts.isDirectory,
         });
@@ -135,7 +137,11 @@ export const useFileExplorer = () => {
         // synchronize with the tree structure
         const newNode = createFileNode(newFileInfo);
         setNodes((currentNodes) =>
-          addNode(currentNodes, (info) => info.path === parentPath, newNode),
+          addNode(
+            currentNodes,
+            (info) => info.path === newNode.value.dirPath,
+            newNode,
+          ),
         );
       } catch (error) {
         console.error("Error adding node:", error);
@@ -158,46 +164,15 @@ export const useFileExplorer = () => {
     [nodes],
   );
 
-  const getJsonFiles = useCallback(() => {
-    return filterNodes(
-      nodes,
-      (info) => info.isFile && info.name.endsWith(".json"),
-    );
-  }, [nodes]);
-
-  const getTreeStatistics = useCallback(() => {
-    const stats = {
-      totalFiles: 0,
-      totalDirectories: 0,
-      maxDepth: 0,
-    };
-
-    const calculateDepth = (node: FileTreeNode, currentDepth: number) => {
-      stats.maxDepth = Math.max(stats.maxDepth, currentDepth);
-
-      if (node.value.isFile) {
-        stats.totalFiles++;
-      } else if (node.value.isDirectory) {
-        stats.totalDirectories++;
-      }
-
-      node.children?.forEach((child) =>
-        calculateDepth(child, currentDepth + 1),
-      );
-    };
-
-    nodes.forEach((node) => calculateDepth(node, 0));
-
-    return stats;
-  }, [nodes]);
-
+  // checked and is straightforward
   const initializeFileTree = useCallback(async () => {
     const initPath = await join(hiveName, NOTES_PATH);
     const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
 
     setNodes(builtNodes);
-  }, [hiveName, buildDirectoryTree]);
+  }, [hiveName]);
 
+  // checked and is straightforward
   const saveNote = async <TContent>(
     node?: FileTreeNode,
     content?: TContent,
@@ -212,6 +187,7 @@ export const useFileExplorer = () => {
     );
   };
 
+  // straightforward
   const readNote = async <TContent>(path: string) => {
     const noteContent = await readJson<TContent>(path, ROOT_DIR);
 
@@ -254,16 +230,21 @@ export const useFileExplorer = () => {
       }
 
       setNodes((currentNodes) =>
-        renameNode(currentNodes, (info) => info.name === node.value.name, {
-          ...node.value,
-          name: newName,
-          path: newPath,
-        }),
+        changeNodeValues(
+          currentNodes,
+          (info) => info.name === node.value.name,
+          {
+            ...node.value,
+            name: newName,
+            path: newPath,
+          },
+        ),
       );
     },
     [],
   );
 
+  /** The function does not modify the tree because it is used with move as well */
   const copyNote = async (
     sourceNode: FileTreeNode,
     destinationNode: FileTreeNode,
@@ -300,6 +281,41 @@ export const useFileExplorer = () => {
       throw errors;
     }
   };
+
+  // unused for now
+  const getJsonFiles = useCallback(() => {
+    return filterNodes(
+      nodes,
+      (info) => info.isFile && info.name.endsWith(".json"),
+    );
+  }, [nodes]);
+
+  // unused for now
+  const getTreeStatistics = useCallback(() => {
+    const stats = {
+      totalFiles: 0,
+      totalDirectories: 0,
+      maxDepth: 0,
+    };
+
+    const calculateDepth = (node: FileTreeNode, currentDepth: number) => {
+      stats.maxDepth = Math.max(stats.maxDepth, currentDepth);
+
+      if (node.value.isFile) {
+        stats.totalFiles++;
+      } else if (node.value.isDirectory) {
+        stats.totalDirectories++;
+      }
+
+      node.children?.forEach((child) =>
+        calculateDepth(child, currentDepth + 1),
+      );
+    };
+
+    nodes.forEach((node) => calculateDepth(node, 0));
+
+    return stats;
+  }, [nodes]);
 
   return {
     nodes,

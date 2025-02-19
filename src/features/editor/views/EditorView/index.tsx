@@ -83,7 +83,7 @@ export const EditorView = () => {
     <>
       <div className="flex flex-col h-full min-h-0">
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={20} minSize={10}>
+          <ResizablePanel defaultSize={50} minSize={10}>
             <FileExplorer
               nodes={nodes}
               onNodeClick={handleOnNodeClick}
@@ -97,7 +97,7 @@ export const EditorView = () => {
             />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel defaultSize={80} minSize={25}>
+          <ResizablePanel defaultSize={50} minSize={25}>
             {selectedNode?.value.isFile && (
               <NoteTitle title={selectedNode?.value.name} />
             )}

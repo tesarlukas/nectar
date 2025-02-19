@@ -36,7 +36,7 @@ export const useFileExplorer = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
 
   const initializeFileTree = useCallback(async () => {
-    const initPath = await join(hiveName, NOTES_PATH);
+    const initPath = await join(hiveName);
     const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
 
     setNodes(builtNodes);
@@ -201,7 +201,7 @@ export const useFileExplorer = () => {
       await copyNote(node, targetNode);
       await removeNodeByPath(node.value.path);
       const newTreeNodes = await buildDirectoryTree(
-        await join(hiveName, NOTES_PATH),
+        await join(hiveName),
         ROOT_DIR,
       );
       setNodes(() => newTreeNodes);

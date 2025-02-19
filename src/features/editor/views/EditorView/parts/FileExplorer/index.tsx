@@ -4,11 +4,18 @@ import {
 } from "./parts/FileExplorerNode";
 import { FileExplorerToolbar } from "./parts/FileExplorerToolbar";
 import type { FileTreeNode } from "./hooks/useFileExplorer";
+import { useMemo } from "react";
+import { NOTES_PATH } from "@/constants/notesPath";
 
 interface FileExplorerProps
   extends Pick<
       FileExplorerNodeProps,
-      "onDelete" | "onNodeClick" | "onCreateFile" | "onCreateDir" | "onRename" | "onMove"
+      | "onDelete"
+      | "onNodeClick"
+      | "onCreateFile"
+      | "onCreateDir"
+      | "onRename"
+      | "onMove"
     >,
     Pick<FileExplorerToolbar, "onRefresh"> {
   nodes: FileTreeNode[];
@@ -26,10 +33,28 @@ export const FileExplorer = ({
   onCreateDir,
   onMove,
 }: FileExplorerProps) => {
+  const notesNode = useMemo(
+    () => nodes.filter((node) => node.value.name === NOTES_PATH)[0],
+    [nodes],
+  );
+
+  const onCreateFileToolbar = (_: FileTreeNode, name: string) => {
+    onCreateFile?.(notesNode, name);
+  };
+
+  const onCreateDirToolbar = (_: FileTreeNode, name: string) => {
+    onCreateDir?.(notesNode, name);
+  };
+
   return (
     <div className="h-full p-2">
-      <FileExplorerToolbar onRefresh={onRefresh} />
-      {nodes.map((node) => (
+      <FileExplorerToolbar
+        notesNode={notesNode}
+        onRefresh={onRefresh}
+        onCreateFile={onCreateFileToolbar}
+        onCreateDir={onCreateDirToolbar}
+      />
+      {(notesNode?.children ?? []).map((node) => (
         <FileExplorerNode
           key={node.value.path}
           node={node}

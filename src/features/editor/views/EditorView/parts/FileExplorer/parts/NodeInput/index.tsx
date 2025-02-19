@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
 import { cn } from "@/lib/utils";
+import { stripJson } from "@/utils/nodeHelpers";
 
 interface NodeInputProps {
   type: "file" | "directory";
@@ -135,7 +136,7 @@ export const RenameNodeInput = ({
       depth={depth}
       onClose={onClose}
       onSubmit={handleOnSubmit}
-      defaultValue={node.value.name}
+      defaultValue={stripJson(node.value.name)}
     />
   );
 };

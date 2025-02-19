@@ -1,11 +1,5 @@
-import {
-  copyFile,
-  mkdir,
-  readDir,
-  remove,
-  rename,
-} from "@tauri-apps/plugin-fs";
-import { type BaseDirectory, join } from "@tauri-apps/api/path";
+import { copyFile, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
+import { join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
 import { NOTES_PATH } from "@/constants/notesPath";
@@ -20,10 +14,11 @@ import {
   filterNodes,
   changeNodeValues,
 } from "@/utils/treeHelpers";
-import { EMPTY_NOTE } from "./index.preset";
+import { EMPTY_NOTE } from "../index.preset";
 import { appendJson } from "@/utils/nodeHelpers";
+import { buildDirectoryTree, createFileNode } from "../utils";
 
-interface FileInfo {
+export interface FileInfo {
   name: string;
   path: string;
   dirPath: string;
@@ -40,68 +35,12 @@ export const useFileExplorer = () => {
   const [selectedNode, setSelectedNode] = useState<FileTreeNode>();
   const hiveName = useHiveStore((state) => state.hiveName);
 
-  const createFileNode = useCallback(
-    (info: FileInfo, children: FileTreeNode[] = []): FileTreeNode => ({
-      value: info,
-      children,
-    }),
-    [],
-  );
+  const initializeFileTree = useCallback(async () => {
+    const initPath = await join(hiveName, NOTES_PATH);
+    const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
 
-  const buildDirectoryTree = useCallback(
-    async (
-      currentPath: string,
-      baseDir: BaseDirectory = ROOT_DIR,
-    ): Promise<FileTreeNode[]> => {
-      try {
-        const entries = await readDir(currentPath, { baseDir });
-
-        const nodes = await Promise.all(
-          entries.map(async (entry) => {
-            if (!entry.isDirectory && !entry.name.endsWith(".json")) {
-              return null;
-            }
-
-            const fullPath = await join(currentPath, entry.name);
-
-            const fileInfo: FileInfo = {
-              name: entry.name,
-              path: fullPath,
-              dirPath: currentPath,
-              isDirectory: entry.isDirectory,
-              isFile: entry.isFile,
-              isSymLink: entry.isSymlink,
-            };
-
-            if (entry.isDirectory) {
-              const children = await buildDirectoryTree(fullPath, baseDir);
-              return createFileNode(fileInfo, children);
-            }
-
-            return createFileNode(fileInfo);
-          }),
-        );
-        return nodes.filter((node): node is FileTreeNode => node !== null);
-      } catch (error) {
-        console.error("Error building directory tree:", error);
-        return [];
-      }
-    },
-    [],
-  );
-
-  const removeNodeByPath = useCallback(async (path: string): Promise<void> => {
-    try {
-      await remove(path, { baseDir: ROOT_DIR, recursive: true });
-
-      setNodes((currentNodes) =>
-        removeNode(currentNodes, (info) => info.path === path),
-      );
-    } catch (error) {
-      console.error(`Error removing node at path ${path}:`, error);
-      throw error;
-    }
-  }, []);
+    setNodes(builtNodes);
+  }, [hiveName]);
 
   // checked, question is if it wouldn't be better to just build the whole tree
   // anew
@@ -145,32 +84,22 @@ export const useFileExplorer = () => {
         );
       } catch (error) {
         console.error("Error adding node:", error);
-        throw error;
       }
     },
-    [createFileNode],
+    [],
   );
 
-  const searchFileTree = useCallback(
-    (searchTerm: string, options: { matchCase?: boolean } = {}) => {
-      return filterNodes(nodes, (info) => {
-        const nodeName = options.matchCase
-          ? info.name
-          : info.name.toLowerCase();
-        const term = options.matchCase ? searchTerm : searchTerm.toLowerCase();
-        return nodeName.includes(term);
-      });
-    },
-    [nodes],
-  );
+  const removeNodeByPath = useCallback(async (path: string): Promise<void> => {
+    try {
+      await remove(path, { baseDir: ROOT_DIR, recursive: true });
 
-  // checked and is straightforward
-  const initializeFileTree = useCallback(async () => {
-    const initPath = await join(hiveName, NOTES_PATH);
-    const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
-
-    setNodes(builtNodes);
-  }, [hiveName]);
+      setNodes((currentNodes) =>
+        removeNode(currentNodes, (info) => info.path === path),
+      );
+    } catch (error) {
+      console.error(`Error removing node at path ${path}:`, error);
+    }
+  }, []);
 
   // checked and is straightforward
   const saveNote = async <TContent>(
@@ -245,14 +174,11 @@ export const useFileExplorer = () => {
   );
 
   /** The function does not modify the tree because it is used with move as well */
-  const copyNote = async (
-    sourceNode: FileTreeNode,
-    destinationNode: FileTreeNode,
-  ) => {
+  const copyNote = async (node: FileTreeNode, targetNode: FileTreeNode) => {
     try {
       await copyFile(
-        sourceNode.value.path,
-        await join(destinationNode.value.path, sourceNode.value.name),
+        node.value.path,
+        await join(targetNode.value.path, node.value.name),
         {
           fromPathBaseDir: ROOT_DIR,
           toPathBaseDir: ROOT_DIR,
@@ -264,13 +190,16 @@ export const useFileExplorer = () => {
     }
   };
 
-  const moveNote = async (
-    sourceNode: FileTreeNode,
-    destinationNode: FileTreeNode,
-  ) => {
+  const moveNote = async (node: FileTreeNode, targetNode: FileTreeNode) => {
+    if (
+      node.value.path === (await join(targetNode.value.path, node.value.name))
+    ) {
+      return;
+    }
+
     try {
-      await copyNote(sourceNode, destinationNode);
-      await removeNodeByPath(sourceNode.value.path);
+      await copyNote(node, targetNode);
+      await removeNodeByPath(node.value.path);
       const newTreeNodes = await buildDirectoryTree(
         await join(hiveName, NOTES_PATH),
         ROOT_DIR,
@@ -281,6 +210,24 @@ export const useFileExplorer = () => {
       throw errors;
     }
   };
+
+  // unused for now
+  const searchFileTree = useCallback(
+    (
+      nodes: FileTreeNode[],
+      searchTerm: string,
+      options: { matchCase?: boolean } = {},
+    ) => {
+      return filterNodes(nodes, (info) => {
+        const nodeName = options.matchCase
+          ? info.name
+          : info.name.toLowerCase();
+        const term = options.matchCase ? searchTerm : searchTerm.toLowerCase();
+        return nodeName.includes(term);
+      });
+    },
+    [],
+  );
 
   // unused for now
   const getJsonFiles = useCallback(() => {

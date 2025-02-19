@@ -71,6 +71,10 @@ export const FileExplorerNode = ({
 
   const handleDragStart = (e: React.DragEvent) => {
     e.stopPropagation();
+
+    // forbid moving directories
+    if (node.value.isDirectory) return;
+
     setIsDragging(true);
 
     // store the source node

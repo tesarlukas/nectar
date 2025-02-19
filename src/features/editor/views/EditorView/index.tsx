@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import type { JSONContent } from "@tiptap/react";
 import { NoteTitle } from "./parts/NoteTitle";
-import { EMPTY_NOTE } from "./parts/FileExplorer/hooks/index.preset";
+import { EMPTY_NOTE } from "./parts/FileExplorer/index.preset";
 
 export const EditorView = () => {
   const { editor, handleEditorOnClick } = useEditor();

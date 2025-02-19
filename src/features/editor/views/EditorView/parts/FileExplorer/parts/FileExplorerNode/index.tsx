@@ -31,6 +31,7 @@ export interface FileExplorerNodeProps {
   onCopy?: (node: FileTreeNode) => void;
   onCreateFile?: (parentNode: FileTreeNode, name: string) => void;
   onCreateDir?: (parentNode: FileTreeNode, name: string) => void;
+  onMove?: (node: FileTreeNode, targetNode: FileTreeNode) => void;
 }
 
 export const FileExplorerNode = ({
@@ -43,6 +44,7 @@ export const FileExplorerNode = ({
   onCopy,
   onCreateFile,
   onCreateDir,
+  onMove,
 }: FileExplorerNodeProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren =
@@ -54,6 +56,9 @@ export const FileExplorerNode = ({
     type: "file" | "directory";
   } | null>(null);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDropTarget, setIsDropTarget] = useState(false);
+
   const handleMainClick = (e: React.MouseEvent) => {
     // Only handle main click if it's not right click
     if (e.button !== 2) {
@@ -62,6 +67,46 @@ export const FileExplorerNode = ({
       }
       onNodeClick?.(node);
     }
+  };
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.stopPropagation();
+    setIsDragging(true);
+
+    // store the source node
+    e.dataTransfer.setData("application/json", JSON.stringify(node));
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Only allow dropping into directories
+    if (node.value.isDirectory) {
+      setIsDropTarget(true);
+      // Expand folder after hovering for a short time
+      if (!isExpanded) {
+        const expandTimeout = setTimeout(() => setIsExpanded(true), 800);
+        return () => clearTimeout(expandTimeout);
+      }
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDropTarget(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDropTarget(false);
+
+    // obtain the source node
+    const sourceNode = JSON.parse(e.dataTransfer.getData("application/json"));
+
+    onMove?.(sourceNode, node);
   };
 
   const [isRenaming, setIsRenaming] = useState(false);
@@ -77,8 +122,16 @@ export const FileExplorerNode = ({
               "h-8 w-full justify-start px-2 hover:bg-muted text-lg relative",
               isSelected && "bg-muted",
               depth > 0 && "ml-4",
+              isDragging && "opacity-50",
+              isDropTarget && "bg-blue-100 dark:bg-blue-900",
             )}
             onClick={handleMainClick}
+            draggable
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onDragEnd={() => setIsDragging(false)}
           >
             <div className="flex items-center w-full">
               {hasChildren ? (
@@ -199,6 +252,7 @@ export const FileExplorerNode = ({
               onCopy={onCopy}
               onCreateFile={onCreateFile}
               onCreateDir={onCreateDir}
+              onMove={onMove}
             />
           ))}
         </div>

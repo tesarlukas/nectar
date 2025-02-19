@@ -27,6 +27,7 @@ export const EditorView = () => {
     removeNodeByPath,
     initializeFileTree,
     renameNodeAndNoteOrDir,
+    moveNote,
   } = useFileExplorer();
 
   const handleOnNodeClick = async (node: FileTreeNode) => {
@@ -70,6 +71,10 @@ export const EditorView = () => {
     await initializeFileTree();
   };
 
+  const handleOnMove = async (node: FileTreeNode, targetNode: FileTreeNode) => {
+    await moveNote(node, targetNode);
+  };
+
   useEffect(() => {
     initializeFileTree();
   }, []);
@@ -88,6 +93,7 @@ export const EditorView = () => {
               onRefresh={handleOnRefresh}
               onCreateFile={handleOnCreateFile}
               onCreateDir={handleOnCreateDir}
+              onMove={handleOnMove}
             />
           </ResizablePanel>
           <ResizableHandle />

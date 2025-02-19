@@ -1,4 +1,10 @@
-import { mkdir, readDir, remove, rename } from "@tauri-apps/plugin-fs";
+import {
+  copyFile,
+  mkdir,
+  readDir,
+  remove,
+  rename,
+} from "@tauri-apps/plugin-fs";
 import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
@@ -258,6 +264,43 @@ export const useFileExplorer = () => {
     [],
   );
 
+  const copyNote = async (
+    sourceNode: FileTreeNode,
+    destinationNode: FileTreeNode,
+  ) => {
+    try {
+      await copyFile(
+        sourceNode.value.path,
+        await join(destinationNode.value.path, sourceNode.value.name),
+        {
+          fromPathBaseDir: ROOT_DIR,
+          toPathBaseDir: ROOT_DIR,
+        },
+      );
+    } catch (errors) {
+      console.error("Error copying the node: ", errors);
+      throw errors;
+    }
+  };
+
+  const moveNote = async (
+    sourceNode: FileTreeNode,
+    destinationNode: FileTreeNode,
+  ) => {
+    try {
+      await copyNote(sourceNode, destinationNode);
+      await removeNodeByPath(sourceNode.value.path);
+      const newTreeNodes = await buildDirectoryTree(
+        await join(hiveName, NOTES_PATH),
+        ROOT_DIR,
+      );
+      setNodes(() => newTreeNodes);
+    } catch (errors) {
+      console.error("Error moving the note: ", errors);
+      throw errors;
+    }
+  };
+
   return {
     nodes,
     setNodes,
@@ -274,5 +317,6 @@ export const useFileExplorer = () => {
     readNote,
     createNewNoteOrDir,
     renameNodeAndNoteOrDir,
+    moveNote,
   };
 };

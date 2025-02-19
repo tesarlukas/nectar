@@ -16,7 +16,7 @@ export const NodeInput = ({
   depth,
   onClose,
   onSubmit,
-  defaultValue,
+  defaultValue = "",
 }: NodeInputProps) => {
   const [name, setName] = useState(defaultValue);
   const inputRef = useRef<HTMLInputElement>(null);

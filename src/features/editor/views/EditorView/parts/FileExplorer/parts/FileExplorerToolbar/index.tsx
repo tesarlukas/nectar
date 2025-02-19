@@ -4,6 +4,7 @@ import {
   RefreshCcw,
   //Search,
   SortAsc,
+  SortDesc,
   //Grid,
   //List,
 } from "lucide-react";
@@ -25,6 +26,8 @@ export interface FileExplorerToolbar {
   onRefresh: () => Promise<void>;
   onCreateFile?: (parentNode: FileTreeNode, name: string) => void;
   onCreateDir?: (parentNode: FileTreeNode, name: string) => void;
+  sortOrder: "asc" | "desc";
+  onToggleSortOrder: () => void;
 }
 
 export const FileExplorerToolbar = ({
@@ -32,6 +35,8 @@ export const FileExplorerToolbar = ({
   onRefresh,
   onCreateFile,
   onCreateDir,
+  sortOrder,
+  onToggleSortOrder,
 }: FileExplorerToolbar) => {
   const [createInput, setCreateInput] = useState<{
     isOpen: boolean;
@@ -40,7 +45,7 @@ export const FileExplorerToolbar = ({
 
   return (
     <>
-      <div className="w-full border-b p-2 flex items-center gap-2 bg-background">
+      <div className="w-full border-b px-2 pb-2 flex items-center gap-x-2 bg-background">
         {/* Left section - Actions */}
         <div className="flex items-center gap-1">
           <TooltipProvider>
@@ -98,8 +103,17 @@ export const FileExplorerToolbar = ({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <SortAsc className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={onToggleSortOrder}
+                >
+                  {sortOrder === "asc" ? (
+                    <SortAsc className="h-4 w-4" />
+                  ) : (
+                    <SortDesc className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Sort Files</TooltipContent>

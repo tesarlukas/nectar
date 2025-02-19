@@ -4,8 +4,9 @@ import {
 } from "./parts/FileExplorerNode";
 import { FileExplorerToolbar } from "./parts/FileExplorerToolbar";
 import type { FileTreeNode } from "./hooks/useFileExplorer";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { NOTES_PATH } from "@/constants/notesPath";
+import { sortNodes } from "@/utils/nodeHelpers";
 
 interface FileExplorerProps
   extends Pick<
@@ -46,15 +47,12 @@ export const FileExplorer = ({
     onCreateDir?.(notesNode, name);
   };
 
-  return (
-    <div className="h-full p-2">
-      <FileExplorerToolbar
-        notesNode={notesNode}
-        onRefresh={onRefresh}
-        onCreateFile={onCreateFileToolbar}
-        onCreateDir={onCreateDirToolbar}
-      />
-      {(notesNode?.children ?? []).map((node) => (
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const renderNodes = useCallback(() => {
+    return (notesNode?.children ?? [])
+      .sort(sortNodes(sortOrder))
+      .map((node) => (
         <FileExplorerNode
           key={node.value.path}
           node={node}
@@ -66,7 +64,22 @@ export const FileExplorer = ({
           onCreateDir={onCreateDir}
           onMove={onMove}
         />
-      ))}
+      ));
+  }, [notesNode, sortOrder]);
+
+  return (
+    <div className="h-full p-2">
+      <FileExplorerToolbar
+        notesNode={notesNode}
+        onRefresh={onRefresh}
+        onCreateFile={onCreateFileToolbar}
+        onCreateDir={onCreateDirToolbar}
+        sortOrder={sortOrder}
+        onToggleSortOrder={() =>
+          setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+        }
+      />
+      {renderNodes()}
     </div>
   );
 };

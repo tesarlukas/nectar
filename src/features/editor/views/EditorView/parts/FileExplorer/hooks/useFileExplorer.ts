@@ -70,7 +70,7 @@ export const useFileExplorer = () => {
 
         await createNewNoteOrDir(location, nodeName, {
           isDirectory: finalOpts.isDirectory,
-          content: finalOpts.isDirectory,
+          content: finalOpts.content,
         });
 
         // synchronize with the tree structure

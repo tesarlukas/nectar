@@ -6,7 +6,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { type BaseDirectory, join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
-import { appendJson } from "../nodeHelpers";
+import { appendJson } from "./nodeHelpers";
 
 export const writeJson = async <T>(
   location: string,

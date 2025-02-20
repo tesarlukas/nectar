@@ -99,3 +99,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Try reducing stroke width first */
+.lucide path {
+  stroke-width: 2;
+}

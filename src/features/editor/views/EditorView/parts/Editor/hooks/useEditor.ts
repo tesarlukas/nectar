@@ -20,6 +20,7 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 import CharacterCount from "@tiptap/extension-character-count";
 import History from "@tiptap/extension-history";
 import FileHandler from "@tiptap-pro/extension-file-handler";
+import Link from "@tiptap/extension-link";
 
 const extensions = [
   // Nodes
@@ -172,6 +173,7 @@ const extensions = [
       });
     },
   }),
+  Link,
 ];
 
 const content = `

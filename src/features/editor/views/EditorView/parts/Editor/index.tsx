@@ -1,9 +1,9 @@
 import {
   FloatingMenu,
-  BubbleMenu,
   EditorContent,
   type Editor as EditorType,
 } from "@tiptap/react";
+import { BubbleMenu } from "./parts/BubbleMenu";
 
 export interface EditorProps {
   editor: EditorType | null;
@@ -22,7 +22,7 @@ export const Editor = ({ editor, onClick }: EditorProps) => {
         <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
       </div>
       <div>
-        <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
+        <BubbleMenu editor={editor} />
       </div>
     </div>
   );

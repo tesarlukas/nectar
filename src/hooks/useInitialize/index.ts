@@ -49,9 +49,10 @@ export const useInitialize = () => {
   );
 
   const initNotes = async (
+    hiveName: string,
     baseDir: BaseDirectory = ROOT_DIR,
   ): Promise<void> => {
-    const notesDirLocation = await path.join(storedHiveName, "notes");
+    const notesDirLocation = await path.join(hiveName, "notes");
 
     const doesDirExist = await exists(notesDirLocation, { baseDir });
 
@@ -66,9 +67,10 @@ export const useInitialize = () => {
   };
 
   const initSettings = async (
+    hiveName: string,
     baseDir: BaseDirectory = ROOT_DIR,
   ): Promise<void> => {
-    const settingsDirLocation = await path.join(storedHiveName, "settings");
+    const settingsDirLocation = await path.join(hiveName, "settings");
 
     // check if settings directory exists, if not, create it
     const doesDirExist = await exists(settingsDirLocation, { baseDir });
@@ -80,7 +82,7 @@ export const useInitialize = () => {
 
     // check if colorTheme.json exists, if not, initialize it
     const colorThemeLocation = await path.join(
-      storedHiveName,
+      hiveName,
       "settings",
       "colorTheme.json",
     );

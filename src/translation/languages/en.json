@@ -5,5 +5,9 @@
   "yourHives": "Your Hives",
   "noHivesFound": "No Hives Found",
   "getStartedByCreatingYourFirstHive": "Get started by creating your first Hive!",
-  "createNewHive": "Create New Hive"
+  "createNewHive": "Create New Hive",
+  "hiveName": "Hive Name",
+  "confirm": "Confirm",
+  "theHiveNameCannotBeEmpty": "The Hive Name cannot be empty",
+  "thisFolderAlreadyExists": "This folder already exists"
 }

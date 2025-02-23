@@ -1,30 +1,52 @@
+import { HIDDEN_DIR } from "@/constants/hiddenDir";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTheme";
 import { ThemeFlavour } from "@/features/appearance/colorTheme/types";
 import { colorThemes } from "@/features/appearance/colorTheme/variants";
 import { useHiveStore } from "@/stores/useHiveStore";
+import { readJson, writeJson } from "@/utils/jsonHelpers";
 import { path } from "@tauri-apps/api";
+import { join } from "@tauri-apps/api/path";
 import { type BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
+import { useCallback } from "react";
 
 export const useInitialize = () => {
   const storedHiveName = useHiveStore((state) => state.hiveName);
   const { writeTheme } = useColorTheme();
 
-  const initHive = async (
-    hiveName: string,
-    baseDir: BaseDirectory = ROOT_DIR,
-  ): Promise<void> => {
-    const doesDirExist = await exists(hiveName, { baseDir });
+  const initHive = useCallback(
+    async (
+      hiveName: string,
+      baseDir: BaseDirectory = ROOT_DIR,
+    ): Promise<void> => {
+      //const doesDirExist = await exists(hiveName, { baseDir });
+      const hiddenFilesPath = await join(hiveName, HIDDEN_DIR);
+      const doesHiddenDirExist = await exists(hiddenFilesPath);
 
-    if (doesDirExist) {
-      console.log("Directory with this name already exists");
-      return;
-    }
+      if (doesHiddenDirExist) {
+        const hiveInfo = await readJson<{ hiveName: string }>(
+          hiddenFilesPath,
+          baseDir,
+        );
 
-    await mkdir(hiveName, {
-      baseDir,
-    });
-  };
+        if (hiveInfo?.hiveName) {
+          console.log("Hive has already been initialized");
+          return;
+        }
+
+        await writeJson(hiddenFilesPath, "info", { hiveName: hiveName });
+      }
+
+      try {
+        await mkdir(hiddenFilesPath, { baseDir, recursive: true });
+      } catch (errors) {
+        console.error("Errors while creating hidden files dir: ", errors);
+      }
+
+      await writeJson(hiddenFilesPath, "info", { hiveName: hiveName });
+    },
+    [],
+  );
 
   const initNotes = async (
     baseDir: BaseDirectory = ROOT_DIR,

@@ -38,8 +38,8 @@ export default function App() {
                 <Route index element={<AppearanceSettings />} />
                 <Route path="keymap" element={<KeymapSettings />} />
               </Route>
+              <Route path="homebase" element={<Homebase />} />
             </Route>
-            <Route path="homebase" element={<Homebase />} />
           </Routes>
         </Router>
       </Provider>

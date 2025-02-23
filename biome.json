@@ -26,6 +26,10 @@
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "suspicious": {
+        "useAwait": "error",
+        "noArrayIndexKey": "off"
       }
     }
   },

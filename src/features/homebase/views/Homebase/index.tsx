@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import type { DirEntry } from "@tauri-apps/plugin-fs";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Folder } from "lucide-react";
 import { getHives } from "./utils/getHives";
+import { useHiveStore } from "@/stores/useHiveStore";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+import { HiveListing } from "./parts/HiveListing";
+import { EmptyHives } from "./parts/EmptyHives";
 
 export const Homebase = () => {
+  const { t } = useTranslation();
+  const setHiveName = useHiveStore((state) => state.setHiveName);
+  const navigate = useNavigate();
   const [hives, setHives] = useState<DirEntry[]>([]);
 
   useEffect(() => {
+    setHiveName("");
+
     const obtainHives = async () => {
       const newHives = await getHives();
       setHives(newHives);
@@ -15,23 +23,22 @@ export const Homebase = () => {
     obtainHives();
   }, []);
 
+  const handleOnHiveClick = (hiveName: string) => {
+    setHiveName(hiveName);
+    navigate("/");
+  };
+
+  const handleOnCreateHive = () => {
+    console.log("create hive");
+  };
+
   return (
-    <div className="p-4">
-      <div className="flex flex-col gap-3">
-        {hives.map((hive, index) => (
-          <Card
-            key={index}
-            className="cursor-pointer transition-colors hover:bg-accent active:bg-accent/80"
-          >
-            <CardHeader className="py-3">
-              <div className="flex items-center space-x-2">
-                <Folder className="w-5 h-5 text-primary" />
-                <CardTitle className="text-lg">{hive.name}</CardTitle>
-              </div>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
+    <div className="p-4 flex flex-1 flex-col min-h-0 items-center w-full">
+      {hives.length === 1 ? (
+        <EmptyHives t={t} onCreateHive={handleOnCreateHive} />
+      ) : (
+        <HiveListing t={t} hives={hives} onHiveClick={handleOnHiveClick} />
+      )}
     </div>
   );
 };

@@ -1,5 +1,9 @@
 {
   "nectar": "Nectar",
   "helloWorld": "Hello World!",
-  "characterCount": "Character Count"
+  "characterCount": "Character Count",
+  "yourHives": "Your Hives",
+  "noHivesFound": "No Hives Found",
+  "getStartedByCreatingYourFirstHive": "Get started by creating your first Hive!",
+  "createNewHive": "Create New Hive"
 }

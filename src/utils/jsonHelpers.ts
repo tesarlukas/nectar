@@ -46,7 +46,7 @@ export const readJson = async <T>(
 ): Promise<T | undefined> => {
   try {
     const jsonContent = JSON.parse(
-      await readTextFile(path, {
+      await readTextFile(appendJson(path), {
         baseDir,
       }),
     ) as T;

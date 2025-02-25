@@ -8,6 +8,7 @@ import { HiveListing } from "./parts/HiveListing";
 import { EmptyHives } from "./parts/EmptyHives";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useInitialize } from "@/hooks/useInitialize";
+import { APP_CONFIG_DIR } from "@/constants/appConfigDir";
 
 export const Homebase = () => {
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ export const Homebase = () => {
     if (!error) {
       await initHive(newHiveName);
       await initNotes(newHiveName, ROOT_DIR);
-      await initSettings(newHiveName, ROOT_DIR);
+      await initSettings(newHiveName, APP_CONFIG_DIR);
       setHiveName(newHiveName);
       navigate("/");
     }

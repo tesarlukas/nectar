@@ -28,7 +28,7 @@ export const useInitialize = () => {
         );
 
         if (hiveInfo?.hiveName) {
-          console.log("Hive has already been initialized");
+          console.info("Hive has already been initialized");
           return;
         }
 
@@ -55,7 +55,7 @@ export const useInitialize = () => {
     const doesDirExist = await exists(notesDirLocation, { baseDir });
 
     if (doesDirExist) {
-      console.log("Notes are already initialized");
+      console.info("Notes are already initialized");
       return;
     }
 
@@ -65,32 +65,17 @@ export const useInitialize = () => {
   };
 
   const initSettings = async (
-    hiveName: string,
     baseDir: BaseDirectory = APP_CONFIG_DIR,
   ): Promise<void> => {
-    const settingsDirLocation = await path.join(hiveName, "settings");
+    const doesSettingsDirExist = await exists(SETTINGS_PATH, { baseDir });
 
-    // check if settings directory exists, if not, create it
-    const doesDirExist = await exists(settingsDirLocation, { baseDir });
-    if (!doesDirExist) {
-      await mkdir(settingsDirLocation, {
+    if (!doesSettingsDirExist) {
+      await mkdir(SETTINGS_PATH, {
         baseDir,
       });
     }
 
-    // check if colorTheme.json exists, if not, initialize it
-    const colorThemeLocation = await path.join(
-      hiveName,
-      SETTINGS_PATH,
-      "colorTheme.json",
-    );
-    const doesColorThemeJsonExist = await exists(colorThemeLocation, {
-      baseDir,
-    });
-    if (!doesColorThemeJsonExist) {
-      await initializeTheme();
-    }
-
+    await initializeTheme();
     // TODO: check if keymap.json exists, if not, initialize it
   };
 

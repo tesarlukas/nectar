@@ -1,7 +1,6 @@
 import { HIDDEN_DIR } from "@/constants/hiddenDir";
 import { NOTES_PATH } from "@/constants/notesPath";
 import { ROOT_DIR } from "@/constants/rootDir";
-import { SETTINGS_PATH } from "@/constants/settingsPath";
 import { readDir } from "@tauri-apps/plugin-fs";
 
 export const getHives = async () => {
@@ -27,8 +26,7 @@ export const isHive = async (path: string) => {
 
   if (
     dirEntriesNames.includes(HIDDEN_DIR) &&
-    dirEntriesNames.includes(NOTES_PATH) &&
-    dirEntriesNames.includes(SETTINGS_PATH)
+    dirEntriesNames.includes(NOTES_PATH)
   )
     return true;
 

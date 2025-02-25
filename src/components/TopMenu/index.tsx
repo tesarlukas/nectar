@@ -1,24 +1,49 @@
 import { useNavigate, useLocation } from "react-router";
-import { Settings, Pencil } from "lucide-react";
+import { Settings, Pencil, Home } from "lucide-react";
 import { Card } from "../ui/card";
 import { ColorSchemeToggle } from "./parts/ColorSchemeToggle";
 import { Button } from "../ui/button";
 import { useHiveStore } from "@/stores/useHiveStore";
+import { useCallback } from "react";
 
 export const TopMenu = () => {
+  const hiveName = useHiveStore((state) => state.hiveName);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const hiveName = useHiveStore((state) => state.hiveName);
   const isInSettings = pathname.includes("settings");
 
-  const handleOnSettingsToggle = () => {
-    if (isInSettings) {
-      navigate("/");
-      return;
-    }
+  const renderNavHandler = useCallback(() => {
+    if (isInSettings && hiveName)
+      return (
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => (isInSettings ? navigate("/") : navigate("/settings"))}
+        >
+          {pathname.includes("settings") ? (
+            <Pencil className="h-[1.2rem] w-[1.2rem]" />
+          ) : (
+            <Settings className="h-[1.2rem] w-[1.2rem]" />
+          )}
+        </Button>
+      );
 
-    navigate("/settings");
-  };
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() =>
+          isInSettings ? navigate("/homebase") : navigate("/settings")
+        }
+      >
+        {isInSettings ? (
+          <Home className="h-[1.2rem] w-[1.2rem]" />
+        ) : (
+          <Settings className="h-[1.2rem] w-[1.2rem]" />
+        )}
+      </Button>
+    );
+  }, [hiveName, isInSettings]);
 
   return (
     <>
@@ -27,17 +52,7 @@ export const TopMenu = () => {
           <h1 className="text-4xl">{hiveName}</h1>
         </div>
         <div className="flex flex-row ml-auto gap-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleOnSettingsToggle}
-          >
-            {pathname.includes("settings") ? (
-              <Pencil className="h-[1.2rem] w-[1.2rem]" />
-            ) : (
-              <Settings className="h-[1.2rem] w-[1.2rem]" />
-            )}
-          </Button>
+          {renderNavHandler()}
           <ColorSchemeToggle />
         </div>
       </Card>

@@ -8,13 +8,12 @@ import { HiveListing } from "./parts/HiveListing";
 import { EmptyHives } from "./parts/EmptyHives";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useInitialize } from "@/hooks/useInitialize";
-import { APP_CONFIG_DIR } from "@/constants/appConfigDir";
 
 export const Homebase = () => {
   const { t } = useTranslation();
   const setHiveName = useHiveStore((state) => state.setHiveName);
   const navigate = useNavigate();
-  const { initHive, initNotes, initSettings } = useInitialize();
+  const { initHive, initNotes } = useInitialize();
   const [hives, setHives] = useState<DirEntry[]>([]);
   const [error, setError] = useState<{ message: string } | null>(null);
 
@@ -49,7 +48,6 @@ export const Homebase = () => {
     if (!error) {
       await initHive(newHiveName);
       await initNotes(newHiveName, ROOT_DIR);
-      await initSettings(newHiveName, APP_CONFIG_DIR);
       setHiveName(newHiveName);
       navigate("/");
     }
@@ -60,7 +58,13 @@ export const Homebase = () => {
       {hives.length === 1 ? (
         <EmptyHives t={t} onConfirm={handleOnConfirm} error={error} />
       ) : (
-        <HiveListing t={t} hives={hives} onHiveClick={handleOnHiveClick} />
+        <HiveListing
+          t={t}
+          hives={hives}
+          onHiveClick={handleOnHiveClick}
+          onConfirm={handleOnConfirm}
+          error={error}
+        />
       )}
     </div>
   );

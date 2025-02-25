@@ -9,5 +9,7 @@
   "hiveName": "Hive Name",
   "confirm": "Confirm",
   "theHiveNameCannotBeEmpty": "The Hive Name cannot be empty",
-  "thisFolderAlreadyExists": "This folder already exists"
+  "thisFolderAlreadyExists": "This folder already exists",
+  "cancel": "Cancel",
+  "addHive": "Add Hive"
 }

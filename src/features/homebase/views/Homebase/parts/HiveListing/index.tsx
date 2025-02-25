@@ -3,14 +3,23 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DirEntry } from "@tauri-apps/plugin-fs";
 import type { TFunction } from "i18next";
 import { Folder } from "lucide-react";
+import { CreateAnother } from "../CreateAnother";
 
 interface HiveListingProps {
   t: TFunction;
   hives: DirEntry[];
   onHiveClick: (hiveName: string) => void;
+  error: { message: string } | null;
+  onConfirm: (newHiveName?: string) => void;
 }
 
-export const HiveListing = ({ t, hives, onHiveClick }: HiveListingProps) => (
+export const HiveListing = ({
+  t,
+  hives,
+  onHiveClick,
+  error,
+  onConfirm,
+}: HiveListingProps) => (
   <>
     <Typography variant="h1" className="mb-4" weight="normal">
       {t("yourHives")}
@@ -30,6 +39,7 @@ export const HiveListing = ({ t, hives, onHiveClick }: HiveListingProps) => (
           </CardHeader>
         </Card>
       ))}
+      <CreateAnother t={t} error={error} onConfirm={onConfirm} />
     </div>
   </>
 );

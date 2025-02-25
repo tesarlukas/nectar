@@ -1,27 +1,22 @@
 import { Typography } from "@/components/Typography";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import type { TFunction } from "i18next";
 import { FolderPlus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { HiveInput } from "../HiveInput";
 
 interface EmptyHivesProps {
   t: TFunction;
-  onConfirm: (newHiveName?: string) => void;
   error: { message: string } | null;
+  onConfirm: (newHiveName?: string) => void;
 }
 
 export const EmptyHives = ({ t, onConfirm, error }: EmptyHivesProps) => {
   const [isInput, setIsInput] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleOnCreateNewHive = () => {
     setIsInput(true);
-  };
-
-  const handleOnConfirm = () => {
-    onConfirm(inputRef.current?.value);
   };
 
   return (
@@ -38,31 +33,7 @@ export const EmptyHives = ({ t, onConfirm, error }: EmptyHivesProps) => {
             </Typography>
           </div>
           {isInput ? (
-            <>
-              <div className="md:w-1/2 w-full">
-                <Typography variant="p" weight="normal" className="mb-2">
-                  {t("hiveName")}
-                </Typography>
-                <Input className="w-full" ref={inputRef} />
-                {error && (
-                  <Typography
-                    variant="p"
-                    textColor="destructive"
-                    className="!mt-2"
-                  >
-                    {error.message}
-                  </Typography>
-                )}
-
-                <Button
-                  type="submit"
-                  onClick={handleOnConfirm}
-                  className="mt-4 mx-auto"
-                >
-                  {t("confirm")}
-                </Button>
-              </div>
-            </>
+            <HiveInput t={t} error={error} onConfirm={onConfirm} />
           ) : (
             <Button onClick={handleOnCreateNewHive} className="mt-4">
               {t("createNewHive")}

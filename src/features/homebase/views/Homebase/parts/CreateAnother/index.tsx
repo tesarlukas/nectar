@@ -12,7 +12,6 @@ interface CreateAnotherProps {
 
 export const CreateAnother = ({ t, error, onConfirm }: CreateAnotherProps) => {
   const [isInput, setIsInput] = useState(false);
-  console.log("rerender", isInput);
 
   const handleOnAddHive = () => {
     setIsInput(true);

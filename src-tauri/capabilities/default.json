@@ -33,6 +33,7 @@
         }
       ]
     },
-    "core:webview:allow-set-webview-zoom"
+    "core:webview:allow-set-webview-zoom",
+    "store:default"
   ]
 }

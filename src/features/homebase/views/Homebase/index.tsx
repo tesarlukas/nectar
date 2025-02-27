@@ -18,17 +18,17 @@ export const Homebase = () => {
   const [error, setError] = useState<{ message: string } | null>(null);
 
   useEffect(() => {
-    setHiveName("");
-
     const obtainHives = async () => {
+      await setHiveName("");
+
       const newHives = await getHives();
       setHives(newHives);
     };
     obtainHives();
   }, []);
 
-  const handleOnHiveClick = (hiveName: string) => {
-    setHiveName(hiveName);
+  const handleOnHiveClick = async (hiveName: string) => {
+    await setHiveName(hiveName);
     navigate("/");
   };
 
@@ -48,7 +48,7 @@ export const Homebase = () => {
     if (!error) {
       await initHive(newHiveName);
       await initNotes(newHiveName, ROOT_DIR);
-      setHiveName(newHiveName);
+      await setHiveName(newHiveName);
       navigate("/");
     }
   };

@@ -52,6 +52,7 @@ const tauriStorage: StorageAdapter = {
 // Define the store shape
 interface HiveStore {
   hiveName: string;
+  isHydrated: boolean;
   setHiveName: (newHiveName: string) => void;
 }
 
@@ -60,6 +61,7 @@ export const useHiveStore = create<HiveStore>()(
   persist(
     (set) => ({
       hiveName: DEFAULT_HIVE_NAME,
+      isHydrated: false,
       setHiveName: (newHiveName) => set({ hiveName: newHiveName }),
     }),
     {
@@ -69,6 +71,11 @@ export const useHiveStore = create<HiveStore>()(
       partialize: (state) => ({
         hiveName: state.hiveName,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.isHydrated = true;
+        }
+      },
     },
   ),
 );

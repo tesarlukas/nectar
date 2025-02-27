@@ -1,1 +1,1 @@
-export const DEFAULT_HIVE_NAME = "MyHive";
+export const DEFAULT_HIVE_NAME = "";

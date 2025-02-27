@@ -35,12 +35,13 @@ export const useFileExplorer = () => {
   const [selectedNode, setSelectedNode] = useState<FileTreeNode>();
   const hiveName = useHiveStore((state) => state.hiveName);
 
-  const initializeFileTree = useCallback(async () => {
+  const initializeFileTree = useCallback(async (hiveName: string) => {
+    if (hiveName === "") return;
     const initPath = await join(hiveName);
     const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
 
     setNodes(builtNodes);
-  }, [hiveName]);
+  }, []);
 
   // checked, question is if it wouldn't be better to just build the whole tree
   // anew

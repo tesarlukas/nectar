@@ -7,7 +7,7 @@ import { Layout } from "@/features/layout/views/Layout";
 import { Homebase } from "@/features/homebase/views/Homebase";
 import { SettingsLayout } from "@/features/layout/views/SettingsLayout";
 import { AppearanceSettings } from "@/features/settings/views/AppearanceSettings";
-import { KeymapSettings } from "@/features/settings/views/KeymapSettings";
+import { ShortcutsSettings } from "@/features/settings/views/ShortcutsSettings";
 
 export default function App() {
   const { initializeTheme } = useColorTheme();
@@ -25,7 +25,7 @@ export default function App() {
               <Route index element={<EditorView />} />
               <Route path="settings" element={<SettingsLayout />}>
                 <Route index element={<AppearanceSettings />} />
-                <Route path="keymap" element={<KeymapSettings />} />
+                <Route path="shortcuts" element={<ShortcutsSettings />} />
               </Route>
               <Route path="homebase" element={<Homebase />} />
             </Route>

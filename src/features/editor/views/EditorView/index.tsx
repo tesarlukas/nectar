@@ -79,6 +79,11 @@ export const EditorView = () => {
     await moveNote(node, targetNode);
   };
 
+  useHotkeys("ctrl+s", () => handleOnSave(), {
+    preventDefault: true,
+    enableOnContentEditable: true,
+  });
+
   useEffect(() => {
     if (isHydrated && hiveName === "") {
       navigate("/homebase");

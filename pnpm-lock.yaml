@@ -131,6 +131,9 @@ dependencies:
   react-dom:
     specifier: ^19.0.0
     version: 19.0.0(react@19.0.0)
+  react-hotkeys-hook:
+    specifier: ^4.6.1
+    version: 4.6.1(react-dom@19.0.0)(react@19.0.0)
   react-i18next:
     specifier: ^15.4.0
     version: 15.4.0(i18next@24.2.2)(react-dom@19.0.0)(react@19.0.0)
@@ -3305,6 +3308,16 @@ packages:
     dependencies:
       react: 19.0.0
       scheduler: 0.25.0
+    dev: false
+
+  /react-hotkeys-hook@4.6.1(react-dom@19.0.0)(react@19.0.0):
+    resolution: {integrity: sha512-XlZpbKUj9tkfgPgT9gA+1p7Ey6vFIZHttUjPqpTdyT5nqQ8mHL7elxvSbaC+dpSiHUSmr21Ya1mDxBZG3aje4Q==}
+    peerDependencies:
+      react: '>=16.8.1'
+      react-dom: '>=16.8.1'
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     dev: false
 
   /react-i18next@15.4.0(i18next@24.2.2)(react-dom@19.0.0)(react@19.0.0):

@@ -4,6 +4,7 @@ import { SETTINGS_PATH } from "@/constants/settingsPath";
 import {
   DEFAULT_SHORTCUTS,
   type KeyboardShortcuts,
+  ShortcutContext,
   SHORTCUTS_FILENAME,
 } from "./index.preset";
 import { APP_CONFIG_DIR } from "@/constants/appConfigDir";
@@ -55,6 +56,7 @@ const shortcutsStorage = {
 interface ShortcutsStore {
   shortcuts: KeyboardShortcuts;
   isHydrated: boolean;
+  activeContexts: ShortcutContext[];
   updateShortcuts: (newShortcuts: KeyboardShortcuts) => void;
   resetToDefault: () => void;
 }
@@ -65,10 +67,30 @@ export const useShortcutsStore = create<ShortcutsStore>()(
     (set) => ({
       shortcuts: DEFAULT_SHORTCUTS,
       isHydrated: false,
+      activeContexts: [ShortcutContext.Global],
 
       updateShortcuts: (newShortcuts) => set({ shortcuts: newShortcuts }),
 
       resetToDefault: () => set({ shortcuts: DEFAULT_SHORTCUTS }),
+
+      activateContext: (context: ShortcutContext) => {
+        set((state) => {
+          if (state.activeContexts.includes(context)) return state;
+
+          return {
+            activeContexts: [...state.activeContexts, context],
+          };
+        });
+
+        // Return deactivate function
+        return () => {
+          set((state) => ({
+            activeContexts: state.activeContexts.filter(
+              (ctx) => ctx !== context,
+            ),
+          }));
+        };
+      },
     }),
     {
       name: "shortcuts", // Storage key

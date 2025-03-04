@@ -12,10 +12,10 @@ export interface EditorProps {
 
 export const Editor = ({ editor, onClick }: EditorProps) => {
   return (
-    <div className="h-full p-4">
+    <>
       <EditorContent
         editor={editor}
-        className="w-full max-h-full h-full bg-background overflow-scroll"
+        className="w-full max-h-full h-full bg-background overflow-y-scroll overflow-x-hidden"
         onClick={onClick}
       />
       <div>
@@ -24,6 +24,6 @@ export const Editor = ({ editor, onClick }: EditorProps) => {
       <div>
         <BubbleMenu editor={editor} />
       </div>
-    </div>
+    </>
   );
 };

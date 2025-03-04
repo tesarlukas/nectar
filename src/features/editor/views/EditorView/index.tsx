@@ -108,10 +108,12 @@ export const EditorView = () => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
-            {selectedNode?.value.isFile && (
-              <NoteTitle title={selectedNode?.value.name} />
-            )}
-            <Editor editor={editor} onClick={handleEditorOnClick} />
+            <div className="h-full p-4 min-h-0 flex flex-col max-h-full">
+              {selectedNode?.value.isFile && (
+                <NoteTitle title={selectedNode?.value.name} />
+              )}
+              <Editor editor={editor} onClick={handleEditorOnClick} />
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
         <BottomMenu charCount={editor?.storage.characterCount.characters()}>

@@ -1,5 +1,5 @@
 import { useHotkeys } from "react-hotkeys-hook";
-import type { ActionCallback } from "@/features/eventsystem/eventEmitter";
+import type { ActionCallback } from "@/features/events/eventEmitter";
 import type { KeyboardShortcut } from "@/stores/useShortcutStore/index.preset";
 import type { OptionsOrDependencyArray } from "react-hotkeys-hook/dist/types";
 

@@ -6,22 +6,15 @@ import cs from "./languages/cs.json";
 import sk from "./languages/cs.json";
 
 const resources = {
-  en: {
-    translation: en,
-  },
-  cs: {
-    translation: cs,
-  },
-  sk: {
-    translation: sk,
-  },
+  en,
+  cs,
+  sk,
 };
 
 i18n.use(initReactI18next).init({
   lng: "en",
   fallbackLng: "en",
   resources,
-
   interpolation: {
     escapeValue: false,
   },

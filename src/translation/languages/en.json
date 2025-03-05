@@ -11,5 +11,19 @@
   "theHiveNameCannotBeEmpty": "The Hive Name cannot be empty",
   "thisFolderAlreadyExists": "This folder already exists",
   "cancel": "Cancel",
-  "addHive": "Add Hive"
+  "addHive": "Add Hive",
+  "common": {
+    "save": "Save"
+  },
+  "settings": {
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "resetToDefault": "Reset to default",
+    "shortcuts": {
+      "save_note": "Save note",
+      "create_new_note": "Creat new note"
+    }
+  },
+  "editorView": {
+    "characterCount": "Character Count"
+  }
 }

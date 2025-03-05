@@ -17,6 +17,9 @@ import { EMPTY_NOTE } from "./parts/FileExplorer/index.preset";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import { ActionId } from "@/features/events/eventEmitter";
+import { useEventListener } from "@/features/events/hooks/useEventListener";
 
 export const EditorView = () => {
   const { hiveName, isHydrated } = useHiveStore();
@@ -34,6 +37,7 @@ export const EditorView = () => {
     renameNodeAndNoteOrDir,
     moveNote,
   } = useFileExplorer();
+  const emitter = useEventEmitter();
 
   const handleOnNodeClick = async (node: FileTreeNode) => {
     setSelectedNode(node);
@@ -84,6 +88,9 @@ export const EditorView = () => {
   useShortcuts("ctrl+s", () => handleOnSave(), {
     enableOnContentEditable: true,
   });
+
+  useShortcuts("ctrl+h", () => emitter(ActionId.CreateNewNote));
+  useEventListener(ActionId.CreateNewNote, () => console.log("brdel"));
 
   useEffect(() => {
     if (isHydrated && hiveName === "") {

@@ -1,4 +1,4 @@
-import { ActionId } from "@/features/shortcuts/hooks/useEventSystem";
+import { ActionId } from "@/features/events/eventEmitter";
 
 export enum ShortcutContext {
   Global = "global",

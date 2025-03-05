@@ -16,6 +16,7 @@ import { NoteTitle } from "./parts/NoteTitle";
 import { EMPTY_NOTE } from "./parts/FileExplorer/index.preset";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 
 export const EditorView = () => {
   const { hiveName, isHydrated } = useHiveStore();
@@ -46,6 +47,7 @@ export const EditorView = () => {
   };
 
   const handleOnSave = async () => {
+    console.log("got triggered");
     await saveNote<JSONContent>(selectedNode, editor?.getJSON());
   };
 
@@ -79,8 +81,7 @@ export const EditorView = () => {
     await moveNote(node, targetNode);
   };
 
-  useHotkeys("ctrl+s", () => handleOnSave(), {
-    preventDefault: true,
+  useShortcuts("ctrl+s", () => handleOnSave(), {
     enableOnContentEditable: true,
   });
 

@@ -9,7 +9,8 @@
     "Dropcursor",
     "keymap",
     "homebase",
-    "partialize"
+    "partialize",
+    "eventsystem"
   ],
   "ignorePaths": ["node_modules"]
 }

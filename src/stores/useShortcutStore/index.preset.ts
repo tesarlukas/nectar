@@ -6,11 +6,11 @@ export enum ShortcutContext {
 
 export type KeyboardShortcut = string;
 
-export type KeyboardShortcuts = Record<KeyboardShortcut, ActionId>;
+export type KeyboardShortcuts = Record<ActionId, KeyboardShortcut>;
 
 export const SHORTCUTS_FILENAME = "shortcuts.json" as const;
 
 export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
-  [`${ShortcutContext.Global}:ctrl+s`]: ActionId.SaveNote,
-  [`${ShortcutContext.Global}:ctrl+a`]: ActionId.CreateNewNote,
+  [ActionId.SaveNote]: `${ShortcutContext.Global}:ctrl+s`,
+  [ActionId.CreateNewNote]: `${ShortcutContext.Global}:ctrl+a`,
 } as const;

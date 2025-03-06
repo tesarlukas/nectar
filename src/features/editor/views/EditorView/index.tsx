@@ -85,12 +85,11 @@ export const EditorView = () => {
     await moveNote(node, targetNode);
   };
 
-  useShortcuts("ctrl+s", () => handleOnSave(), {
+  useShortcuts(ActionId.SaveNote, () => handleOnSave(), {
     enableOnContentEditable: true,
   });
-
-  useShortcuts("ctrl+h", () => emitter(ActionId.CreateNewNote));
-  useEventListener(ActionId.CreateNewNote, () => console.log("brdel"));
+  useShortcuts(ActionId.CreateNewNote, () => emitter(ActionId.CreateNewNote));
+  useEventListener(ActionId.CreateNewNote, () => console.log("hello"));
 
   useEffect(() => {
     if (isHydrated && hiveName === "") {

@@ -3,7 +3,8 @@ import { Card, CardTitle } from "@/components/ui/card";
 import type { ActionId } from "@/features/events/eventEmitter";
 import type { KeyboardShortcut } from "@/stores/useShortcutStore/index.preset";
 import { splitShortcut } from "@/stores/useShortcutStore/utils/shortcutHelpers";
-import { useMemo } from "react";
+import { Typography } from "@/components/Typography";
+import { formatKeys } from "../../utils/formatKeys";
 
 interface ShortcutItemProps {
   t: TFunction;
@@ -12,6 +13,8 @@ interface ShortcutItemProps {
   onClick: (actionId: ActionId) => void;
   isRecording: boolean;
   recordedKeys?: Set<string>;
+  isChanged?: boolean;
+  newShortcut: KeyboardShortcut;
 }
 
 export const ShortcutItem = ({
@@ -21,17 +24,10 @@ export const ShortcutItem = ({
   onClick,
   isRecording,
   recordedKeys,
+  isChanged,
+  newShortcut,
 }: ShortcutItemProps) => {
-  const shortcutPart = splitShortcut(shortcut)[1];
-
-  const formattedKeys = useMemo(() => {
-    if (!recordedKeys) return shortcutPart;
-
-    const chars = [...recordedKeys];
-    const joinedChars = chars.join("+");
-
-    return joinedChars;
-  }, [recordedKeys]);
+  const shortcutKeys = splitShortcut(shortcut)[1];
 
   return (
     <>
@@ -44,11 +40,16 @@ export const ShortcutItem = ({
         onClick={() => onClick(actionId)}
       >
         <CardTitle>{t(`shortcuts.${actionId}`)}</CardTitle>
-        <CardTitle
-          className={`capitalize ${isRecording ? "text-primary animate-pulse" : ""}`}
-        >
-          {isRecording ? formattedKeys : shortcutPart}
-        </CardTitle>
+        {isChanged && <Typography variant="subtle">unsaved changes</Typography>}
+        {isRecording && recordedKeys ? (
+          <CardTitle className="capitalize text-primary animate-pulse">
+            {formatKeys(recordedKeys)}
+          </CardTitle>
+        ) : (
+          <CardTitle className="capitalize">
+            {shortcutKeys} {isChanged && `... ${splitShortcut(newShortcut)[1]}`}
+          </CardTitle>
+        )}
       </Card>
     </>
   );

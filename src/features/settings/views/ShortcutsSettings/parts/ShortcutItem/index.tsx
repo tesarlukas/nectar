@@ -47,7 +47,10 @@ export const ShortcutItem = ({ t, shortcut, actionId }: ShortcutItemProps) => {
       <Card
         ref={enterRef}
         tabIndex={-1}
-        className="p-4 flex flex-row justify-between hover:bg-accent hover:text-accent-foreground cursor-pointer active:bg-accent/90 transition-all duration-200 active:scale-[0.98] border border-border"
+        className="p-4 flex flex-row justify-between hover:bg-accent
+        hover:text-accent-foreground cursor-pointer active:bg-accent/90
+        transition-all duration-200 active:scale-[0.98] border border-border
+        focus:outline-none"
         onClick={handleOnCardClick}
       >
         <CardTitle>{t(`shortcuts.${actionId}`)}</CardTitle>

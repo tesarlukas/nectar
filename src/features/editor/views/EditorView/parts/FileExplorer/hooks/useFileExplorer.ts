@@ -2,7 +2,6 @@ import { copyFile, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
-import { NOTES_PATH } from "@/constants/notesPath";
 import { readJson, writeJson } from "@/utils/jsonHelpers";
 import { useHiveStore } from "@/stores/useHiveStore";
 import {

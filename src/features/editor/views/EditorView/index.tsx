@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useEffect } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
-import type { JSONContent } from "@tiptap/react";
 import { NoteTitle } from "./parts/NoteTitle";
 import { EMPTY_NOTE } from "./parts/FileExplorer/index.preset";
 import { useHiveStore } from "@/stores/useHiveStore";
@@ -21,8 +20,10 @@ import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const EditorView = () => {
+  const { t } = useTranslation();
   const { hiveName, isHydrated } = useHiveStore();
   const navigate = useNavigate();
   const { editor, handleEditorOnClick } = useEditor();
@@ -46,13 +47,30 @@ export const EditorView = () => {
     // if it's not a file, then it's not a note
     if (node.value.isDirectory) return;
 
-    const noteContent = await readNote<JSONContent>(node.value.path);
+    const noteContent = await readNote(node.value.path);
+    console.log("noteContent on node click", noteContent);
 
-    if (noteContent) editor?.commands.setContent(noteContent);
+    if (noteContent) editor?.commands.setContent(noteContent.editorContent);
   };
 
   const handleOnSave = async () => {
-    await saveNote<JSONContent>(selectedNode, editor?.getJSON());
+    if (!selectedNode?.value.isFile) return;
+
+    try {
+      const noteContent = await readNote(selectedNode?.value.path);
+      console.log("noteContent", noteContent);
+
+      if (!noteContent) return;
+
+      const newNoteContent = {
+        ...noteContent,
+        editorContent: editor?.getJSON() ?? EMPTY_NOTE,
+      };
+
+      await saveNote(selectedNode, newNoteContent);
+    } catch (error) {
+      toast.error(t(`failedToSaveNote: ${error}`));
+    }
   };
 
   const handleOnDelete = async (node: FileTreeNode) => {

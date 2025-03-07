@@ -16,6 +16,9 @@ import {
 import { EMPTY_NOTE } from "../index.preset";
 import { appendJson } from "@/utils/nodeHelpers";
 import { buildDirectoryTree, createFileNode } from "../utils";
+import type { Note } from "../../../types";
+import { nanoid } from "nanoid";
+import type { JSONContent } from "@tiptap/react";
 
 export interface FileInfo {
   name: string;
@@ -36,24 +39,23 @@ export const useFileExplorer = () => {
 
   const initializeFileTree = useCallback(async (hiveName: string) => {
     if (hiveName === "") return;
+
     const initPath = await join(hiveName);
     const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
 
     setNodes(builtNodes);
   }, []);
 
-  // checked, question is if it wouldn't be better to just build the whole tree
-  // anew
   const addNewNode = useCallback(
-    async <TContent>(
+    async (
       location: string,
       nodeName: string,
-      opts?: Partial<{ isDirectory: boolean; content: TContent }>,
+      opts?: Partial<{ isDirectory: boolean; content: JSONContent }>,
     ): Promise<void> => {
       try {
         const defaultOpts = {
           isDirectory: false,
-          content: EMPTY_NOTE as TContent,
+          content: EMPTY_NOTE as JSONContent,
         };
         const finalOpts = { ...defaultOpts, ...opts };
 
@@ -73,7 +75,6 @@ export const useFileExplorer = () => {
           content: finalOpts.content,
         });
 
-        // synchronize with the tree structure
         const newNode = createFileNode(newFileInfo);
         setNodes((currentNodes) =>
           addNode(
@@ -101,34 +102,25 @@ export const useFileExplorer = () => {
     }
   }, []);
 
-  // checked and is straightforward
-  const saveNote = async <TContent>(
-    node?: FileTreeNode,
-    content?: TContent,
-  ) => {
-    if (!content || !node) return;
-
-    await writeJson<TContent>(
-      node.value.dirPath,
-      node.value.name,
-      content,
-      ROOT_DIR,
-    );
+  const saveNote = async (node: FileTreeNode, note: Note) => {
+    await writeJson<Note>(node.value.dirPath, node.value.name, note, ROOT_DIR);
   };
 
-  // straightforward
-  const readNote = async <TContent>(path: string) => {
-    const noteContent = await readJson<TContent>(path, ROOT_DIR);
+  const readNote = async (path: string) => {
+    const noteContent = await readJson<Note>(path, ROOT_DIR);
 
     return noteContent;
   };
 
-  const createNewNoteOrDir = async <TContent>(
+  const createNewNoteOrDir = async (
     location: string,
     name: string,
-    opts?: Partial<{ isDirectory: boolean; content: TContent }>,
+    opts?: Partial<{ isDirectory: boolean; content: JSONContent }>,
   ) => {
-    const defaultOpts = { isDirectory: false, content: EMPTY_NOTE as TContent };
+    const defaultOpts = {
+      isDirectory: false,
+      content: EMPTY_NOTE as JSONContent,
+    };
     const finalOpts = { ...defaultOpts, ...opts };
 
     if (finalOpts?.isDirectory) {
@@ -139,7 +131,15 @@ export const useFileExplorer = () => {
       return;
     }
 
-    await writeJson<TContent>(location, name, finalOpts.content, ROOT_DIR);
+    const noteContent: Note = {
+      id: nanoid(),
+      createdAt: new Date().toISOString(),
+      lastModifiedAt: new Date().toISOString(),
+      editorContent: finalOpts.content,
+      referenceIds: [],
+    };
+
+    await writeJson<Note>(location, name, noteContent, ROOT_DIR);
   };
 
   const renameNodeAndNoteOrDir = useCallback(

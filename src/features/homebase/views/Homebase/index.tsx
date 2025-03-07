@@ -55,7 +55,7 @@ export const Homebase = () => {
 
   return (
     <div className="p-4 flex flex-1 flex-col min-h-0 items-center w-full">
-      {hives.length === 1 ? (
+      {hives.length === 0 ? (
         <EmptyHives t={t} onConfirm={handleOnConfirm} error={error} />
       ) : (
         <HiveListing

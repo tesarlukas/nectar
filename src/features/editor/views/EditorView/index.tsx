@@ -52,7 +52,6 @@ export const EditorView = () => {
   };
 
   const handleOnSave = async () => {
-    console.log("got triggered");
     await saveNote<JSONContent>(selectedNode, editor?.getJSON());
   };
 

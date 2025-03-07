@@ -20,6 +20,7 @@ import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
+import { toast } from "sonner";
 
 export const EditorView = () => {
   const { hiveName, isHydrated } = useHiveStore();
@@ -129,6 +130,7 @@ export const EditorView = () => {
           </ResizablePanel>
         </ResizablePanelGroup>
         <BottomMenu charCount={editor?.storage.characterCount.characters()}>
+          <Button onClick={() => toast("Welcome")}>Toast click</Button>
           <Button onClick={handleOnSave}>Save</Button>
         </BottomMenu>
       </div>

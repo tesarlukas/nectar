@@ -10,7 +10,8 @@
     "keymap",
     "homebase",
     "partialize",
-    "eventsystem"
+    "eventsystem",
+    "sonner"
   ],
   "ignorePaths": ["node_modules"]
 }

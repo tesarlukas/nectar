@@ -8,6 +8,7 @@ import { Homebase } from "@/features/homebase/views/Homebase";
 import { SettingsLayout } from "@/features/layout/views/SettingsLayout";
 import { AppearanceSettings } from "@/features/settings/views/AppearanceSettings";
 import { ShortcutsSettings } from "@/features/settings/views/ShortcutsSettings";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App() {
   const { initializeTheme } = useColorTheme();
@@ -32,6 +33,11 @@ export default function App() {
           </Routes>
         </Router>
       </Provider>
+      <Toaster
+        position="bottom-center"
+        swipeDirections={["left", "right", "top"]}
+        offset={{ bottom: "64px" }}
+      />
     </main>
   );
 }

@@ -9,7 +9,7 @@ import { useEditor } from "./parts/Editor/hooks/useEditor";
 import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { NoteTitle } from "./parts/NoteTitle";
 import { EMPTY_NOTE } from "./parts/FileExplorer/index.preset";
@@ -30,8 +30,10 @@ export const EditorView = () => {
   const {
     nodes,
     selectedNode,
-    addNewNode,
     setSelectedNode,
+    selectedNoteNode,
+    setSelectedNoteNode,
+    addNewNode,
     readNote,
     saveNote,
     removeNodeByPath,
@@ -42,23 +44,27 @@ export const EditorView = () => {
   const emitter = useEventEmitter();
 
   const handleOnNodeClick = async (node: FileTreeNode) => {
-    setSelectedNode(node);
+    if (node.value.isDirectory) {
+      setSelectedNode(node);
 
-    // if it's not a file, then it's not a note
+      return;
+    }
+
+    setSelectedNode(node);
+    setSelectedNoteNode(node);
+
     if (node.value.isDirectory) return;
 
     const noteContent = await readNote(node.value.path);
-    console.log("noteContent on node click", noteContent);
 
     if (noteContent) editor?.commands.setContent(noteContent.editorContent);
   };
 
   const handleOnSave = async () => {
-    if (!selectedNode?.value.isFile) return;
+    if (!selectedNoteNode) return;
 
     try {
-      const noteContent = await readNote(selectedNode?.value.path);
-      console.log("noteContent", noteContent);
+      const noteContent = await readNote(selectedNoteNode.value.path);
 
       if (!noteContent) return;
 
@@ -67,7 +73,7 @@ export const EditorView = () => {
         editorContent: editor?.getJSON() ?? EMPTY_NOTE,
       };
 
-      await saveNote(selectedNode, newNoteContent);
+      await saveNote(selectedNoteNode, newNoteContent);
     } catch (error) {
       toast.error(t(`failedToSaveNote: ${error}`));
     }
@@ -139,9 +145,7 @@ export const EditorView = () => {
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
             <div className="h-full p-4 min-h-0 flex flex-col max-h-full">
-              {selectedNode?.value.isFile && (
-                <NoteTitle title={selectedNode?.value.name} />
-              )}
+              <NoteTitle title={selectedNoteNode?.value.name} />
               <Editor editor={editor} onClick={handleEditorOnClick} />
             </div>
           </ResizablePanel>

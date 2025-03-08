@@ -1,7 +1,7 @@
 import { copyFile, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { readJson, writeJson } from "@/utils/jsonHelpers";
 import { useHiveStore } from "@/stores/useHiveStore";
 import {
@@ -35,6 +35,7 @@ export type FileTreeNode = TreeNode<FileInfo>;
 export const useFileExplorer = () => {
   const [nodes, setNodes] = useState<FileTreeNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<FileTreeNode>();
+  const [selectedNoteNode, setSelectedNoteNode] = useState<FileTreeNode>();
   const hiveName = useHiveStore((state) => state.hiveName);
 
   const initializeFileTree = useCallback(async (hiveName: string) => {
@@ -269,6 +270,8 @@ export const useFileExplorer = () => {
     setNodes,
     selectedNode,
     setSelectedNode,
+    selectedNoteNode,
+    setSelectedNoteNode,
     buildDirectoryTree,
     removeNodeByPath,
     addNewNode,

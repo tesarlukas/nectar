@@ -1,1 +1,1 @@
-export const HIDDEN_DIR = '.hive' as const;
+export const HIDDEN_DIR = ".hive" as const;

@@ -1,8 +1,8 @@
 // typography.ts// typography.tsx
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
-import { forwardRef, type ElementType } from "react"
-import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import { forwardRef, type ElementType } from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 const typographyVariants = cva("", {
   variants: {
@@ -14,7 +14,8 @@ const typographyVariants = cva("", {
       p: "leading-7 [&:not(:first-child)]:mt-6",
       lead: "text-xl text-muted-foreground",
       blockquote: "mt-6 border-l-2 pl-6 italic",
-      inlineCode: "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
+      inlineCode:
+        "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
       large: "text-lg font-semibold",
       small: "text-sm font-medium leading-none",
       subtle: "text-sm text-muted-foreground",
@@ -48,7 +49,7 @@ const typographyVariants = cva("", {
       muted: "text-muted-foreground",
       primary: "text-primary",
       destructive: "text-destructive",
-    }
+    },
   },
   defaultVariants: {
     variant: "p",
@@ -56,32 +57,35 @@ const typographyVariants = cva("", {
     weight: "default",
     align: "left",
     textColor: "default",
-  }
-})
+  },
+});
 
-type TypographyVariantProps = VariantProps<typeof typographyVariants>
+type TypographyVariantProps = VariantProps<typeof typographyVariants>;
 
 export interface TypographyProps extends TypographyVariantProps {
-  asChild?: boolean
-  as?: ElementType
-  className?: string
-  children?: React.ReactNode
+  asChild?: boolean;
+  as?: ElementType;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 const Typography = forwardRef<HTMLElement, TypographyProps>(
-  ({ 
-    className, 
-    variant, 
-    size, 
-    weight, 
-    align, 
-    textColor, 
-    as: Tag = "p", 
-    asChild = false,
-    children, 
-    ...props 
-  }, ref) => {
-    const Comp = asChild ? Slot : Tag
+  (
+    {
+      className,
+      variant,
+      size,
+      weight,
+      align,
+      textColor,
+      as: Tag = "p",
+      asChild = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = asChild ? Slot : Tag;
 
     return (
       <Comp
@@ -93,17 +97,17 @@ const Typography = forwardRef<HTMLElement, TypographyProps>(
             weight,
             align,
             textColor,
-            className
-          })
+            className,
+          }),
         )}
         {...props}
       >
         {children}
       </Comp>
-    )
-  }
-)
+    );
+  },
+);
 
-Typography.displayName = "Typography"
+Typography.displayName = "Typography";
 
-export { Typography, typographyVariants }
+export { Typography, typographyVariants };

@@ -9,106 +9,43 @@ import { useEditor } from "./parts/Editor/hooks/useEditor";
 import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
-import { useEffect, useRef } from "react";
-import type { FileTreeNode } from "./parts/FileExplorer/hooks/useFileExplorer";
+import { useEffect } from "react";
 import { NoteTitle } from "./parts/NoteTitle";
-import { EMPTY_NOTE } from "./parts/FileExplorer/index.preset";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { useEditorViewHandlers } from "./hooks/useEditorViewHandlers";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
-import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
-import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
 export const EditorView = () => {
-  const { t } = useTranslation();
   const { hiveName, isHydrated } = useHiveStore();
   const navigate = useNavigate();
-  const { editor, handleEditorOnClick } = useEditor();
-  const {
-    nodes,
-    selectedNode,
-    setSelectedNode,
-    selectedNoteNode,
-    setSelectedNoteNode,
-    addNewNode,
-    readNote,
-    saveNote,
-    removeNodeByPath,
-    initializeFileTree,
-    renameNodeAndNoteOrDir,
-    moveNote,
-  } = useFileExplorer();
   const emitter = useEventEmitter();
 
-  const handleOnNodeClick = async (node: FileTreeNode) => {
-    if (node.value.isDirectory) {
-      setSelectedNode(node);
+  const { editor, handleEditorOnClick } = useEditor();
 
-      return;
-    }
+  const fileExplorer = useFileExplorer();
+  const { nodes, selectedNode, selectedNoteNode, initializeFileTree } =
+    fileExplorer;
+  const {
+    handleOnNodeClick,
+    handleOnSave,
+    handleOnDelete,
+    handleOnCreateFile,
+    handleOnCreateDir,
+    handleOnRename,
+    handleOnRefresh,
+    handleOnMove,
+  } = useEditorViewHandlers({
+    ...fileExplorer,
+    editor,
+    hiveName,
+  });
 
-    setSelectedNode(node);
-    setSelectedNoteNode(node);
-
-    if (node.value.isDirectory) return;
-
-    const noteContent = await readNote(node.value.path);
-
-    if (noteContent) editor?.commands.setContent(noteContent.editorContent);
-  };
-
-  const handleOnSave = async () => {
-    if (!selectedNoteNode) return;
-
-    try {
-      const noteContent = await readNote(selectedNoteNode.value.path);
-
-      if (!noteContent) return;
-
-      const newNoteContent = {
-        ...noteContent,
-        editorContent: editor?.getJSON() ?? EMPTY_NOTE,
-      };
-
-      await saveNote(selectedNoteNode, newNoteContent);
-    } catch (error) {
-      toast.error(t(`failedToSaveNote: ${error}`));
-    }
-  };
-
-  const handleOnDelete = async (node: FileTreeNode) => {
-    await removeNodeByPath(node.value.path);
-  };
-
-  const handleOnCreateFile = async (parentNode: FileTreeNode, name: string) => {
-    await addNewNode(parentNode.value.path, name, {
-      isDirectory: false,
-      content: EMPTY_NOTE,
-    });
-  };
-
-  const handleOnCreateDir = async (parentNode: FileTreeNode, name: string) => {
-    await addNewNode(parentNode.value.path, name, {
-      isDirectory: true,
-      content: EMPTY_NOTE,
-    });
-  };
-
-  const handleOnRename = async (node: FileTreeNode, name: string) => {
-    await renameNodeAndNoteOrDir(node, name);
-  };
-
-  const handleOnRefresh = async () => {
-    await initializeFileTree(hiveName);
-  };
-
-  const handleOnMove = async (node: FileTreeNode, targetNode: FileTreeNode) => {
-    await moveNote(node, targetNode);
-  };
-
+  // Set up shortcuts and event listeners
   useShortcuts(ActionId.SaveNote, () => handleOnSave(), {
     enableOnContentEditable: true,
   });
@@ -121,7 +58,7 @@ export const EditorView = () => {
     } else {
       initializeFileTree(hiveName);
     }
-  }, [isHydrated, hiveName]);
+  }, [isHydrated, hiveName, initializeFileTree, navigate]);
 
   if (!isHydrated) return <>Loading</>;
 

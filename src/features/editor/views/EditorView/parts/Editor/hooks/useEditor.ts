@@ -28,6 +28,7 @@ import Link from "@tiptap/extension-link";
 import { useEditorStateStore } from "@/stores/useEditorStateStore";
 import { useCallback, useEffect } from "react";
 import { debounce } from "@/utils/debounce";
+import SearchAndReplace from "../extensions/searchAndReplace";
 
 const extensions = [
   // Nodes
@@ -181,6 +182,10 @@ const extensions = [
     },
   }),
   Link,
+  SearchAndReplace.configure({
+    searchResultClass: "search-result",
+    disableRegex: false,
+  }),
 ];
 
 const TEMP_NOTE_ID = "temp";

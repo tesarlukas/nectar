@@ -6,15 +6,11 @@ export const resetEditorContent = ({
   newContent,
 }: { editor: Editor | null; newContent: JSONContent }) => {
   if (!editor) return;
-  const currentSelection = editor.state.selection;
 
-  // Create a new editor state while preserving the old selection
   const newEditorState = EditorState.create({
     doc: createDocument(newContent, editor.schema),
     plugins: editor.state.plugins,
-    selection: currentSelection,
   });
 
-  // Update the editor state
   editor.view.updateState(newEditorState);
 };

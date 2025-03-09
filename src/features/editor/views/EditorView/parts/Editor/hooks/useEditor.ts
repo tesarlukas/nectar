@@ -1,4 +1,8 @@
-import { mergeAttributes, useEditor as useTiptapEditor } from "@tiptap/react";
+import {
+  type Editor,
+  mergeAttributes,
+  useEditor as useTiptapEditor,
+} from "@tiptap/react";
 import { Image } from "@tiptap/extension-image";
 import Code from "@tiptap/extension-code";
 import ListItem from "@tiptap/extension-list-item";
@@ -21,6 +25,9 @@ import CharacterCount from "@tiptap/extension-character-count";
 import History from "@tiptap/extension-history";
 import FileHandler from "@tiptap-pro/extension-file-handler";
 import Link from "@tiptap/extension-link";
+import { useEditorStateStore } from "@/stores/useEditorStateStore";
+import { useCallback, useEffect, useRef } from "react";
+import { debounce } from "@/utils/debounce";
 
 const extensions = [
   // Nodes
@@ -181,6 +188,14 @@ const content = `
 `;
 
 export const useEditor = () => {
+  const editorStatesRef = useRef(useEditorStateStore.getState().editorStates);
+  const debouncedUpdateEditorStates = useCallback(
+    debounce((editor: Editor) => {
+      editorStatesRef.current.id = editor.state;
+    }, 500),
+    [],
+  );
+
   const editor = useTiptapEditor({
     extensions,
     content,
@@ -191,12 +206,24 @@ export const useEditor = () => {
         id: "editor",
       },
     },
+    onUpdate: ({ editor }) => {
+      debouncedUpdateEditorStates(editor);
+    },
     shouldRerenderOnTransaction: false,
   });
 
   const handleEditorOnClick = () => {
     editor?.commands.focus();
   };
+
+  // Connect to the store on mount, disconnect on unmount, catch state-changes in a reference
+  useEffect(() => {
+    const unsubscribe = useEditorStateStore.subscribe((state) => {
+      editorStatesRef.current = state.editorStates;
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return {
     editor,

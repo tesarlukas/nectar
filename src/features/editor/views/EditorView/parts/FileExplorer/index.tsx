@@ -65,7 +65,7 @@ export const FileExplorer = ({
           onMove={onMove}
         />
       ));
-  }, [notesNode, sortOrder]);
+  }, [notesNode, sortOrder, selectedNode]);
 
   return (
     <div className="h-full p-2">

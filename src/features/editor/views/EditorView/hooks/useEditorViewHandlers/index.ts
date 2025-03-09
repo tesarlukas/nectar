@@ -10,6 +10,7 @@ import { EMPTY_NOTE } from "../../parts/FileExplorer/index.preset";
 import { useEditorStatesRef } from "@/stores/useEditorStateStore/useEditorStatesRef";
 import { resetEditorContent } from "../../parts/Editor/utils/updateEditorContent";
 import { useEditorStateStore } from "@/stores/useEditorStateStore";
+import { Note } from "../../types";
 
 // Create a type that represents all the returns from useFileExplorer
 type FileExplorerReturns = ReturnType<typeof useFileExplorer>;
@@ -83,8 +84,9 @@ export const useEditorViewHandlers = ({
 
       if (!noteContent) return;
 
-      const newNoteContent = {
+      const newNoteContent: Note = {
         ...noteContent,
+        lastModifiedAt: new Date().toISOString(),
         editorContent: editor?.getJSON() ?? EMPTY_NOTE,
       };
 

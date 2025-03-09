@@ -10,7 +10,6 @@ import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useEffect } from "react";
-import { NoteTitle } from "./parts/NoteTitle";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -49,11 +48,12 @@ export const EditorView = () => {
   });
 
   // Set up shortcuts and event listeners
-  useShortcuts(ActionId.SaveNote, () => handleOnSave(), {
+  useShortcuts(ActionId.SaveNote, () => emitter(ActionId.SaveNote), {
     enableOnContentEditable: true,
   });
   useShortcuts(ActionId.CreateNewNote, () => emitter(ActionId.CreateNewNote));
   useEventListener(ActionId.CreateNewNote, () => console.log("hello"));
+  useEventListener(ActionId.SaveNote, handleOnSave);
 
   useEffect(() => {
     if (isHydrated && hiveName === "") {
@@ -85,8 +85,11 @@ export const EditorView = () => {
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
             <div className="h-full p-4 min-h-0 flex flex-col max-h-full">
-              <NoteTitle title={selectedNoteNode?.value.name} />
-              <Editor editor={editor} onClick={handleEditorOnClick} />
+              <Editor
+                editor={editor}
+                onClick={handleEditorOnClick}
+                selectedNoteNode={selectedNoteNode}
+              />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

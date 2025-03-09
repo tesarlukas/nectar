@@ -2,14 +2,20 @@ import { readDir, type BaseDirectory } from "@tauri-apps/plugin-fs";
 import type { FileInfo, FileTreeNode } from "../hooks/useFileExplorer";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { join } from "@tauri-apps/api/path";
+import { nanoid } from "nanoid";
 
 export const createFileNode = (
   info: FileInfo,
   children: FileTreeNode[] = [],
-): FileTreeNode => ({
-  value: info,
-  children,
-});
+): FileTreeNode => {
+  const nodeId = nanoid();
+
+  return {
+    nodeId: nodeId,
+    value: info,
+    children,
+  };
+};
 
 export const buildDirectoryTree = async (
   currentPath: string,

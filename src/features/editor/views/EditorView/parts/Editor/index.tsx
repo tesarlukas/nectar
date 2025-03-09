@@ -13,7 +13,6 @@ import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
 import { SearchReplaceComponent } from "./parts/SearchAndReplace";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
-import React from "react";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;

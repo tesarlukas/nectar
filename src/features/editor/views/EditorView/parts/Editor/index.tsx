@@ -11,6 +11,9 @@ import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { ActionId } from "@/features/events/eventEmitter";
 import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
+import { SearchReplaceComponent } from "./parts/SearchAndReplace";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import React from "react";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -21,8 +24,14 @@ export interface EditorProps {
 export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
   const { t } = useTranslation();
   const [isSaved, setIsSaved] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEventListener(ActionId.SaveNote, () => setIsSaved(true));
+  useShortcuts(
+    ActionId.SearchReplace,
+    () => setIsSearching((prevState) => !prevState),
+    { enableOnContentEditable: true },
+  );
 
   useEffect(() => {
     const handleOnUpdate = () => {
@@ -38,6 +47,7 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
 
   return (
     <>
+      {isSearching && <SearchReplaceComponent />}
       <div className="flex flex-row items-center justify-between mb-2">
         <Typography variant="h2" weight="normal" className="no-underline">
           {stripJson(selectedNoteNode?.value.name)}

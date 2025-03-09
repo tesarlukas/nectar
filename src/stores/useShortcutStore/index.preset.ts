@@ -13,4 +13,5 @@ export const SHORTCUTS_FILENAME = "shortcuts.json" as const;
 export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.SaveNote]: `${ShortcutContext.Global}:ctrl+s`,
   [ActionId.CreateNewNote]: `${ShortcutContext.Global}:ctrl+a`,
+  [ActionId.SearchReplace]: `${ShortcutContext.Global}:ctrl+f`,
 } as const;

@@ -1,7 +1,7 @@
 import type { EditorState } from "@tiptap/pm/state";
 import { create } from "zustand";
 
-export type EditorStates = Record<string, EditorState>;
+export type EditorStates = Record<string, EditorState | undefined>;
 
 export interface EditorStateStore {
   editorStates: EditorStates;

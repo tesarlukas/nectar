@@ -24,6 +24,7 @@ export const EditorView = () => {
   const { hiveName, isHydrated } = useHiveStore();
   const navigate = useNavigate();
   const emitter = useEventEmitter();
+  const { hiveName, isHydrated } = useHiveStore();
 
   const { editor, handleEditorOnClick } = useEditor();
 

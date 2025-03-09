@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import type {
@@ -7,6 +7,9 @@ import type {
 } from "../../parts/FileExplorer/hooks/useFileExplorer";
 import type { Editor } from "@tiptap/react";
 import { EMPTY_NOTE } from "../../parts/FileExplorer/index.preset";
+import { useEditorStatesRef } from "@/stores/useEditorStateStore/useEditorStatesRef";
+import { resetEditorContent } from "../../parts/Editor/utils/updateEditorContent";
+import { useEditorStateStore } from "@/stores/useEditorStateStore";
 
 // Create a type that represents all the returns from useFileExplorer
 type FileExplorerReturns = ReturnType<typeof useFileExplorer>;
@@ -32,6 +35,10 @@ export const useEditorViewHandlers = ({
   hiveName,
 }: EditorViewHandlersProps) => {
   const { t } = useTranslation();
+  const editorStatesRef = useEditorStatesRef();
+  const clearEditorStates = useEditorStateStore(
+    (state) => state.clearEditorStates,
+  );
 
   const handleOnNodeClick = useCallback(
     async (node: FileTreeNode) => {
@@ -43,11 +50,27 @@ export const useEditorViewHandlers = ({
       setSelectedNode(node);
       setSelectedNoteNode(node);
 
+      // if it's just a directory, then end here
       if (node.value.isDirectory) return;
 
+      // search for state of this node already in the memory only storage first
+      const noteState = editorStatesRef.current[node.value.path];
+
+      // TODO: there is some issue with state mismatch when the editor gets
+      // remounted, transaction and range errors are occurring, probably some
+      // state mismatches because of different instances
+      if (noteState) {
+        editor?.view.updateState(noteState);
+        editor?.chain().setContent(noteState.doc.content).focus("end").run();
+        return;
+      }
+
+      // if there is none, just read from the filesystem
       const noteContent = await readNote(node.value.path);
 
-      if (noteContent) editor?.commands.setContent(noteContent.editorContent);
+      if (noteContent) {
+        resetEditorContent({ editor, newContent: noteContent.editorContent });
+      }
     },
     [editor, readNote, setSelectedNode, setSelectedNoteNode],
   );
@@ -115,6 +138,11 @@ export const useEditorViewHandlers = ({
     },
     [moveNote],
   );
+
+  // very important otherwise the states get messed up
+  useEffect(() => {
+    return () => clearEditorStates();
+  }, []);
 
   return {
     handleOnNodeClick,

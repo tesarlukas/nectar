@@ -26,7 +26,7 @@ import History from "@tiptap/extension-history";
 import FileHandler from "@tiptap-pro/extension-file-handler";
 import Link from "@tiptap/extension-link";
 import { useEditorStateStore } from "@/stores/useEditorStateStore";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { debounce } from "@/utils/debounce";
 
 const extensions = [
@@ -183,18 +183,33 @@ const extensions = [
   Link,
 ];
 
+const TEMP_NOTE_ID = "temp";
+
 const content = `
 <h1>Hello, welcome to the app Nectar!</h1> 
 `;
 
-export const useEditor = () => {
-  const editorStatesRef = useRef(useEditorStateStore.getState().editorStates);
+interface UseEditor {
+  noteId?: string;
+}
+
+export const useEditor = ({ noteId }: UseEditor) => {
+  const addEditorState = useEditorStateStore((state) => state.addEditorState);
+
   const debouncedUpdateEditorStates = useCallback(
-    debounce((editor: Editor) => {
-      editorStatesRef.current.id = editor.state;
+    debounce((noteId: string, editor: Editor) => {
+      addEditorState(noteId, editor.view.state);
     }, 500),
     [],
   );
+
+  const handleEditorOnClick = () => {
+    editor?.commands.focus();
+  };
+
+  useEffect(() => {
+    return () => debouncedUpdateEditorStates.cancel();
+  }, []);
 
   const editor = useTiptapEditor({
     extensions,
@@ -207,23 +222,10 @@ export const useEditor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      debouncedUpdateEditorStates(editor);
+      debouncedUpdateEditorStates(noteId ?? TEMP_NOTE_ID, editor);
     },
     shouldRerenderOnTransaction: false,
   });
-
-  const handleEditorOnClick = () => {
-    editor?.commands.focus();
-  };
-
-  // Connect to the store on mount, disconnect on unmount, catch state-changes in a reference
-  useEffect(() => {
-    const unsubscribe = useEditorStateStore.subscribe((state) => {
-      editorStatesRef.current = state.editorStates;
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   return {
     editor,

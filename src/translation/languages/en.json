@@ -24,6 +24,11 @@
     }
   },
   "editorView": {
-    "characterCount": "Character Count"
+    "characterCount": "Character Count",
+    "replace": "Replace",
+    "replaceAll": "Replace All",
+    "hideReplace": "Hide Replace",
+    "replaceWith": "Replace With",
+    "search": "Search"
   }
 }

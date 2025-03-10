@@ -10,7 +10,7 @@ export const BottomMenu = ({
   charCount,
   children,
 }: PropsWithChildren<BottomMenuProps>) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("editorView");
 
   return (
     <>

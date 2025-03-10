@@ -13,5 +13,6 @@
     "eventsystem",
     "sonner"
   ],
-  "ignorePaths": ["node_modules"]
+  "language": "en,cs-CZ",
+  "ignorePaths": ["node_modules", "src-tauri", "pnpm-lock.yaml"]
 }

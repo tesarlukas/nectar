@@ -104,3 +104,11 @@
 .lucide path {
   stroke-width: 2;
 }
+
+.search-result {
+  @apply bg-blue-200;
+}
+
+.search-result-current {
+  @apply bg-yellow-200;
+}

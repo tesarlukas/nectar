@@ -47,8 +47,8 @@ export const EditorView = () => {
     hiveName,
   });
 
-  // Set up shortcuts and event listeners
-  useShortcuts(ActionId.SaveNote, () => emitter(ActionId.SaveNote), {
+  const emitSaveNote = () => emitter(ActionId.SaveNote);
+  useShortcuts(ActionId.SaveNote, emitSaveNote, {
     enableOnContentEditable: true,
   });
   useShortcuts(ActionId.CreateNewNote, () => emitter(ActionId.CreateNewNote));
@@ -95,7 +95,7 @@ export const EditorView = () => {
         </ResizablePanelGroup>
         <BottomMenu charCount={editor?.storage.characterCount.characters()}>
           <Button onClick={() => toast("Welcome")}>Toast click</Button>
-          <Button onClick={handleOnSave}>Save</Button>
+          <Button onClick={emitSaveNote}>Save</Button>
         </BottomMenu>
       </div>
     </>

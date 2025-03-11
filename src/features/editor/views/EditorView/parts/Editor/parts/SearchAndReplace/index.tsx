@@ -1,30 +1,28 @@
-import { useState, useCallback } from "react";
-import { Search, Replace, ArrowUpDown, ChevronDown } from "lucide-react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { Search, Replace, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
+import { Toggle } from "@/components/ui/toggle";
+import { Typography } from "@/components/Typography";
+import { useTranslation } from "react-i18next";
+import type { Editor } from "@tiptap/react";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
 // Define search options interface
 interface SearchOptions {
   matchCase: boolean;
-  wholeWord: boolean;
   useRegex: boolean;
 }
 
 // Define search params interface
-interface SearchParams {
+export interface SearchParams {
   term: string;
   options: SearchOptions;
 }
 
 // Define replace params interface
-interface ReplaceParams {
+export interface ReplaceParams {
   searchTerm: string;
   replaceTerm: string;
   options: SearchOptions;
@@ -32,73 +30,79 @@ interface ReplaceParams {
 
 // Component props interface
 interface SearchReplaceComponentProps {
+  editor: Editor | null;
   onSearch?: (params: SearchParams) => void;
   onReplace?: (params: ReplaceParams) => void;
   onReplaceAll?: (params: ReplaceParams) => void;
+  onCaseToggle?: (caseToggle: boolean) => void;
   onNext?: (params: SearchParams) => void;
   onPrevious?: (params: SearchParams) => void;
-  totalMatches?: number;
-  currentMatch?: number;
+  getTotalMatches?: () => number;
+  getCurrentMatch?: () => number;
   className?: string;
 }
 
+const RESULT_INDEX_OFFSET = 1 as const;
+
 export const SearchReplaceComponent = ({
+  editor,
   onSearch,
   onReplace,
   onReplaceAll,
+  onCaseToggle,
   onNext,
   onPrevious,
-  totalMatches = 0,
-  currentMatch = 0,
   className = "",
 }: SearchReplaceComponentProps) => {
-  // State for search and replace
+  const { t } = useTranslation("editorView");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const emitter = useEventEmitter();
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [replaceTerm, setReplaceTerm] = useState<string>("");
   const [showReplace, setShowReplace] = useState<boolean>(false);
-  const [advancedOpen, setAdvancedOpen] = useState<boolean>(false);
-
-  // Search options
   const [matchCase, setMatchCase] = useState<boolean>(false);
-  const [wholeWord, setWholeWord] = useState<boolean>(false);
+
   const [useRegex, setUseRegex] = useState<boolean>(false);
+
+  const [totalMatches, setTotalMatches] = useState<number>(
+    editor?.storage.searchAndReplace.results.length,
+  );
+  const [currentMatchIndex, setCurrentMatchIndex] = useState<number>(
+    editor?.storage.searchAndReplace.resultIndex,
+  );
 
   // Handle search
   const handleSearch = useCallback(() => {
     if (!searchTerm) return;
 
-    onSearch?.({
-      term: searchTerm,
-      options: {
-        matchCase,
-        wholeWord,
-        useRegex,
-      },
-    });
-  }, [searchTerm, matchCase, wholeWord, useRegex, onSearch]);
+    editor?.commands.setSearchTerm(searchTerm);
+
+    editor?.commands.resetIndex();
+    setTotalMatches(editor?.storage.searchAndReplace.results.length);
+    setCurrentMatchIndex(
+      editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
+    );
+  }, [searchTerm, matchCase, useRegex]);
 
   // Handle next/previous match
   const handleNext = useCallback(() => {
-    onNext?.({
-      term: searchTerm,
-      options: {
-        matchCase,
-        wholeWord,
-        useRegex,
-      },
-    });
-  }, [searchTerm, matchCase, wholeWord, useRegex, onNext]);
+    if (!searchTerm) return;
+
+    editor?.commands.nextSearchResult();
+    setCurrentMatchIndex(
+      editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
+    );
+  }, [searchTerm, matchCase, useRegex, onNext]);
 
   const handlePrevious = useCallback(() => {
-    onPrevious?.({
-      term: searchTerm,
-      options: {
-        matchCase,
-        wholeWord,
-        useRegex,
-      },
-    });
-  }, [searchTerm, matchCase, wholeWord, useRegex, onPrevious]);
+    if (!searchTerm) return;
+
+    editor?.commands.previousSearchResult();
+    setCurrentMatchIndex(
+      editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
+    );
+  }, [searchTerm, matchCase, useRegex, onPrevious]);
 
   // Handle replace
   const handleReplace = useCallback(() => {
@@ -107,11 +111,17 @@ export const SearchReplaceComponent = ({
       replaceTerm,
       options: {
         matchCase,
-        wholeWord,
         useRegex,
       },
     });
-  }, [searchTerm, replaceTerm, matchCase, wholeWord, useRegex, onReplace]);
+
+    editor?.commands.setReplaceTerm(replaceTerm);
+    editor?.commands.replace();
+    setTotalMatches(editor?.storage.searchAndReplace.results.length);
+    setCurrentMatchIndex(
+      editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
+    );
+  }, [searchTerm, replaceTerm, matchCase, useRegex, onReplace, editor]);
 
   // Handle replace all
   const handleReplaceAll = useCallback(() => {
@@ -120,42 +130,51 @@ export const SearchReplaceComponent = ({
       replaceTerm,
       options: {
         matchCase,
-        wholeWord,
         useRegex,
       },
     });
-  }, [searchTerm, replaceTerm, matchCase, wholeWord, useRegex, onReplaceAll]);
 
-  // Search on Enter key
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
+    editor?.commands.setReplaceTerm(replaceTerm);
+    editor?.commands.replaceAll();
+    setTotalMatches(editor?.storage.searchAndReplace.results.length);
+    setCurrentMatchIndex(
+      editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
+    );
+  }, [searchTerm, replaceTerm, matchCase, useRegex, onReplaceAll]);
 
-  // Replace on Enter key
-  const handleReplaceKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleReplace();
-    }
-  };
+  const handleCaseToggle = useCallback(() => {
+    setMatchCase((prevState) => {
+      editor?.commands.setCaseSensitive(!prevState);
+      return !prevState;
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      editor?.commands.setSearchTerm("");
+    };
+  }, []);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [inputRef.current]);
 
   return (
     <div
-      className={`p-4 border rounded-lg shadow-sm bg-background ${className}`}
+      className={`p-2 border rounded-lg shadow-sm bg-background ${className}`}
     >
-      <div className="space-y-3">
+      <div className="space-y-2">
         {/* Search section */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
+              ref={inputRef}
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSearchTerm(e.target.value)
               }
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Search"
+              placeholder={t("search")}
               className="pl-8"
             />
           </div>
@@ -165,28 +184,36 @@ export const SearchReplaceComponent = ({
               size="icon"
               variant="ghost"
               onClick={handlePrevious}
-              disabled={!searchTerm || totalMatches === 0}
-              title="Previous match"
+              title={t("previousMatch")}
+              disabled={!searchTerm}
             >
-              <ArrowUpDown className="h-4 w-4 rotate-90" />
+              <ArrowLeft className="h-4 w-4" />
             </Button>
 
             <Button
               size="icon"
               variant="ghost"
               onClick={handleNext}
-              disabled={!searchTerm || totalMatches === 0}
-              title="Next match"
+              title={t("nextMatch")}
+              disabled={!searchTerm}
             >
-              <ArrowUpDown className="h-4 w-4 -rotate-90" />
+              <ArrowRight className="h-4 w-4" />
             </Button>
+
+            <Toggle
+              title={t("caseSensitive")}
+              onPressedChange={handleCaseToggle}
+              pressed={matchCase}
+            >
+              <Typography>C</Typography>
+            </Toggle>
 
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowReplace(!showReplace)}
             >
-              {showReplace ? "Hide Replace" : "Replace"}
+              {showReplace ? t("hideReplace") : t("replace")}
             </Button>
 
             <Button
@@ -204,7 +231,7 @@ export const SearchReplaceComponent = ({
         {totalMatches > 0 && (
           <div className="text-xs text-muted-foreground flex justify-between items-center">
             <Badge variant="secondary" className="font-normal">
-              {currentMatch} of {totalMatches} matches
+              {currentMatchIndex} of {totalMatches} matches
             </Badge>
           </div>
         )}
@@ -219,94 +246,20 @@ export const SearchReplaceComponent = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setReplaceTerm(e.target.value)
                 }
-                onKeyDown={handleReplaceKeyDown}
-                placeholder="Replace with"
+                placeholder={t("replaceWith")}
                 className="pl-8"
               />
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReplace}
-              disabled={!searchTerm || totalMatches === 0}
-            >
-              Replace
+            <Button variant="outline" size="sm" onClick={handleReplace}>
+              {t("replace")}
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReplaceAll}
-              disabled={!searchTerm || totalMatches === 0}
-            >
-              Replace All
+            <Button variant="outline" size="sm" onClick={handleReplaceAll}>
+              {t("replaceAll")}
             </Button>
           </div>
         )}
-
-        {/* Advanced options */}
-        <Collapsible
-          open={advancedOpen}
-          onOpenChange={setAdvancedOpen}
-          className="mt-2"
-        >
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex w-full justify-between p-2 h-auto"
-            >
-              <span className="text-xs">Advanced Options</span>
-              <ChevronDown
-                className={`h-4 w-4 transition-transform ${advancedOpen ? "rotate-180" : ""}`}
-              />
-            </Button>
-          </CollapsibleTrigger>
-
-          <CollapsibleContent className="pt-2">
-            <div className="flex flex-wrap gap-x-4 gap-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="matchCase"
-                  checked={matchCase}
-                  onCheckedChange={(checked: boolean | "indeterminate") =>
-                    setMatchCase(checked === true)
-                  }
-                />
-                <label htmlFor="matchCase" className="text-sm cursor-pointer">
-                  Match case
-                </label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="wholeWord"
-                  checked={wholeWord}
-                  onCheckedChange={(checked: boolean | "indeterminate") =>
-                    setWholeWord(checked === true)
-                  }
-                />
-                <label htmlFor="wholeWord" className="text-sm cursor-pointer">
-                  Whole word
-                </label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="useRegex"
-                  checked={useRegex}
-                  onCheckedChange={(checked: boolean | "indeterminate") =>
-                    setUseRegex(checked === true)
-                  }
-                />
-                <label htmlFor="useRegex" className="text-sm cursor-pointer">
-                  Use regex
-                </label>
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
 import { SearchReplaceComponent } from "./parts/SearchAndReplace";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -24,13 +25,15 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
   const { t } = useTranslation();
   const [isSaved, setIsSaved] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
+  const emitter = useEventEmitter();
 
   useEventListener(ActionId.SaveNote, () => setIsSaved(true));
-  useShortcuts(
-    ActionId.SearchReplace,
-    () => setIsSearching((prevState) => !prevState),
-    { enableOnContentEditable: true },
+  useEventListener(ActionId.SearchReplace, () =>
+    setIsSearching((prevState) => !prevState),
   );
+  useShortcuts(ActionId.SearchReplace, () => emitter(ActionId.SearchReplace), {
+    enableOnContentEditable: true,
+  });
 
   useEffect(() => {
     const handleOnUpdate = () => {
@@ -46,7 +49,6 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
 
   return (
     <>
-      {isSearching && <SearchReplaceComponent />}
       <div className="flex flex-row items-center justify-between mb-2">
         <Typography variant="h2" weight="normal" className="no-underline">
           {stripJson(selectedNoteNode?.value.name)}
@@ -71,6 +73,7 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       <div>
         <BubbleMenu editor={editor} />
       </div>
+      {isSearching && <SearchReplaceComponent editor={editor} />}
     </>
   );
 };

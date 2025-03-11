@@ -9,49 +9,16 @@ import { useTranslation } from "react-i18next";
 import type { Editor } from "@tiptap/react";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
-// Define search options interface
-interface SearchOptions {
-  matchCase: boolean;
-  useRegex: boolean;
-}
-
-// Define search params interface
-export interface SearchParams {
-  term: string;
-  options: SearchOptions;
-}
-
-// Define replace params interface
-export interface ReplaceParams {
-  searchTerm: string;
-  replaceTerm: string;
-  options: SearchOptions;
-}
-
 // Component props interface
 interface SearchReplaceComponentProps {
-  editor: Editor | null;
-  onSearch?: (params: SearchParams) => void;
-  onReplace?: (params: ReplaceParams) => void;
-  onReplaceAll?: (params: ReplaceParams) => void;
-  onCaseToggle?: (caseToggle: boolean) => void;
-  onNext?: (params: SearchParams) => void;
-  onPrevious?: (params: SearchParams) => void;
-  getTotalMatches?: () => number;
-  getCurrentMatch?: () => number;
   className?: string;
+  editor: Editor | null;
 }
 
 const RESULT_INDEX_OFFSET = 1 as const;
 
 export const SearchReplaceComponent = ({
   editor,
-  onSearch,
-  onReplace,
-  onReplaceAll,
-  onCaseToggle,
-  onNext,
-  onPrevious,
   className = "",
 }: SearchReplaceComponentProps) => {
   const { t } = useTranslation("editorView");
@@ -61,9 +28,9 @@ export const SearchReplaceComponent = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [replaceTerm, setReplaceTerm] = useState<string>("");
   const [showReplace, setShowReplace] = useState<boolean>(false);
-  const [matchCase, setMatchCase] = useState<boolean>(false);
+  const [isCaseSensitive, setIsCaseSensitive] = useState<boolean>(false);
 
-  const [useRegex, setUseRegex] = useState<boolean>(false);
+  const [isRegex, setIsRegex] = useState<boolean>(false);
 
   const [totalMatches, setTotalMatches] = useState<number>(
     editor?.storage.searchAndReplace.results.length,
@@ -83,7 +50,7 @@ export const SearchReplaceComponent = ({
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, matchCase, useRegex]);
+  }, [searchTerm, isCaseSensitive, isRegex]);
 
   // Handle next/previous match
   const handleNext = useCallback(() => {
@@ -93,7 +60,7 @@ export const SearchReplaceComponent = ({
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, matchCase, useRegex, onNext]);
+  }, [searchTerm, isCaseSensitive, isRegex]);
 
   const handlePrevious = useCallback(() => {
     if (!searchTerm) return;
@@ -102,48 +69,31 @@ export const SearchReplaceComponent = ({
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, matchCase, useRegex, onPrevious]);
+  }, [searchTerm, isCaseSensitive, isRegex]);
 
   // Handle replace
   const handleReplace = useCallback(() => {
-    onReplace?.({
-      searchTerm,
-      replaceTerm,
-      options: {
-        matchCase,
-        useRegex,
-      },
-    });
-
     editor?.commands.setReplaceTerm(replaceTerm);
     editor?.commands.replace();
     setTotalMatches(editor?.storage.searchAndReplace.results.length);
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, replaceTerm, matchCase, useRegex, onReplace, editor]);
+  }, [searchTerm, replaceTerm, isCaseSensitive, isRegex, editor]);
 
   // Handle replace all
   const handleReplaceAll = useCallback(() => {
-    onReplaceAll?.({
-      searchTerm,
-      replaceTerm,
-      options: {
-        matchCase,
-        useRegex,
-      },
-    });
-
     editor?.commands.setReplaceTerm(replaceTerm);
     editor?.commands.replaceAll();
+
     setTotalMatches(editor?.storage.searchAndReplace.results.length);
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, replaceTerm, matchCase, useRegex, onReplaceAll]);
+  }, [searchTerm, replaceTerm, isCaseSensitive, isRegex]);
 
   const handleCaseToggle = useCallback(() => {
-    setMatchCase((prevState) => {
+    setIsCaseSensitive((prevState) => {
       editor?.commands.setCaseSensitive(!prevState);
       return !prevState;
     });
@@ -203,7 +153,7 @@ export const SearchReplaceComponent = ({
             <Toggle
               title={t("caseSensitive")}
               onPressedChange={handleCaseToggle}
-              pressed={matchCase}
+              pressed={isCaseSensitive}
             >
               <Typography>C</Typography>
             </Toggle>
@@ -227,7 +177,6 @@ export const SearchReplaceComponent = ({
           </div>
         </div>
 
-        {/* Match count indicator */}
         {totalMatches > 0 && (
           <div className="text-xs text-muted-foreground flex justify-between items-center">
             <Badge variant="secondary" className="font-normal">
@@ -236,7 +185,6 @@ export const SearchReplaceComponent = ({
           </div>
         )}
 
-        {/* Replace section */}
         {showReplace && (
           <div className="flex items-center gap-2 mt-2">
             <div className="relative flex-1">

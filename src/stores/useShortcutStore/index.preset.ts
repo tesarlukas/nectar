@@ -14,4 +14,10 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.SaveNote]: `${ShortcutContext.Global}:ctrl+s`,
   [ActionId.CreateNewNote]: `${ShortcutContext.Global}:ctrl+a`,
   [ActionId.SearchReplace]: `${ShortcutContext.Global}:ctrl+f`,
+  [ActionId.NextSearch]: `${ShortcutContext.Global}:ctrl+n`,
+  [ActionId.PreviousSearch]: `${ShortcutContext.Global}:ctrl+shift+n`,
+  [ActionId.ToggleCaseSensitiveSearch]: `${ShortcutContext.Global}:ctrl+c`,
+  [ActionId.ToggleReplace]: `${ShortcutContext.Global}:ctrl+r`,
+  [ActionId.FocusEditor]: `${ShortcutContext.Global}:ctrl+l`,
+  [ActionId.FocusExplorer]: `${ShortcutContext.Global}:ctrl+h`,
 } as const;

@@ -1,13 +1,16 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import { Search, Replace, ArrowRight, ArrowLeft } from "lucide-react";
+import { Typography } from "@/components/Typography";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
-import { Typography } from "@/components/Typography";
-import { useTranslation } from "react-i18next";
-import type { Editor } from "@tiptap/react";
+import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { debounce } from "@/utils/debounce";
+import type { Editor, Range } from "@tiptap/react";
+import { ArrowLeft, ArrowRight, Replace, Search } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 // Component props interface
 interface SearchReplaceComponentProps {
@@ -16,13 +19,15 @@ interface SearchReplaceComponentProps {
 }
 
 const RESULT_INDEX_OFFSET = 1 as const;
+const ON_UPDATE_DEBOUNCE = 750 as const;
 
 export const SearchReplaceComponent = ({
   editor,
   className = "",
 }: SearchReplaceComponentProps) => {
   const { t } = useTranslation("editorView");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
   const emitter = useEventEmitter();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -30,7 +35,8 @@ export const SearchReplaceComponent = ({
   const [showReplace, setShowReplace] = useState<boolean>(false);
   const [isCaseSensitive, setIsCaseSensitive] = useState<boolean>(false);
 
-  const [isRegex, setIsRegex] = useState<boolean>(false);
+  // disabled for now
+  //const [isRegex, setIsRegex] = useState<boolean>(false);
 
   const [totalMatches, setTotalMatches] = useState<number>(
     editor?.storage.searchAndReplace.results.length,
@@ -42,15 +48,16 @@ export const SearchReplaceComponent = ({
   // Handle search
   const handleSearch = useCallback(() => {
     if (!searchTerm) return;
+    console.log("am I getting triggered?");
 
     editor?.commands.setSearchTerm(searchTerm);
-
     editor?.commands.resetIndex();
+
     setTotalMatches(editor?.storage.searchAndReplace.results.length);
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, isCaseSensitive, isRegex]);
+  }, [searchTerm, isCaseSensitive]);
 
   // Handle next/previous match
   const handleNext = useCallback(() => {
@@ -60,7 +67,8 @@ export const SearchReplaceComponent = ({
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, isCaseSensitive, isRegex]);
+    goToSelection();
+  }, [searchTerm, isCaseSensitive]);
 
   const handlePrevious = useCallback(() => {
     if (!searchTerm) return;
@@ -69,17 +77,19 @@ export const SearchReplaceComponent = ({
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, isCaseSensitive, isRegex]);
+    goToSelection();
+  }, [searchTerm, isCaseSensitive]);
 
   // Handle replace
   const handleReplace = useCallback(() => {
     editor?.commands.setReplaceTerm(replaceTerm);
     editor?.commands.replace();
+
     setTotalMatches(editor?.storage.searchAndReplace.results.length);
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, replaceTerm, isCaseSensitive, isRegex, editor]);
+  }, [searchTerm, replaceTerm, isCaseSensitive, editor]);
 
   // Handle replace all
   const handleReplaceAll = useCallback(() => {
@@ -90,7 +100,7 @@ export const SearchReplaceComponent = ({
     setCurrentMatchIndex(
       editor?.storage.searchAndReplace.resultIndex + RESULT_INDEX_OFFSET,
     );
-  }, [searchTerm, replaceTerm, isCaseSensitive, isRegex]);
+  }, [searchTerm, replaceTerm, isCaseSensitive]);
 
   const handleCaseToggle = useCallback(() => {
     setIsCaseSensitive((prevState) => {
@@ -99,6 +109,59 @@ export const SearchReplaceComponent = ({
     });
   }, []);
 
+  const toggleFocus = useCallback(() => {
+    if (document.activeElement === searchInputRef.current) {
+      replaceInputRef.current?.focus();
+    } else {
+      searchInputRef.current?.focus();
+    }
+  }, []);
+
+  const goToSelection = useCallback(() => {
+    if (!editor) return;
+
+    const { results, resultIndex } = editor.storage.searchAndReplace;
+    const position: Range = results[resultIndex];
+
+    if (!position) return;
+
+    editor.commands.setTextSelection(position);
+
+    const { node } = editor.view.domAtPos(editor.state.selection.anchor);
+
+    node instanceof HTMLElement &&
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
+
+  useShortcuts(ActionId.SearchReplace, () => emitter(ActionId.SearchReplace), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(ActionId.NextSearch, handleNext, {
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(ActionId.PreviousSearch, handlePrevious, {
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(ActionId.ToggleCaseSensitiveSearch, handleCaseToggle, {
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(
+    ActionId.ToggleReplace,
+    () => setShowReplace((prevState) => !prevState),
+    {
+      enableOnFormTags: ["INPUT"],
+    },
+  );
+  useShortcuts(NonAlphas.Enter, handleSearch, {
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(NonAlphas.Escape, () => emitter(ActionId.SearchReplace), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(NonAlphas.Tab, toggleFocus, {
+    enableOnFormTags: ["INPUT"],
+  });
+
   useEffect(() => {
     return () => {
       editor?.commands.setSearchTerm("");
@@ -106,8 +169,18 @@ export const SearchReplaceComponent = ({
   }, []);
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, [inputRef.current]);
+    searchInputRef.current?.focus();
+  }, [searchInputRef.current]);
+
+  useEffect(() => {
+    const debouncedOnUpdate = debounce(handleSearch, ON_UPDATE_DEBOUNCE);
+
+    editor?.on("update", debouncedOnUpdate);
+
+    return () => {
+      editor?.off("update", debouncedOnUpdate);
+    };
+  }, [editor, handleSearch]);
 
   return (
     <div
@@ -119,7 +192,7 @@ export const SearchReplaceComponent = ({
           <div className="relative flex-1">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              ref={inputRef}
+              ref={searchInputRef}
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSearchTerm(e.target.value)
@@ -190,6 +263,7 @@ export const SearchReplaceComponent = ({
             <div className="relative flex-1">
               <Replace className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
+                ref={replaceInputRef}
                 value={replaceTerm}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setReplaceTerm(e.target.value)

@@ -48,10 +48,17 @@ export const EditorView = () => {
   });
 
   const emitSaveNote = () => emitter(ActionId.SaveNote);
+
   useShortcuts(ActionId.SaveNote, emitSaveNote, {
     enableOnContentEditable: true,
+    enableOnFormTags: ["INPUT"],
   });
   useShortcuts(ActionId.CreateNewNote, () => emitter(ActionId.CreateNewNote));
+  useShortcuts(ActionId.SearchReplace, () => emitter(ActionId.SearchReplace), {
+    enableOnContentEditable: true,
+  });
+  useShortcuts(ActionId.FocusEditor, () => editor?.commands.focus());
+
   useEventListener(ActionId.CreateNewNote, () => console.log("hello"));
   useEventListener(ActionId.SaveNote, handleOnSave);
 
@@ -95,7 +102,6 @@ export const EditorView = () => {
         </ResizablePanelGroup>
         <BottomMenu charCount={editor?.storage.characterCount.characters()}>
           <Button onClick={() => toast("Welcome")}>Toast click</Button>
-          <Button onClick={emitSaveNote}>Save</Button>
         </BottomMenu>
       </div>
     </>

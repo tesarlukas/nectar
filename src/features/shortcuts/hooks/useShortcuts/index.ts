@@ -1,12 +1,16 @@
 import { useHotkeys } from "react-hotkeys-hook";
-import { type ActionCallback, ActionId } from "@/features/events/eventEmitter";
+import {
+  type ActionCallback,
+  ActionId,
+  type NonAlphas,
+} from "@/features/events/eventEmitter";
 import type { OptionsOrDependencyArray } from "react-hotkeys-hook/dist/types";
 import { useShortcutsStore } from "@/stores/useShortcutStore";
 import type { KeyboardShortcut } from "@/stores/useShortcutStore/index.preset";
 import { splitShortcut } from "@/stores/useShortcutStore/utils/shortcutHelpers";
 
 export const useShortcuts = (
-  shortcutOrActionId: ActionId | KeyboardShortcut,
+  shortcutOrActionId: ActionId | KeyboardShortcut | NonAlphas,
   handler: ActionCallback,
   options?: OptionsOrDependencyArray,
   dependencies?: OptionsOrDependencyArray,

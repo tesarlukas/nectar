@@ -12,8 +12,6 @@ import { ActionId } from "@/features/events/eventEmitter";
 import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
 import { SearchReplaceComponent } from "./parts/SearchAndReplace";
-import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
-import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -25,14 +23,15 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
   const { t } = useTranslation();
   const [isSaved, setIsSaved] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
-  const emitter = useEventEmitter();
 
   useEventListener(ActionId.SaveNote, () => setIsSaved(true));
-  useEventListener(ActionId.SearchReplace, () =>
-    setIsSearching((prevState) => !prevState),
-  );
-  useShortcuts(ActionId.SearchReplace, () => emitter(ActionId.SearchReplace), {
-    enableOnContentEditable: true,
+  useEventListener(ActionId.SearchReplace, () => {
+    setIsSearching((prevState) => {
+      if (prevState) {
+        editor?.commands.focus();
+      }
+      return !prevState;
+    });
   });
 
   useEffect(() => {

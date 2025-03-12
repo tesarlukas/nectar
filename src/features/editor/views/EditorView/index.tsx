@@ -57,7 +57,9 @@ export const EditorView = () => {
   useShortcuts(ActionId.SearchReplace, () => emitter(ActionId.SearchReplace), {
     enableOnContentEditable: true,
   });
-  useShortcuts(ActionId.FocusEditor, () => editor?.commands.focus());
+  useShortcuts(ActionId.FocusEditor, () => editor?.commands.focus(), {
+    enableOnFormTags: ["INPUT"],
+  });
 
   useEventListener(ActionId.CreateNewNote, () => console.log("hello"));
   useEventListener(ActionId.SaveNote, handleOnSave);

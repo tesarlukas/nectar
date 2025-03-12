@@ -11,6 +11,7 @@ import type { Editor, Range } from "@tiptap/react";
 import { ArrowLeft, ArrowRight, Replace, Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useEditorEffect } from "../../hooks/useEditorEffect";
 
 // Component props interface
 interface SearchReplaceComponentProps {
@@ -172,15 +173,10 @@ export const SearchReplaceComponent = ({
     searchInputRef.current?.focus();
   }, [searchInputRef.current]);
 
-  useEffect(() => {
-    const debouncedOnUpdate = debounce(handleSearch, ON_UPDATE_DEBOUNCE);
-
-    editor?.on("update", debouncedOnUpdate);
-
-    return () => {
-      editor?.off("update", debouncedOnUpdate);
-    };
-  }, [editor, handleSearch]);
+  useEditorEffect(editor, "update", handleSearch, {
+    useDebounce: true,
+    debounceTime: ON_UPDATE_DEBOUNCE,
+  });
 
   return (
     <div

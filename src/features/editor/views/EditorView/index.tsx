@@ -9,7 +9,7 @@ import { useEditor } from "./parts/Editor/hooks/useEditor";
 import { Editor } from "./parts/Editor";
 import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export const EditorView = () => {
   const { hiveName, isHydrated } = useHiveStore();
   const navigate = useNavigate();
   const emitter = useEventEmitter();
+  const explorerRef = useRef<HTMLDivElement>(null);
 
   const fileExplorer = useFileExplorer();
   const { nodes, selectedNode, selectedNoteNode, initializeFileTree } =
@@ -60,6 +61,9 @@ export const EditorView = () => {
   useShortcuts(ActionId.FocusEditor, () => editor?.commands.focus(), {
     enableOnFormTags: ["INPUT"],
   });
+  useShortcuts(ActionId.FocusExplorer, () => explorerRef.current?.focus(), {
+    enableOnContentEditable: true,
+  });
 
   useEventListener(ActionId.CreateNewNote, () => console.log("hello"));
   useEventListener(ActionId.SaveNote, handleOnSave);
@@ -80,6 +84,7 @@ export const EditorView = () => {
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={20} minSize={10}>
             <FileExplorer
+              ref={explorerRef}
               nodes={nodes}
               onNodeClick={handleOnNodeClick}
               selectedNode={selectedNode}

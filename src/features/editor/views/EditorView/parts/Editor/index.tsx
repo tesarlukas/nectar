@@ -5,13 +5,14 @@ import {
 } from "@tiptap/react";
 import { BubbleMenu } from "./parts/BubbleMenu";
 import type { FileTreeNode } from "../FileExplorer/hooks/useFileExplorer";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { ActionId } from "@/features/events/eventEmitter";
 import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
 import { SearchReplaceComponent } from "./parts/SearchAndReplace";
+import { useEditorEffect } from "./hooks/useEditorEffect";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -34,17 +35,11 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
     });
   });
 
-  useEffect(() => {
-    const handleOnUpdate = () => {
-      setIsSaved(false);
-    };
+  const handleOnUpdate = useCallback(() => {
+    setIsSaved(false);
+  }, []);
 
-    editor?.on("update", handleOnUpdate);
-
-    return () => {
-      editor?.off("update", handleOnUpdate);
-    };
-  });
+  useEditorEffect(editor, "update", handleOnUpdate);
 
   return (
     <>

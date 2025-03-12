@@ -49,7 +49,6 @@ export const SearchReplaceComponent = ({
   // Handle search
   const handleSearch = useCallback(() => {
     if (!searchTerm) return;
-    console.log("am I getting triggered?");
 
     editor?.commands.setSearchTerm(searchTerm);
     editor?.commands.resetIndex();

@@ -6,7 +6,6 @@ import { Toggle } from "@/components/ui/toggle";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
-import { debounce } from "@/utils/debounce";
 import type { Editor, Range } from "@tiptap/react";
 import { ArrowLeft, ArrowRight, Replace, Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";

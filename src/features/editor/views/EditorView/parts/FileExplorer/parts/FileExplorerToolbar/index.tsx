@@ -61,6 +61,7 @@ export const FileExplorerToolbar = ({
                       type: "file",
                     })
                   }
+                  tabIndex={-1}
                 >
                   <FilePlus className="h-4 w-4" />
                 </Button>
@@ -80,6 +81,7 @@ export const FileExplorerToolbar = ({
                       type: "directory",
                     })
                   }
+                  tabIndex={-1}
                 >
                   <FolderPlus className="h-4 w-4" />
                 </Button>
@@ -94,6 +96,7 @@ export const FileExplorerToolbar = ({
                   size="icon"
                   className="h-8 w-8"
                   onClick={onRefresh}
+                  tabIndex={-1}
                 >
                   <RefreshCcw className="h-4 w-4" />
                 </Button>
@@ -108,6 +111,7 @@ export const FileExplorerToolbar = ({
                   size="icon"
                   className="h-8 w-8"
                   onClick={onToggleSortOrder}
+                  tabIndex={-1}
                 >
                   {sortOrder === "asc" ? (
                     <SortAsc className="h-4 w-4" />

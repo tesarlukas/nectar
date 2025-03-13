@@ -65,7 +65,6 @@ export const EditorView = () => {
     enableOnContentEditable: true,
   });
 
-  useEventListener(ActionId.CreateNewNote, () => console.log("hello"));
   useEventListener(ActionId.SaveNote, handleOnSave);
 
   useEffect(() => {

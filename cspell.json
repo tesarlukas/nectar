@@ -11,7 +11,8 @@
     "homebase",
     "partialize",
     "eventsystem",
-    "sonner"
+    "sonner",
+    "focusables"
   ],
   "language": "en,cs-CZ",
   "ignorePaths": ["node_modules", "src-tauri", "pnpm-lock.yaml"]

@@ -20,6 +20,10 @@ import {
 } from "@/components/ui/context-menu";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
 import { CreateNodeInput, RenameNodeInput } from "../NodeInput";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { ActionId } from "@/features/events/eventEmitter";
+import { useShortcutsStore } from "@/stores/useShortcutStore";
+import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
@@ -50,6 +54,7 @@ export const FileExplorerNode = ({
   const hasChildren =
     node.value.isDirectory && node.children && node.children.length > 0;
   const isSelected = node.value.path === selectedPath;
+  const shortcuts = useShortcutsStore((state) => state.shortcuts);
 
   const [createInput, setCreateInput] = useState<{
     isOpen: boolean;
@@ -113,6 +118,26 @@ export const FileExplorerNode = ({
     onMove?.(sourceNode, node);
   };
 
+  const shortcutButtonRef = useShortcuts(
+    [ActionId.CreateNewNote, ActionId.CreateNewDir],
+    (_, { hotkey }) => {
+      switch (hotkey) {
+        case getShortcutKeyPart(shortcuts[ActionId.CreateNewNote]):
+          setCreateInput({
+            isOpen: true,
+            type: "file",
+          });
+          break;
+        case getShortcutKeyPart(shortcuts[ActionId.CreateNewDir]):
+          setCreateInput({
+            isOpen: true,
+            type: "directory",
+          });
+          break;
+      }
+    },
+  );
+
   const [isRenaming, setIsRenaming] = useState(false);
 
   return (
@@ -120,6 +145,7 @@ export const FileExplorerNode = ({
       <ContextMenu>
         <ContextMenuTrigger>
           <Button
+            ref={shortcutButtonRef}
             variant="ghost"
             size="sm"
             className={cn(

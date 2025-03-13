@@ -10,6 +10,7 @@ export enum NonAlphas {
 export enum ActionId {
   SaveNote = "save_note",
   CreateNewNote = "create_new_note",
+  CreateNewDir = "create_new_dir",
   SearchReplace = "search_replace",
   NextSearch = "next_search",
   PreviousSearch = "previous_search",

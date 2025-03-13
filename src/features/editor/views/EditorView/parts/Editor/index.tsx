@@ -58,7 +58,10 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       </div>
       <EditorContent
         editor={editor}
-        className="w-full max-h-full h-full bg-background overflow-y-scroll overflow-x-hidden"
+        className="w-full max-h-full h-full bg-background overflow-y-scroll
+        overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-400
+        scrollbar-track-zinc-100 dark:scrollbar-thumb-zinc-600
+        dark:scrollbar-track-zinc-800"
         onClick={onClick}
       />
       <div>

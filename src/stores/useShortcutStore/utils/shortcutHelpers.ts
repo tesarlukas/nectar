@@ -14,3 +14,9 @@ export const joinShortcut = (
   const [context, shortcut] = shortcutTuple;
   return `${context}:${shortcut}`;
 };
+
+export const getShortcutKeyPart = (fullShortcut: KeyboardShortcut) => {
+  const [_, shortcut] = splitShortcut(fullShortcut);
+
+  return shortcut;
+};

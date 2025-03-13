@@ -20,4 +20,6 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.ToggleReplace]: `${ShortcutContext.Global}:ctrl+r`,
   [ActionId.FocusEditor]: `${ShortcutContext.Global}:ctrl+l`,
   [ActionId.FocusExplorer]: `${ShortcutContext.Global}:ctrl+h`,
+  [ActionId.MoveExplorerCursorUp]: `${ShortcutContext.Global}:up`,
+  [ActionId.MoveExplorerCursorDown]: `${ShortcutContext.Global}:down`,
 } as const;

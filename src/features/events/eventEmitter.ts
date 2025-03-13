@@ -15,7 +15,9 @@ export enum ActionId {
   ToggleCaseSensitiveSearch = "toggle_case_sensitive_search",
   ToggleReplace = "toggle_replace",
   FocusEditor = "focus_editor",
-  FocusExplorer = "focus_explorer"
+  FocusExplorer = "focus_explorer",
+  MoveExplorerCursorUp = "move_explorer_cursor_up",
+  MoveExplorerCursorDown = "move_explorer_cursor_down",
 }
 
 export type ActionCallback = (...args: unknown[]) => void;

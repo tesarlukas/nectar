@@ -4,7 +4,7 @@ export enum NonAlphas {
   Enter = "enter",
   Escape = "escape",
   Tab = "tab",
-  ShiftTab = "shift+tab"
+  ShiftTab = "shift+tab",
 }
 
 export enum ActionId {

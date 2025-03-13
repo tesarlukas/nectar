@@ -5,7 +5,7 @@ import {
 } from "@tiptap/react";
 import { BubbleMenu } from "./parts/BubbleMenu";
 import type { FileTreeNode } from "../FileExplorer/hooks/useFileExplorer";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { ActionId } from "@/features/events/eventEmitter";

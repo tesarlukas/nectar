@@ -20,7 +20,8 @@ export enum ActionId {
   MoveExplorerCursorDown = "move_explorer_cursor_down",
 }
 
-export type ActionCallback = (...args: unknown[]) => void;
+// biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments
+export type ActionCallback = (...args: any[]) => void;
 
 const eventEmitter = mitt();
 

@@ -123,7 +123,7 @@ export const FileExplorerNode = ({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 w-full justify-start px-2 hover:bg-muted text-lg relative",
+              "h-8 w-full justify-start px-2 hover:bg-muted text-lg relative focus:bg-highlight",
               isSelected && "bg-muted",
               depth > 0 && "ml-4",
               isDragging && "opacity-50",

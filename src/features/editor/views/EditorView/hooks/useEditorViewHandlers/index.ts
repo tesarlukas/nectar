@@ -105,7 +105,11 @@ export const useEditorViewHandlers = ({
 
   const handleOnCreateFile = useCallback(
     async (parentNode: FileTreeNode, name: string) => {
-      await addNewNode(parentNode.value.path, name, {
+      const path = parentNode.value.isFile
+        ? parentNode.value.dirPath
+        : parentNode.value.path;
+
+      await addNewNode(path, name, {
         isDirectory: false,
         content: EMPTY_NOTE,
       });
@@ -115,7 +119,11 @@ export const useEditorViewHandlers = ({
 
   const handleOnCreateDir = useCallback(
     async (parentNode: FileTreeNode, name: string) => {
-      await addNewNode(parentNode.value.path, name, {
+      const path = parentNode.value.isFile
+        ? parentNode.value.dirPath
+        : parentNode.value.path;
+
+      await addNewNode(path, name, {
         isDirectory: true,
         content: EMPTY_NOTE,
       });

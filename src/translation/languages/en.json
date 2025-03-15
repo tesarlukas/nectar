@@ -20,7 +20,22 @@
     "resetToDefault": "Reset to default",
     "shortcuts": {
       "save_note": "Save note",
-      "create_new_note": "Creat new note"
+      "create_new_note": "Creat new note",
+      "create_new_dir": "Create New Directory",
+      "search_replace": "Search & Replace",
+      "next_search": "Next Search Result",
+      "previous_search": "Previous Search Result",
+      "toggle_case_sensitive_search": "Toggle Case Sensitive Search",
+      "toggle_replace": "Toggle Replace",
+      "focus_editor": "Focus Editor",
+      "focus_explorer": "Focus Explorer",
+      "move_explorer_cursor_up": "Move Explorer Cursor Up",
+      "move_explorer_cursor_down": "Move Explorer Cursor Down",
+      "focus_explorer_toolbar": "Focus Explorer Toolbar",
+      "refresh_explorer": "Refresh Explorer",
+      "expand_explorer_left": "Expand Explorer Left",
+      "expand_explorer_right": "Expand Explorer Right",
+      "toggle_sort_order": "Toggle Sort Order"
     }
   },
   "editorView": {

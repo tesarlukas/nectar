@@ -29,6 +29,7 @@
     "replaceAll": "Replace All",
     "hideReplace": "Hide Replace",
     "replaceWith": "Replace With",
-    "search": "Search"
+    "search": "Search",
+    "explorerRefreshed": "Explorer Refreshed "
   }
 }

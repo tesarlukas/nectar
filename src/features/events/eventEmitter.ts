@@ -24,6 +24,7 @@ export enum ActionId {
   RefreshExplorer = "refresh_explorer",
   ExpandExplorerLeft = "expand_explorer_left",
   ExpandExplorerRight = "expand_explorer_right",
+  ToggleSortOrder = "toggle_sort_order",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

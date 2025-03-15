@@ -18,7 +18,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { CreateNodeInput } from "../NodeInput";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";
@@ -59,11 +59,23 @@ export const FileExplorerToolbar = forwardRef<
       });
     };
 
-    //useShortcuts(ActionId.CreateNewNote, () => handleCreateInput("file"));
-    //useShortcuts(ActionId.CreateNewDir, () =>
-    //  handleCreateInput("directory"),
-    //);
-    //useShortcuts(ActionId.RefreshExplorer, () => onRefresh?.());
+    const isToolbarFocused = () => {
+      const element = ref as React.RefObject<HTMLDivElement>;
+      return document.activeElement === element.current;
+    };
+
+    useShortcuts(ActionId.CreateNewNote, () => handleCreateInput("file"), {
+      enabled: isToolbarFocused,
+    });
+    useShortcuts(ActionId.CreateNewDir, () => handleCreateInput("directory"), {
+      enabled: isToolbarFocused,
+    });
+    useShortcuts(ActionId.RefreshExplorer, () => onRefresh?.(), {
+      enabled: isToolbarFocused,
+    });
+    useShortcuts(ActionId.ToggleSortOrder, () => onToggleSortOrder?.(), {
+      enabled: isToolbarFocused,
+    });
 
     return (
       <>

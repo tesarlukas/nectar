@@ -35,7 +35,7 @@ export const useEditorViewHandlers = ({
   editor,
   hiveName,
 }: EditorViewHandlersProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("editorView");
   const editorStatesRef = useEditorStatesRef();
   const clearEditorStates = useEditorStateStore(
     (state) => state.clearEditorStates,
@@ -140,6 +140,8 @@ export const useEditorViewHandlers = ({
 
   const handleOnRefresh = useCallback(async () => {
     await initializeFileTree(hiveName);
+
+    toast.success(t("explorerRefreshed"));
   }, [hiveName, initializeFileTree]);
 
   const handleOnMove = useCallback(

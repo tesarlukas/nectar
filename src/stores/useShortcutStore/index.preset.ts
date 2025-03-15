@@ -24,4 +24,7 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.MoveExplorerCursorUp]: `${ShortcutContext.Global}:k`,
   [ActionId.MoveExplorerCursorDown]: `${ShortcutContext.Global}:j`,
   [ActionId.FocusExplorerToolbar]: `${ShortcutContext.Global}:ctrl+g`,
+  [ActionId.RefreshExplorer]: `${ShortcutContext.Global}:ctrl+r`,
+  [ActionId.ExpandExplorerLeft]: `${ShortcutContext.Global}:alt+h`,
+  [ActionId.ExpandExplorerRight]: `${ShortcutContext.Global}:alt+l`,
 } as const;

@@ -18,7 +18,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
-import { forwardRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { CreateNodeInput } from "../NodeInput";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";
@@ -52,7 +52,15 @@ export const FileExplorerToolbar = forwardRef<
       type: "file" | "directory";
     } | null>(null);
 
-    useShortcuts(ActionId.CreateNewNote, () => console.log("hle"));
+    const handleCreateInput = (type: "file" | "directory") => {
+      setCreateInput({
+        isOpen: true,
+        type,
+      });
+    };
+    useShortcuts(ActionId.CreateNewNote, () => handleCreateInput("file"));
+    useShortcuts(ActionId.CreateNewDir, () => handleCreateInput("directory"));
+    useShortcuts(ActionId.RefreshExplorer, () => onRefresh?.());
 
     return (
       <>

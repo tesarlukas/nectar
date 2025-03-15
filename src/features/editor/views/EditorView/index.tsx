@@ -18,12 +18,16 @@ import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import type { ImperativePanelHandle } from "react-resizable-panels";
+
+const RESIZE_STEP = 5;
 
 export const EditorView = () => {
   const { hiveName, isHydrated } = useHiveStore();
   const navigate = useNavigate();
   const emitter = useEventEmitter();
   const explorerRef = useRef<HTMLDivElement>(null);
+  const resizablePanelRef = useRef<ImperativePanelHandle | null>(null);
 
   const fileExplorer = useFileExplorer();
   const { nodes, selectedNode, selectedNoteNode, initializeFileTree } =
@@ -64,6 +68,24 @@ export const EditorView = () => {
   useShortcuts(ActionId.FocusExplorer, () => explorerRef.current?.focus(), {
     enableOnContentEditable: true,
   });
+  useShortcuts(
+    ActionId.ExpandExplorerRight,
+    () => {
+      resizablePanelRef.current?.resize(
+        resizablePanelRef.current.getSize() + RESIZE_STEP,
+      );
+    },
+    { enableOnContentEditable: true },
+  );
+  useShortcuts(
+    ActionId.ExpandExplorerLeft,
+    () => {
+      resizablePanelRef.current?.resize(
+        resizablePanelRef.current.getSize() - RESIZE_STEP,
+      );
+    },
+    { enableOnContentEditable: true },
+  );
 
   useEventListener(ActionId.SaveNote, handleOnSave);
 
@@ -81,7 +103,7 @@ export const EditorView = () => {
     <>
       <div className="flex flex-col h-full min-h-0">
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={20} minSize={10}>
+          <ResizablePanel defaultSize={20} minSize={10} ref={resizablePanelRef}>
             <FileExplorer
               ref={explorerRef}
               nodes={nodes}

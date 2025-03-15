@@ -21,6 +21,9 @@ export enum ActionId {
   MoveExplorerCursorUp = "move_explorer_cursor_up",
   MoveExplorerCursorDown = "move_explorer_cursor_down",
   FocusExplorerToolbar = "focus_explorer_toolbar",
+  RefreshExplorer = "refresh_explorer",
+  ExpandExplorerLeft = "expand_explorer_left",
+  ExpandExplorerRight = "expand_explorer_right",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

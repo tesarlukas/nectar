@@ -58,9 +58,12 @@ export const FileExplorerToolbar = forwardRef<
         type,
       });
     };
-    useShortcuts(ActionId.CreateNewNote, () => handleCreateInput("file"));
-    useShortcuts(ActionId.CreateNewDir, () => handleCreateInput("directory"));
-    useShortcuts(ActionId.RefreshExplorer, () => onRefresh?.());
+
+    //useShortcuts(ActionId.CreateNewNote, () => handleCreateInput("file"));
+    //useShortcuts(ActionId.CreateNewDir, () =>
+    //  handleCreateInput("directory"),
+    //);
+    //useShortcuts(ActionId.RefreshExplorer, () => onRefresh?.());
 
     return (
       <>

@@ -13,7 +13,7 @@ import {
   useState,
 } from "react";
 import { NOTES_PATH } from "@/constants/notesPath";
-import { sortNodes } from "@/utils/nodeHelpers";
+import { sortFileTreeRecursive } from "@/utils/nodeHelpers";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 
@@ -157,9 +157,8 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     useShortcuts(NonAlphas.ShiftTab, () => {});
 
     const renderNodes = useCallback(() => {
-      return (notesNode?.children ?? [])
-        .sort(sortNodes(sortOrder))
-        .map((node) => (
+      return sortFileTreeRecursive(notesNode?.children ?? [], sortOrder).map(
+        (node) => (
           <FileExplorerNode
             key={node.value.path}
             node={node}
@@ -171,7 +170,8 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
             onCreateDir={onCreateDir}
             onMove={onMove}
           />
-        ));
+        ),
+      );
     }, [notesNode, sortOrder, selectedNode]);
 
     return (

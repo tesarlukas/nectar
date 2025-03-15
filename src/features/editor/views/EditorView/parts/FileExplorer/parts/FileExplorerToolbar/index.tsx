@@ -18,8 +18,10 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { CreateNodeInput } from "../NodeInput";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { ActionId } from "@/features/events/eventEmitter";
 
 export interface FileExplorerToolbar {
   notesNode: FileTreeNode;
@@ -30,103 +32,117 @@ export interface FileExplorerToolbar {
   onToggleSortOrder: () => void;
 }
 
-export const FileExplorerToolbar = ({
-  notesNode,
-  onRefresh,
-  onCreateFile,
-  onCreateDir,
-  sortOrder,
-  onToggleSortOrder,
-}: FileExplorerToolbar) => {
-  const [createInput, setCreateInput] = useState<{
-    isOpen: boolean;
-    type: "file" | "directory";
-  } | null>(null);
+export const FileExplorerToolbar = forwardRef<
+  HTMLDivElement,
+  FileExplorerToolbar
+>(
+  (
+    {
+      notesNode,
+      onRefresh,
+      onCreateFile,
+      onCreateDir,
+      sortOrder,
+      onToggleSortOrder,
+    }: FileExplorerToolbar,
+    ref,
+  ) => {
+    const [createInput, setCreateInput] = useState<{
+      isOpen: boolean;
+      type: "file" | "directory";
+    } | null>(null);
 
-  return (
-    <>
-      <div className="w-full border-b px-2 pb-2 flex items-center gap-x-2 bg-background">
-        {/* Left section - Actions */}
-        <div className="flex items-center gap-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() =>
-                    setCreateInput({
-                      isOpen: true,
-                      type: "file",
-                    })
-                  }
-                  tabIndex={-1}
-                >
-                  <FilePlus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>New File</TooltipContent>
-            </Tooltip>
+    useShortcuts(ActionId.CreateNewNote, () => console.log("hle"));
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() =>
-                    setCreateInput({
-                      isOpen: true,
-                      type: "directory",
-                    })
-                  }
-                  tabIndex={-1}
-                >
-                  <FolderPlus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>New Folder</TooltipContent>
-            </Tooltip>
+    return (
+      <>
+        <div
+          className="w-full border-b m-2 flex items-center gap-x-2 bg-background focus:bg-highlight"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: there is a need for this div to be interactive
+          tabIndex={0}
+          ref={ref}
+        >
+          {/* Left section - Actions */}
+          <div className="flex items-center gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() =>
+                      setCreateInput({
+                        isOpen: true,
+                        type: "file",
+                      })
+                    }
+                    tabIndex={-1}
+                  >
+                    <FilePlus className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>New File</TooltipContent>
+              </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={onRefresh}
-                  tabIndex={-1}
-                >
-                  <RefreshCcw className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Refresh</TooltipContent>
-            </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() =>
+                      setCreateInput({
+                        isOpen: true,
+                        type: "directory",
+                      })
+                    }
+                    tabIndex={-1}
+                  >
+                    <FolderPlus className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>New Folder</TooltipContent>
+              </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={onToggleSortOrder}
-                  tabIndex={-1}
-                >
-                  {sortOrder === "asc" ? (
-                    <SortAsc className="h-4 w-4" />
-                  ) : (
-                    <SortDesc className="h-4 w-4" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Sort Files</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={onRefresh}
+                    tabIndex={-1}
+                  >
+                    <RefreshCcw className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Refresh</TooltipContent>
+              </Tooltip>
 
-        {/* Center section - Search */}
-        {/*
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={onToggleSortOrder}
+                    tabIndex={-1}
+                  >
+                    {sortOrder === "asc" ? (
+                      <SortAsc className="h-4 w-4" />
+                    ) : (
+                      <SortDesc className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Sort Files</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
+          {/* Center section - Search */}
+          {/*
       <div className="flex-1 max-w-md">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -138,8 +154,8 @@ export const FileExplorerToolbar = ({
       </div>
       */}
 
-        {/* Right section - View toggle */}
-        {/*
+          {/* Right section - View toggle */}
+          {/*
       <ToggleGroup type="single" defaultValue="list">
         <ToggleGroupItem value="grid" size="sm" className="h-8 w-8">
           <Grid className="h-4 w-4" />
@@ -149,18 +165,19 @@ export const FileExplorerToolbar = ({
         </ToggleGroupItem>
       </ToggleGroup>
       */}
-      </div>
+        </div>
 
-      {createInput && (
-        <CreateNodeInput
-          type={createInput.type}
-          parentNode={notesNode}
-          depth={0}
-          onClose={() => setCreateInput(null)}
-          onCreateFile={onCreateFile}
-          onCreateDir={onCreateDir}
-        />
-      )}
-    </>
-  );
-};
+        {createInput && (
+          <CreateNodeInput
+            type={createInput.type}
+            parentNode={notesNode}
+            depth={0}
+            onClose={() => setCreateInput(null)}
+            onCreateFile={onCreateFile}
+            onCreateDir={onCreateDir}
+          />
+        )}
+      </>
+    );
+  },
+);

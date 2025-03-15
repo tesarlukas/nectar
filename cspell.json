@@ -12,7 +12,8 @@
     "partialize",
     "eventsystem",
     "sonner",
-    "focusables"
+    "focusables",
+    "Noninteractive"
   ],
   "language": "en,cs-CZ",
   "ignorePaths": ["node_modules", "src-tauri", "pnpm-lock.yaml"]

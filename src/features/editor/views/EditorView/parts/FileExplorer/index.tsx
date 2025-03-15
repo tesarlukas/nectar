@@ -50,6 +50,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const focusableElementsRef = useRef<HTMLElement[]>([]);
     const focusIndex = useRef<number>(0);
+    const toolbarRef = useRef<HTMLDivElement>(null);
 
     const notesNode = useMemo(
       () => nodes.filter((node) => node.value.name === NOTES_PATH)[0],
@@ -72,11 +73,14 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
 
       if (focusableElementsRef.current.length === 0) return;
 
-      // cursor index flip
       const nextIndex =
-        focusIndex.current >= focusableElementsRef.current.length - 1
-          ? 0
-          : focusIndex.current + 1;
+        // this check is to prevent the focus to move from the last item the
+        // user has selected when he jumped to the toolbar
+        document.activeElement === toolbarRef.current
+          ? focusIndex.current
+          : focusIndex.current >= focusableElementsRef.current.length - 1
+            ? 0
+            : focusIndex.current + 1;
 
       focusableElementsRef.current[nextIndex]?.focus();
       focusIndex.current = nextIndex;
@@ -89,9 +93,12 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       if (focusableElementsRef.current.length === 0) return;
 
       const prevIndex =
-        focusIndex.current <= 0
-          ? focusableElementsRef.current.length - 1
-          : focusIndex.current - 1;
+        // same check as above
+        document.activeElement === toolbarRef.current
+          ? focusIndex.current
+          : focusIndex.current <= 0
+            ? focusableElementsRef.current.length - 1
+            : focusIndex.current - 1;
 
       focusableElementsRef.current[prevIndex]?.focus();
       focusIndex.current = prevIndex;
@@ -135,6 +142,12 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       };
     }, []);
 
+    const handleFocusToolbar = () => {
+      toolbarRef.current?.focus();
+    };
+
+    useShortcuts(ActionId.FocusExplorerToolbar, handleFocusToolbar);
+
     // Register custom keyboard shortcuts
     useShortcuts(ActionId.MoveExplorerCursorDown, handleForwardNav);
     useShortcuts(ActionId.MoveExplorerCursorUp, handleBackwardNav);
@@ -164,6 +177,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     return (
       <div className="h-full p-2" ref={ref} tabIndex={-1}>
         <FileExplorerToolbar
+          ref={toolbarRef}
           notesNode={notesNode}
           onRefresh={onRefresh}
           onCreateFile={onCreateFileToolbar}

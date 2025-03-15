@@ -18,6 +18,7 @@
   "settings": {
     "keyboardShortcuts": "Keyboard Shortcuts",
     "resetToDefault": "Reset to default",
+    "shortcutsReset": "Shortcuts reset",
     "shortcuts": {
       "save_note": "Save note",
       "create_new_note": "Creat new note",

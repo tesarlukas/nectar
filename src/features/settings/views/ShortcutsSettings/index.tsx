@@ -6,9 +6,10 @@ import { useTranslation } from "react-i18next";
 import { Typography } from "@/components/Typography";
 import { useRecordHotkeys } from "react-hotkeys-hook";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
-import type { ActionId } from "@/features/events/eventEmitter";
+import { NonAlphas, type ActionId } from "@/features/events/eventEmitter";
 import { formatKeys } from "./utils/formatKeys";
 import { DEFAULT_SHORTCUTS } from "@/stores/useShortcutStore/index.preset";
+import { toast } from "sonner";
 
 export const ShortcutsSettings = () => {
   const { t } = useTranslation(["settings", "common"]);
@@ -27,6 +28,7 @@ export const ShortcutsSettings = () => {
 
   const handleOnReset = useCallback(() => {
     reset();
+    toast.success(t("shortcutsReset"));
     setNewShortcuts(DEFAULT_SHORTCUTS);
   }, []);
   const handleOnSave = () => updateShortcuts(newShortcuts);
@@ -45,11 +47,11 @@ export const ShortcutsSettings = () => {
     [recordedKeys, recordedActionIdRef],
   );
 
-  useShortcuts("escape", () => {
+  useShortcuts(NonAlphas.Escape, () => {
     newKeysRef.current = "";
     stopRecording();
   });
-  useShortcuts("enter", () => {
+  useShortcuts(NonAlphas.Enter, () => {
     newKeysRef.current = `global:${formatKeys(recordedKeys)}`;
 
     if (recordedActionIdRef.current) {
@@ -69,9 +71,14 @@ export const ShortcutsSettings = () => {
           <Typography variant="h3" weight="normal" className="text-center">
             {t("keyboardShortcuts")}
           </Typography>
-          <Button className="ml-auto" onClick={handleOnSave}>
-            {t("save", { ns: "common" })}
-          </Button>
+          <div className="ml-auto flex gap-x-2">
+            <Button onClick={handleOnReset} variant="destructive">
+              {t("resetToDefault")}
+            </Button>
+            <Button className="ml-auto" onClick={handleOnSave}>
+              {t("save", { ns: "common" })}
+            </Button>
+          </div>
         </div>
         <div className="flex flex-col gap-y-2 py-4">
           {(Object.entries(shortcuts) as [ActionId, string][]).map(
@@ -91,15 +98,6 @@ export const ShortcutsSettings = () => {
               />
             ),
           )}
-        </div>
-        <div className="flex flex-row">
-          <Button
-            onClick={handleOnReset}
-            className="ml-auto"
-            variant="destructive"
-          >
-            {t("resetToDefault")}
-          </Button>
         </div>
       </div>
     </>

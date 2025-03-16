@@ -46,6 +46,7 @@
     "hideReplace": "Hide Replace",
     "replaceWith": "Replace With",
     "search": "Search",
-    "explorerRefreshed": "Explorer Refreshed "
+    "explorerRefreshed": "Explorer Refreshed",
+    "directoriesCannotBeCopied": "Directories cannot be copied"
   }
 }

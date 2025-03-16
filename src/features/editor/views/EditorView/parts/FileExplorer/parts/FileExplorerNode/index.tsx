@@ -1,4 +1,4 @@
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import {
   ChevronRight,
   ChevronDown,
@@ -24,6 +24,8 @@ import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useShortcutsStore } from "@/stores/useShortcutStore";
 import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
@@ -59,6 +61,7 @@ export const FileExplorerNode = ({
     node.value.isDirectory && node.children && node.children.length > 0;
   const isSelected = node.value.path === selectedPath;
   const shortcuts = useShortcutsStore((state) => state.shortcuts);
+  const { t } = useTranslation("editorView");
 
   const [createInput, setCreateInput] = useState<{
     isOpen: boolean;
@@ -144,10 +147,14 @@ export const FileExplorerNode = ({
           });
           break;
         case getShortcutKeyPart(shortcuts[ActionId.CopyNode]):
+          if (node.value.isDirectory) {
+            toast.warning(t("directoriesCannotBeCopied"));
+            break;
+          }
           onCopy?.(node);
           break;
         case getShortcutKeyPart(shortcuts[ActionId.PasteNode]):
-          if (!clipboardNode) return;
+          if (!clipboardNode) break;
 
           await onPaste?.(clipboardNode, node);
           break;

@@ -33,4 +33,5 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.PasteNode]: `${ShortcutContext.Global}:p`,
   [ActionId.DeleteNode]: `${ShortcutContext.Global}:d`,
   [ActionId.RenameNode]: `${ShortcutContext.Global}:r`,
+  [ActionId.ToggleSettings]: `${ShortcutContext.Global}:ctrl+.`,
 } as const;

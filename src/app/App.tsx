@@ -6,7 +6,6 @@ import { useColorTheme } from "@/features/appearance/colorTheme/hooks/useColorTh
 import { Layout } from "@/features/layout/views/Layout";
 import { Homebase } from "@/features/homebase/views/Homebase";
 import { SettingsLayout } from "@/features/layout/views/SettingsLayout";
-import { AppearanceSettings } from "@/features/settings/views/AppearanceSettings";
 import { ShortcutsSettings } from "@/features/settings/views/ShortcutsSettings";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -25,8 +24,7 @@ export default function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<EditorView />} />
               <Route path="settings" element={<SettingsLayout />}>
-                <Route index element={<AppearanceSettings />} />
-                <Route path="shortcuts" element={<ShortcutsSettings />} />
+                <Route index element={<ShortcutsSettings />} />
               </Route>
               <Route path="homebase" element={<Homebase />} />
             </Route>

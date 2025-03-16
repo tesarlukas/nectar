@@ -30,6 +30,7 @@ export enum ActionId {
   PasteNode = "paste_node",
   DeleteNode = "delete_node",
   RenameNode = "rename_node",
+  ToggleSettings = "toggle_settings",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

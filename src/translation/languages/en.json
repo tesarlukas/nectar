@@ -16,6 +16,8 @@
     "save": "Save"
   },
   "settings": {
+    "homebase": "Homebase",
+    "settings": "Settings",
     "keyboardShortcuts": "Keyboard Shortcuts",
     "resetToDefault": "Reset to default",
     "shortcutsReset": "Shortcuts reset",

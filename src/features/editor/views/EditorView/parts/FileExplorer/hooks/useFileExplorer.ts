@@ -174,22 +174,47 @@ export const useFileExplorer = () => {
     [],
   );
 
-  /** The function does not modify the tree because it is used with move as well */
-  const copyNote = async (node: FileTreeNode, targetNode: FileTreeNode) => {
-    try {
-      await copyFile(
-        node.value.path,
-        await join(
-          targetNode.value.isFile
-            ? targetNode.value.dirPath
-            : targetNode.value.path,
-          node.value.name,
-        ),
+  const updateNoteMetadata = useCallback(
+    async (noteLocation: string, noteName: string) => {
+      const noteContent = await readNote(await join(noteLocation, noteName));
+      if (!noteContent) return;
+
+      await writeJson<Note>(
+        noteLocation,
+        noteName,
         {
-          fromPathBaseDir: ROOT_DIR,
-          toPathBaseDir: ROOT_DIR,
+          ...noteContent,
+          id: nanoid(),
+          createdAt: new Date().toISOString(),
+          lastModifiedAt: new Date().toISOString(),
         },
+        ROOT_DIR,
       );
+    },
+    [],
+  );
+
+  /** The function does not modify the tree because it is used with move as well */
+  const copyNote = async (
+    node: FileTreeNode,
+    targetNode: FileTreeNode,
+    options?: { isNewFile: boolean },
+  ) => {
+    try {
+      const targetNodePath = await join(
+        targetNode.value.isFile
+          ? targetNode.value.dirPath
+          : targetNode.value.path,
+        node.value.name,
+      );
+      await copyFile(node.value.path, targetNodePath, {
+        fromPathBaseDir: ROOT_DIR,
+        toPathBaseDir: ROOT_DIR,
+      });
+
+      if (options?.isNewFile) {
+        await updateNoteMetadata(targetNode.value.dirPath, node.value.name);
+      }
     } catch (errors) {
       console.error("Error copying the node: ", errors);
       throw errors;
@@ -225,7 +250,7 @@ export const useFileExplorer = () => {
     }
 
     try {
-      await copyNote(node, targetNode);
+      await copyNote(node, targetNode, { isNewFile: true });
       const newTreeNodes = await buildDirectoryTree(
         await join(hiveName),
         ROOT_DIR,

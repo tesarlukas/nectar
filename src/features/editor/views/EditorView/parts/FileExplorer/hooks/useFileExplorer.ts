@@ -213,7 +213,12 @@ export const useFileExplorer = () => {
       });
 
       if (options?.isNewFile) {
-        await updateNoteMetadata(targetNode.value.dirPath, node.value.name);
+        await updateNoteMetadata(
+          targetNode.value.isFile
+            ? targetNode.value.dirPath
+            : targetNode.value.path,
+          node.value.name,
+        );
       }
     } catch (errors) {
       console.error("Error copying the node: ", errors);

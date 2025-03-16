@@ -7,12 +7,10 @@ import { FileExplorer } from "./parts/FileExplorer";
 import { BottomMenu } from "@/components/BottomMenu";
 import { useEditor } from "./parts/Editor/hooks/useEditor";
 import { Editor } from "./parts/Editor";
-import { Button } from "@/components/ui/button";
 import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useEffect, useRef } from "react";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
-import { toast } from "sonner";
 import { useEditorViewHandlers } from "./hooks/useEditorViewHandlers";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";
@@ -128,9 +126,7 @@ export const EditorView = () => {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <BottomMenu charCount={editor?.storage.characterCount.characters()}>
-          <Button onClick={() => toast("Welcome")}>Toast click</Button>
-        </BottomMenu>
+        <BottomMenu charCount={editor?.storage.characterCount.characters()} />
       </div>
     </>
   );

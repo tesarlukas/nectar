@@ -44,6 +44,7 @@ export const EditorView = () => {
     handleOnRename,
     handleOnRefresh,
     handleOnMove,
+    handleOnPaste
   } = useEditorViewHandlers({
     ...fileExplorer,
     editor,
@@ -113,6 +114,7 @@ export const EditorView = () => {
               onCreateFile={handleOnCreateFile}
               onCreateDir={handleOnCreateDir}
               onMove={handleOnMove}
+              onPaste={handleOnPaste}
             />
           </ResizablePanel>
           <ResizableHandle />

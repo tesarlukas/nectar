@@ -26,6 +26,7 @@ interface FileExplorerProps
       | "onCreateDir"
       | "onRename"
       | "onMove"
+      | "onPaste"
     >,
     Pick<FileExplorerToolbar, "onRefresh"> {
   nodes: FileTreeNode[];
@@ -44,6 +45,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       onCreateFile,
       onCreateDir,
       onMove,
+      onPaste,
     }: FileExplorerProps,
     ref,
   ) => {
@@ -51,6 +53,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     const focusableElementsRef = useRef<HTMLElement[]>([]);
     const focusIndex = useRef<number>(0);
     const toolbarRef = useRef<HTMLDivElement>(null);
+    const [clipboardNode, setClipboardNode] = useState<FileTreeNode>();
 
     const notesNode = useMemo(
       () => nodes.filter((node) => node.value.name === NOTES_PATH)[0],
@@ -120,6 +123,10 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       }
     }, [ref]);
 
+    const handleOnCopy = useCallback((node: FileTreeNode) => {
+      setClipboardNode(node);
+    }, []);
+
     // Collect all focusable elements on mount and updates
     useEffect(() => {
       updateFocusableElements();
@@ -152,6 +159,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     useShortcuts(ActionId.MoveExplorerCursorDown, handleForwardNav);
     useShortcuts(ActionId.MoveExplorerCursorUp, handleBackwardNav);
 
+    useShortcuts(NonAlphas.Escape, () => setClipboardNode(undefined));
     // turn off the tab and shift tab for this component
     useShortcuts(NonAlphas.Tab, () => {});
     useShortcuts(NonAlphas.ShiftTab, () => {});
@@ -169,10 +177,13 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
             onCreateFile={onCreateFile}
             onCreateDir={onCreateDir}
             onMove={onMove}
+            onCopy={handleOnCopy}
+            onPaste={onPaste}
+            clipboardNode={clipboardNode}
           />
         ),
       );
-    }, [notesNode, sortOrder, selectedNode]);
+    }, [notesNode, sortOrder, selectedNode, clipboardNode]);
 
     return (
       <div className="h-full p-2" ref={ref} tabIndex={-1}>

@@ -179,7 +179,12 @@ export const useFileExplorer = () => {
     try {
       await copyFile(
         node.value.path,
-        await join(targetNode.value.path, node.value.name),
+        await join(
+          targetNode.value.isFile
+            ? targetNode.value.dirPath
+            : targetNode.value.path,
+          node.value.name,
+        ),
         {
           fromPathBaseDir: ROOT_DIR,
           toPathBaseDir: ROOT_DIR,
@@ -201,6 +206,26 @@ export const useFileExplorer = () => {
     try {
       await copyNote(node, targetNode);
       await removeNodeByPath(node.value.path);
+      const newTreeNodes = await buildDirectoryTree(
+        await join(hiveName),
+        ROOT_DIR,
+      );
+      setNodes(() => newTreeNodes);
+    } catch (errors) {
+      console.error("Error moving the note: ", errors);
+      throw errors;
+    }
+  };
+
+  const pasteNote = async (node: FileTreeNode, targetNode: FileTreeNode) => {
+    if (
+      node.value.path === (await join(targetNode.value.path, node.value.name))
+    ) {
+      return;
+    }
+
+    try {
+      await copyNote(node, targetNode);
       const newTreeNodes = await buildDirectoryTree(
         await join(hiveName),
         ROOT_DIR,
@@ -284,5 +309,6 @@ export const useFileExplorer = () => {
     createNewNoteOrDir,
     renameNodeAndNoteOrDir,
     moveNote,
+    pasteNote,
   };
 };

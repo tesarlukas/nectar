@@ -31,6 +31,7 @@ export const useEditorViewHandlers = ({
   addNewNode,
   renameNodeAndNoteOrDir,
   moveNote,
+  pasteNote,
   initializeFileTree,
   editor,
   hiveName,
@@ -148,7 +149,14 @@ export const useEditorViewHandlers = ({
     async (node: FileTreeNode, targetNode: FileTreeNode) => {
       await moveNote(node, targetNode);
     },
-    [moveNote],
+    [],
+  );
+
+  const handleOnPaste = useCallback(
+    async (clipboardNode: FileTreeNode, targetNode: FileTreeNode) => {
+      await pasteNote(clipboardNode, targetNode);
+    },
+    [],
   );
 
   // very important otherwise the states get messed up
@@ -165,5 +173,6 @@ export const useEditorViewHandlers = ({
     handleOnRename,
     handleOnRefresh,
     handleOnMove,
+    handleOnPaste,
   };
 };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import {
   ChevronRight,
   ChevronDown,
@@ -36,6 +36,8 @@ export interface FileExplorerNodeProps {
   onCreateFile?: (parentNode: FileTreeNode, name: string) => void;
   onCreateDir?: (parentNode: FileTreeNode, name: string) => void;
   onMove?: (node: FileTreeNode, targetNode: FileTreeNode) => void;
+  onPaste?: (node: FileTreeNode, targetNode: FileTreeNode) => Promise<void>;
+  clipboardNode?: FileTreeNode;
 }
 
 export const FileExplorerNode = ({
@@ -49,6 +51,8 @@ export const FileExplorerNode = ({
   onCreateFile,
   onCreateDir,
   onMove,
+  clipboardNode,
+  onPaste,
 }: FileExplorerNodeProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren =
@@ -119,8 +123,13 @@ export const FileExplorerNode = ({
   };
 
   const shortcutButtonRef = useShortcuts(
-    [ActionId.CreateNewNote, ActionId.CreateNewDir],
-    (_, { hotkey }) => {
+    [
+      ActionId.CreateNewNote,
+      ActionId.CreateNewDir,
+      ActionId.CopyNode,
+      ActionId.PasteNode,
+    ],
+    async (_, { hotkey }) => {
       switch (hotkey) {
         case getShortcutKeyPart(shortcuts[ActionId.CreateNewNote]):
           setCreateInput({
@@ -133,6 +142,14 @@ export const FileExplorerNode = ({
             isOpen: true,
             type: "directory",
           });
+          break;
+        case getShortcutKeyPart(shortcuts[ActionId.CopyNode]):
+          onCopy?.(node);
+          break;
+        case getShortcutKeyPart(shortcuts[ActionId.PasteNode]):
+          if (!clipboardNode) return;
+
+          await onPaste?.(clipboardNode, node);
           break;
       }
     },
@@ -180,7 +197,12 @@ export const FileExplorerNode = ({
               ) : (
                 <FileText className="h-4 w-4 mr-2 text-gray-500" />
               )}
-              <span className="truncate">
+              <span
+                className={cn(
+                  "truncate",
+                  node.value.path === clipboardNode?.value.path && "underline",
+                )}
+              >
                 {node.value.isFile
                   ? node.value.name.substring(
                       0,
@@ -283,6 +305,8 @@ export const FileExplorerNode = ({
               onCreateFile={onCreateFile}
               onCreateDir={onCreateDir}
               onMove={onMove}
+              clipboardNode={clipboardNode}
+              onPaste={onPaste}
             />
           ))}
         </div>

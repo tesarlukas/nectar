@@ -7,6 +7,7 @@ import {
   Copy,
   Trash,
   FileEdit,
+  ClipboardPaste,
   FilePlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -289,6 +290,17 @@ export const FileExplorerNode = ({
           <ContextMenuItem className="text-base" onClick={() => onCopy?.(node)}>
             <Copy className="mr-2 h-4 w-4" />
             Copy
+          </ContextMenuItem>
+          <ContextMenuItem
+            className="text-base"
+            disabled={!clipboardNode}
+            onClick={() => {
+              if (!clipboardNode) return;
+              onPaste?.(clipboardNode, node);
+            }}
+          >
+            <ClipboardPaste className="mr-2 h-4 w-4" />
+            Paste
           </ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem

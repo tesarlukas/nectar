@@ -1,11 +1,7 @@
-import {
-  FloatingMenu,
-  EditorContent,
-  type Editor as EditorType,
-} from "@tiptap/react";
+import { EditorContent, type Editor as EditorType } from "@tiptap/react";
 import { BubbleMenu } from "./parts/BubbleMenu";
 import type { FileTreeNode } from "../FileExplorer/hooks/useFileExplorer";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { ActionId } from "@/features/events/eventEmitter";
@@ -13,6 +9,7 @@ import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
 import { SearchReplaceComponent } from "./parts/SearchAndReplace";
 import { useEditorEffect } from "./hooks/useEditorEffect";
+import { FloatingMenu } from "./parts/FloatingMenu";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -39,7 +36,21 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
     setIsSaved(false);
   }, []);
 
-  useEditorEffect(editor, "update", handleOnUpdate);
+  useEditorEffect(editor, "update", handleOnUpdate, {
+    useDebounce: true,
+    debounceTime: 300,
+  });
+  useEffect(() => {
+    const handleOnUpdate = () => {
+      setIsSaved(false);
+    };
+
+    editor?.on("update", handleOnUpdate);
+
+    return () => {
+      editor?.off("update", handleOnUpdate);
+    };
+  });
 
   return (
     <>
@@ -58,14 +69,11 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       </div>
       <EditorContent
         editor={editor}
-        className="w-full max-h-full h-full bg-background overflow-y-scroll
-        overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-400
-        scrollbar-track-zinc-100 dark:scrollbar-thumb-zinc-600
-        dark:scrollbar-track-zinc-800"
+        className="w-full max-h-full h-full bg-background overflow-y-scroll overflow-x-hidden"
         onClick={onClick}
       />
       <div>
-        <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
+        <FloatingMenu editor={editor} />
       </div>
       <div>
         <BubbleMenu editor={editor} />

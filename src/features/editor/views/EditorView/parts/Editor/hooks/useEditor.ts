@@ -29,6 +29,12 @@ import { useEditorStateStore } from "@/stores/useEditorStateStore";
 import { useCallback, useEffect } from "react";
 import { debounce } from "@/utils/debounce";
 import SearchAndReplace from "../extensions/searchAndReplace";
+import { TaskList } from "@tiptap/extension-task-list";
+import { TaskItem } from "@tiptap/extension-task-item";
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
 
 const extensions = [
   // Nodes
@@ -185,6 +191,37 @@ const extensions = [
   SearchAndReplace.configure({
     searchResultClass: "search-result",
     disableRegex: false,
+  }),
+  TaskList.configure({
+    HTMLAttributes: {
+      class: "not-prose pl-2 list-none",
+    },
+  }),
+  TaskItem.configure({
+    HTMLAttributes: {
+      class: "flex items-start gap-2 p-2",
+    },
+    nested: true,
+  }),
+  Table.configure({
+    HTMLAttributes: {
+      class: "w-full my-4 border-collapse text-sm not-prose",
+    },
+  }),
+  TableHeader.configure({
+    HTMLAttributes: {
+      class: "bg-muted font-medium border border-border",
+    },
+  }),
+  TableRow.configure({
+    HTMLAttributes: {
+      class: "border-b border-border hover:bg-muted/30 transition-colors",
+    },
+  }),
+  TableCell.configure({
+    HTMLAttributes: {
+      class: "p-2 border border-border align-middle text-foreground",
+    },
   }),
 ];
 

@@ -25,6 +25,11 @@ export enum ActionId {
   ExpandExplorerLeft = "expand_explorer_left",
   ExpandExplorerRight = "expand_explorer_right",
   ToggleSortOrder = "toggle_sort_order",
+  CutNode = "cut_node",
+  CopyNode = "copy_node",
+  PasteNode = "paste_node",
+  DeleteNode = "delete_node",
+  RenameNode = "rename_node",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

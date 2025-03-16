@@ -108,9 +108,12 @@ export const useFileExplorer = () => {
   };
 
   const readNote = async (path: string) => {
-    const noteContent = await readJson<Note>(path, ROOT_DIR);
-
-    return noteContent;
+    try {
+      const noteContent = await readJson<Note>(path, ROOT_DIR);
+      return noteContent;
+    } catch (errors) {
+      console.error("Failed to read the note", errors);
+    }
   };
 
   const createNewNoteOrDir = async (
@@ -176,20 +179,24 @@ export const useFileExplorer = () => {
 
   const updateNoteMetadata = useCallback(
     async (noteLocation: string, noteName: string) => {
-      const noteContent = await readNote(await join(noteLocation, noteName));
-      if (!noteContent) return;
+      try {
+        const noteContent = await readNote(await join(noteLocation, noteName));
+        if (!noteContent) return;
 
-      await writeJson<Note>(
-        noteLocation,
-        noteName,
-        {
-          ...noteContent,
-          id: nanoid(),
-          createdAt: new Date().toISOString(),
-          lastModifiedAt: new Date().toISOString(),
-        },
-        ROOT_DIR,
-      );
+        await writeJson<Note>(
+          noteLocation,
+          noteName,
+          {
+            ...noteContent,
+            id: nanoid(),
+            createdAt: new Date().toISOString(),
+            lastModifiedAt: new Date().toISOString(),
+          },
+          ROOT_DIR,
+        );
+      } catch (error) {
+        console.error("Failed while updating the note metadata", error);
+      }
     },
     [],
   );

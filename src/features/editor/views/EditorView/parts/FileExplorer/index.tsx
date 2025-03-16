@@ -51,7 +51,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
   ) => {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const focusableElementsRef = useRef<HTMLElement[]>([]);
-    const focusIndex = useRef<number>(0);
+    const focusIndex = useRef<number>(1);
     const toolbarRef = useRef<HTMLDivElement>(null);
     const [clipboardNode, setClipboardNode] = useState<FileTreeNode>();
 
@@ -139,6 +139,9 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       const container = ref.current;
 
       const focusElement = () => {
+        if (focusIndex.current === -1) {
+          focusIndex.current = 0;
+        }
         focusableElementsRef.current[focusIndex.current]?.focus();
       };
 

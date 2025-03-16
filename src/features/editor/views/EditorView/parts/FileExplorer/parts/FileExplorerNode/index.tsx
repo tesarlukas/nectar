@@ -131,6 +131,7 @@ export const FileExplorerNode = ({
       ActionId.CreateNewDir,
       ActionId.CopyNode,
       ActionId.PasteNode,
+      ActionId.DeleteNode,
     ],
     async (_, { hotkey }) => {
       switch (hotkey) {
@@ -152,6 +153,9 @@ export const FileExplorerNode = ({
             break;
           }
           onCopy?.(node);
+          break;
+        case getShortcutKeyPart(shortcuts[ActionId.DeleteNode]):
+          onDelete?.(node);
           break;
         case getShortcutKeyPart(shortcuts[ActionId.PasteNode]):
           if (!clipboardNode) break;

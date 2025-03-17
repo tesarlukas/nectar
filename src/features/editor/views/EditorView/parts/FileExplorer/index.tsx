@@ -183,6 +183,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
             onCopy={handleOnCopy}
             onPaste={onPaste}
             clipboardNode={clipboardNode}
+            setClipboardNode={setClipboardNode}
           />
         ),
       );

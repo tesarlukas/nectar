@@ -27,6 +27,7 @@ import { useShortcutsStore } from "@/stores/useShortcutStore";
 import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
@@ -41,6 +42,7 @@ export interface FileExplorerNodeProps {
   onMove?: (node: FileTreeNode, targetNode: FileTreeNode) => void;
   onPaste?: (node: FileTreeNode, targetNode: FileTreeNode) => Promise<void>;
   clipboardNode?: FileTreeNode;
+  setClipboardNode?: (node?: FileTreeNode) => void;
 }
 
 export const FileExplorerNode = ({
@@ -56,6 +58,7 @@ export const FileExplorerNode = ({
   onMove,
   clipboardNode,
   onPaste,
+  setClipboardNode,
 }: FileExplorerNodeProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren =
@@ -63,6 +66,7 @@ export const FileExplorerNode = ({
   const isSelected = node.value.path === selectedPath;
   const shortcuts = useShortcutsStore((state) => state.shortcuts);
   const { t } = useTranslation("editorView");
+  const emitter = useEventEmitter();
 
   const [createInput, setCreateInput] = useState<{
     isOpen: boolean;
@@ -133,6 +137,7 @@ export const FileExplorerNode = ({
       ActionId.CopyNode,
       ActionId.PasteNode,
       ActionId.DeleteNode,
+      ActionId.RenameNode,
     ],
     async (_, { hotkey }) => {
       switch (hotkey) {
@@ -162,6 +167,10 @@ export const FileExplorerNode = ({
           if (!clipboardNode) break;
 
           await onPaste?.(clipboardNode, node);
+          setClipboardNode?.();
+          break;
+        case getShortcutKeyPart(shortcuts[ActionId.RenameNode]):
+          setIsRenaming(true);
           break;
       }
     },
@@ -229,7 +238,10 @@ export const FileExplorerNode = ({
               type="file"
               node={node}
               depth={depth}
-              onClose={() => setIsRenaming(false)}
+              onClose={() => {
+                setIsRenaming(false);
+                emitter(ActionId.FocusExplorer);
+              }}
               onRename={onRename}
             />
           )}
@@ -239,7 +251,10 @@ export const FileExplorerNode = ({
               type={createInput.type}
               parentNode={node}
               depth={depth}
-              onClose={() => setCreateInput(null)}
+              onClose={() => {
+                setCreateInput(null);
+                emitter(ActionId.FocusExplorer);
+              }}
               onCreateFile={onCreateFile}
               onCreateDir={onCreateDir}
             />

@@ -44,7 +44,7 @@ export const EditorView = () => {
     handleOnRename,
     handleOnRefresh,
     handleOnMove,
-    handleOnPaste
+    handleOnPaste,
   } = useEditorViewHandlers({
     ...fileExplorer,
     editor,
@@ -87,6 +87,7 @@ export const EditorView = () => {
   );
 
   useEventListener(ActionId.SaveNote, handleOnSave);
+  useEventListener(ActionId.FocusExplorer, () => explorerRef.current?.focus());
 
   useEffect(() => {
     if (isHydrated && hiveName === "") {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FloatingMenu as TiptapFloatingMenu } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
 import {
@@ -24,6 +24,8 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 
 interface FloatingMenuProps {
   editor: Editor | null;
@@ -32,10 +34,23 @@ interface FloatingMenuProps {
 export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
+  const isExpandableRef = useRef(false);
 
   if (!editor) {
     return null;
   }
+
+  useShortcuts(NonAlphas.Escape, () => {
+    setIsExpanded((prev) => !prev);
+  });
+  useShortcuts(
+    ActionId.ToggleFloatingMenuExpansion,
+    () => {
+      if (isExpandableRef.current)
+      setIsExpanded((prev) => !prev);
+    },
+    { enableOnContentEditable: true },
+  );
 
   const handleButtonClick = (callback: () => void) => {
     callback();
@@ -54,6 +69,8 @@ export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
         const isEmptyTextBlock =
           $anchor.parent.type.name === "paragraph" &&
           $anchor.parent.content.size === 0;
+
+        isExpandableRef.current = isEmptyTextBlock;
 
         return empty && isEmptyTextBlock;
       }}

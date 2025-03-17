@@ -34,4 +34,5 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.DeleteNode]: `${ShortcutContext.Global}:d`,
   [ActionId.RenameNode]: `${ShortcutContext.Global}:r`,
   [ActionId.ToggleSettings]: `${ShortcutContext.Global}:ctrl+.`,
+  [ActionId.ToggleFloatingMenuExpansion]: `${ShortcutContext.Global}:ctrl+/`,
 } as const;

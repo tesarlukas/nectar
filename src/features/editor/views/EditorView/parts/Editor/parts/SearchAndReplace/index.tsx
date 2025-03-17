@@ -8,9 +8,21 @@ import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import type { Editor, Range } from "@tiptap/react";
 import { ArrowLeft, ArrowRight, Replace, Search } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useEditorEffect } from "../../hooks/useEditorEffect";
+
+export interface SearchInputHandle {
+  focus: () => void;
+  domElement: HTMLInputElement | null;
+}
 
 // Component props interface
 interface SearchReplaceComponentProps {
@@ -21,10 +33,10 @@ interface SearchReplaceComponentProps {
 const RESULT_INDEX_OFFSET = 1 as const;
 const ON_UPDATE_DEBOUNCE = 750 as const;
 
-export const SearchReplaceComponent = ({
-  editor,
-  className = "",
-}: SearchReplaceComponentProps) => {
+export const SearchReplaceComponent = forwardRef<
+  SearchInputHandle,
+  SearchReplaceComponentProps
+>(({ editor, className = "" }, ref) => {
   const { t } = useTranslation("editorView");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
@@ -171,6 +183,11 @@ export const SearchReplaceComponent = ({
     searchInputRef.current?.focus();
   }, [searchInputRef.current]);
 
+  useImperativeHandle(ref, () => ({
+    focus: () => searchInputRef.current?.focus(),
+    domElement: searchInputRef.current,
+  }));
+
   useEditorEffect(editor, "update", handleSearch, {
     useDebounce: true,
     debounceTime: ON_UPDATE_DEBOUNCE,
@@ -279,4 +296,4 @@ export const SearchReplaceComponent = ({
       </div>
     </div>
   );
-};
+});

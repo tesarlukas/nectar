@@ -1,13 +1,16 @@
 import { EditorContent, type Editor as EditorType } from "@tiptap/react";
 import { BubbleMenu } from "./parts/BubbleMenu";
 import type { FileTreeNode } from "../FileExplorer/hooks/useFileExplorer";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { ActionId } from "@/features/events/eventEmitter";
 import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
-import { SearchReplaceComponent } from "./parts/SearchAndReplace";
+import {
+  type SearchInputHandle,
+  SearchReplaceComponent,
+} from "./parts/SearchAndReplace";
 import { useEditorEffect } from "./hooks/useEditorEffect";
 import { FloatingMenu } from "./parts/FloatingMenu";
 
@@ -21,9 +24,17 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
   const { t } = useTranslation();
   const [isSaved, setIsSaved] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
+  const searchReplaceRef = useRef<SearchInputHandle>(null);
 
   useEventListener(ActionId.SaveNote, () => setIsSaved(true));
   useEventListener(ActionId.SearchReplace, () => {
+    if (
+      document.activeElement !== searchReplaceRef.current?.domElement &&
+      isSearching
+    ) {
+      searchReplaceRef.current?.focus();
+      return;
+    }
     setIsSearching((prevState) => {
       if (prevState) {
         editor?.commands.focus();
@@ -78,7 +89,9 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       <div>
         <BubbleMenu editor={editor} />
       </div>
-      {isSearching && <SearchReplaceComponent editor={editor} />}
+      {isSearching && (
+        <SearchReplaceComponent editor={editor} ref={searchReplaceRef} />
+      )}
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useShortcutsStore } from "@/stores/useShortcutStore/index";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo } from "react";
 import { ShortcutItem } from "./parts/ShortcutItem";
 import { useTranslation } from "react-i18next";
 import { Typography } from "@/components/Typography";
@@ -10,59 +10,145 @@ import { NonAlphas, type ActionId } from "@/features/events/eventEmitter";
 import { formatKeys } from "./utils/formatKeys";
 import { DEFAULT_SHORTCUTS } from "@/stores/useShortcutStore/index.preset";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import {
+  FixedSizeList as List,
+  type ListChildComponentProps,
+} from "react-window";
+
+// Helper function to normalize text for search
+const normalizeText = (text: string): string => {
+  return (
+    text
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: not really miss leading
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+  );
+};
 
 export const ShortcutsSettings = () => {
   const { t } = useTranslation(["settings", "common"]);
   const shortcuts = useShortcutsStore((state) => state.shortcuts);
   const updateShortcuts = useShortcutsStore((state) => state.updateShortcuts);
   const reset = useShortcutsStore((state) => state.resetToDefault);
-
   const [
     recordedKeys,
     { start: startRecording, stop: stopRecording, isRecording },
   ] = useRecordHotkeys();
   const [newShortcuts, setNewShortcuts] = useState(shortcuts);
-
+  const [searchQuery, setSearchQuery] = useState("");
   const recordedActionIdRef = useRef<ActionId>(null);
   const newKeysRef = useRef("");
+  const listRef = useRef<List>(null);
 
+  // Handle reset
   const handleOnReset = useCallback(() => {
     reset();
     toast.success(t("shortcutsReset"));
     setNewShortcuts(DEFAULT_SHORTCUTS);
-  }, []);
+  }, [reset, t]);
+
+  // Handle save
   const handleOnSave = () => updateShortcuts(newShortcuts);
 
-  const handleShortcutItemOnClick = useCallback((actionId: ActionId) => {
-    recordedActionIdRef.current = actionId;
-    startRecording();
-  }, []);
+  // Handle shortcut item click
+  const handleShortcutItemOnClick = useCallback(
+    (actionId: ActionId) => {
+      recordedActionIdRef.current = actionId;
+      startRecording();
+    },
+    [startRecording],
+  );
 
+  // Get recorded keys for action
   const getRecordedKeysForAction = useCallback(
     (actionId: ActionId) => {
       if (actionId === recordedActionIdRef.current) {
         return recordedKeys;
       }
     },
-    [recordedKeys, recordedActionIdRef],
+    [recordedKeys],
   );
 
+  // Escape key to cancel recording
   useShortcuts(NonAlphas.Escape, () => {
     newKeysRef.current = "";
     stopRecording();
   });
+
+  // Enter key to confirm new shortcut
   useShortcuts(NonAlphas.Enter, () => {
     newKeysRef.current = `global:${formatKeys(recordedKeys)}`;
-
     if (recordedActionIdRef.current) {
       setNewShortcuts((prevShortcuts) => ({
         ...prevShortcuts,
         [recordedActionIdRef.current as ActionId]: newKeysRef.current,
       }));
     }
-
     stopRecording();
   });
+
+  // Filter shortcuts based on search query
+  const filteredShortcuts = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return Object.entries(shortcuts) as [ActionId, string][];
+    }
+
+    const normalizedQuery = normalizeText(searchQuery);
+
+    return (Object.entries(shortcuts) as [ActionId, string][]).filter(
+      ([actionId]) => {
+        const normalizedActionId = normalizeText(actionId);
+        const translatedAction = normalizeText(
+          t(`actions.${actionId}`, { defaultValue: actionId }),
+        );
+
+        return (
+          normalizedActionId.includes(normalizedQuery) ||
+          translatedAction.includes(normalizedQuery)
+        );
+      },
+    );
+  }, [shortcuts, searchQuery, t]);
+
+  // Row renderer for virtualized list
+  const Row = useCallback(
+    ({ index, style }: ListChildComponentProps) => {
+      const [actionId, shortcut] = filteredShortcuts[index];
+      return (
+        <div style={style}>
+          <ShortcutItem
+            key={actionId}
+            t={t}
+            actionId={actionId}
+            shortcut={shortcut}
+            recordedKeys={getRecordedKeysForAction(actionId)}
+            newShortcut={newShortcuts[actionId]}
+            isRecording={
+              isRecording && actionId === recordedActionIdRef.current
+            }
+            isChanged={newShortcuts[actionId] !== shortcuts[actionId]}
+            onClick={handleShortcutItemOnClick}
+          />
+        </div>
+      );
+    },
+    [
+      filteredShortcuts,
+      t,
+      getRecordedKeysForAction,
+      newShortcuts,
+      shortcuts,
+      isRecording,
+      handleShortcutItemOnClick,
+    ],
+  );
+
+  // Calculate list height based on number of items (with a max height)
+  const listHeight = Math.min(filteredShortcuts.length * 56, 400);
 
   return (
     <>
@@ -80,23 +166,36 @@ export const ShortcutsSettings = () => {
             </Button>
           </div>
         </div>
-        <div className="flex flex-col gap-y-2 py-4">
-          {(Object.entries(shortcuts) as [ActionId, string][]).map(
-            ([actionId, shortcut]) => (
-              <ShortcutItem
-                key={actionId}
-                t={t}
-                actionId={actionId}
-                shortcut={shortcut}
-                recordedKeys={getRecordedKeysForAction(actionId)}
-                newShortcut={newShortcuts[actionId]}
-                isRecording={
-                  isRecording && actionId === recordedActionIdRef.current
-                }
-                isChanged={newShortcuts[actionId] !== shortcuts[actionId]}
-                onClick={handleShortcutItemOnClick}
-              />
-            ),
+
+        {/* Search input */}
+        <div className="relative mt-4 mb-2">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={t("searchShortcuts", {
+              defaultValue: "Search shortcuts...",
+            })}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+
+        {/* Virtualized list */}
+        <div className="py-4">
+          {filteredShortcuts.length > 0 ? (
+            <List
+              ref={listRef}
+              height={listHeight}
+              width="100%"
+              itemCount={filteredShortcuts.length}
+              itemSize={56}
+            >
+              {Row}
+            </List>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              {t("noShortcutsFound", { defaultValue: "No shortcuts found" })}
+            </div>
           )}
         </div>
       </div>

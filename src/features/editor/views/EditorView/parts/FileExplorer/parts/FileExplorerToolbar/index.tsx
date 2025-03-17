@@ -18,7 +18,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useState } from "react";
 import { CreateNodeInput } from "../NodeInput";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";

@@ -31,7 +31,7 @@ export enum ActionId {
   DeleteNode = "delete_node",
   RenameNode = "rename_node",
   ToggleSettings = "toggle_settings",
-  ToggleFloatingMenuExpansion = "toggle_floating_menu_expansion"
+  ToggleFloatingMenuExpansion = "toggle_floating_menu_expansion",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

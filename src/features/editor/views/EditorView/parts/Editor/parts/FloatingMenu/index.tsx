@@ -46,8 +46,7 @@ export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
   useShortcuts(
     ActionId.ToggleFloatingMenuExpansion,
     () => {
-      if (isExpandableRef.current)
-      setIsExpanded((prev) => !prev);
+      if (isExpandableRef.current) setIsExpanded((prev) => !prev);
     },
     { enableOnContentEditable: true },
   );

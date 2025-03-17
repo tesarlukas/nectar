@@ -4,7 +4,7 @@ import type { FileTreeNode } from "../FileExplorer/hooks/useFileExplorer";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
-import { ActionId } from "@/features/events/eventEmitter";
+import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 import { Typography } from "@/components/Typography";
 import { stripJson } from "@/utils/nodeHelpers";
 import {
@@ -13,6 +13,7 @@ import {
 } from "./parts/SearchAndReplace";
 import { useEditorEffect } from "./hooks/useEditorEffect";
 import { FloatingMenu } from "./parts/FloatingMenu";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -46,6 +47,22 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
   const handleOnUpdate = useCallback(() => {
     setIsSaved(false);
   }, []);
+
+  useShortcuts(
+    NonAlphas.Escape,
+    () => {
+      const selection = editor?.state.selection;
+      if (!selection) {
+        return;
+      }
+
+      const { ranges } = selection;
+      const toPosition = ranges[0]?.$to;
+
+      editor?.commands.setTextSelection(toPosition.pos);
+    },
+    { enableOnContentEditable: true },
+  );
 
   useEditorEffect(editor, "update", handleOnUpdate, {
     useDebounce: true,

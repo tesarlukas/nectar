@@ -80,7 +80,7 @@ export const FileExplorerToolbar = forwardRef<
     return (
       <>
         <div
-          className="w-full border-b m-2 flex items-center gap-x-2 bg-background focus:bg-highlight"
+          className="w-full border-b flex items-center gap-x-2 bg-background focus:bg-highlight py-1 px-2"
           // biome-ignore lint/a11y/noNoninteractiveTabindex: there is a need for this div to be interactive
           tabIndex={0}
           ref={ref}

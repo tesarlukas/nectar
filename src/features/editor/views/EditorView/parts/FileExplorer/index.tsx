@@ -191,7 +191,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     }, [notesNode, sortOrder, selectedNode, clipboardNode]);
 
     return (
-      <div className="h-full" ref={ref} tabIndex={-1} >
+      <div className="h-full" ref={ref} tabIndex={-1}>
         <FileExplorerToolbar
           ref={toolbarRef}
           notesNode={notesNode}
@@ -203,7 +203,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
             setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
           }
         />
-        <ScrollArea className="h-full pb-10" thumbClassName="w-1" >
+        <ScrollArea className="h-full pb-10" thumbClassName="w-1">
           {renderNodes()}
         </ScrollArea>
       </div>

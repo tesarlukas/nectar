@@ -240,9 +240,9 @@ export const useEditor = ({ noteId }: UseEditor) => {
 
   const debouncedUpdateEditorStates = useCallback(
     debounce((noteId: string, editor: Editor) => {
-      addEditorState(noteId, editor.view.state);
+      addEditorState(noteId, { editorState: editor.view.state, saved: false });
     }, 500),
-    [],
+    [noteId],
   );
 
   const handleEditorOnClick = () => {

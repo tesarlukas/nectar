@@ -89,7 +89,7 @@ export const useEditorViewHandlers = ({
   const loadNote = useCallback(
     async (node: FileTreeNode) => {
       // search for state of this node already in the memory only storage first
-      const noteState = editorStatesRef.current[node.value.path];
+      const noteState = editorStatesRef.current[node.value.path]?.editorState;
 
       if (noteState) {
         editor?.view.updateState(noteState);

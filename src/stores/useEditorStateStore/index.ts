@@ -1,5 +1,10 @@
-import type { EditorState } from "@tiptap/pm/state";
+import type { EditorState as TiptapEditorState } from "@tiptap/pm/state";
 import { create } from "zustand";
+
+export interface EditorState {
+  saved: boolean;
+  editorState: TiptapEditorState;
+}
 
 export type EditorStates = Record<string, EditorState>;
 

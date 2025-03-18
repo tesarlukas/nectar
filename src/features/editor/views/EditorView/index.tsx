@@ -17,6 +17,8 @@ import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import type { ImperativePanelHandle } from "react-resizable-panels";
+import { useJumplist } from "./hooks/useJumplist";
+import { Button } from "@/components/ui/button";
 
 const RESIZE_STEP = 5;
 
@@ -26,6 +28,16 @@ export const EditorView = () => {
   const emitter = useEventEmitter();
   const explorerRef = useRef<HTMLDivElement>(null);
   const resizablePanelRef = useRef<ImperativePanelHandle | null>(null);
+  const {
+    jumplistRef,
+    addItemToJumplist,
+    setIndexByItem,
+    createNewItem,
+    clearJumplist,
+    moveJumplistOut,
+    moveJumplistIn,
+    isNodeCurrentJumplistItem,
+  } = useJumplist();
 
   const fileExplorer = useFileExplorer();
   const { nodes, selectedNode, selectedNoteNode, initializeFileTree } =
@@ -45,14 +57,31 @@ export const EditorView = () => {
     handleOnRefresh,
     handleOnMove,
     handleOnPaste,
+    handleMoveJumplistIn,
+    handleMoveJumplistOut,
   } = useEditorViewHandlers({
     ...fileExplorer,
     editor,
     hiveName,
+    addItemToJumplist,
+    setIndexByItem,
+    createNewItem,
+    jumplistRef,
+    moveJumplistIn,
+    moveJumplistOut,
+    isNodeCurrentJumplistItem,
   });
 
   const emitSaveNote = () => emitter(ActionId.SaveNote);
 
+  useShortcuts(ActionId.MoveJumpListOut, handleMoveJumplistOut, {
+    enableOnContentEditable: true,
+    enableOnFormTags: ["INPUT"],
+  });
+  useShortcuts(ActionId.MoveJumpListIn, handleMoveJumplistIn, {
+    enableOnContentEditable: true,
+    enableOnFormTags: ["INPUT"],
+  });
   useShortcuts(ActionId.SaveNote, emitSaveNote, {
     enableOnContentEditable: true,
     enableOnFormTags: ["INPUT"],
@@ -129,7 +158,9 @@ export const EditorView = () => {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <BottomMenu charCount={editor?.storage.characterCount.characters()} />
+        <BottomMenu charCount={editor?.storage.characterCount.characters()}>
+          <Button onClick={() => clearJumplist()}>Clear jumplist</Button>
+        </BottomMenu>
       </div>
     </>
   );

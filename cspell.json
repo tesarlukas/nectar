@@ -5,15 +5,16 @@
     "tauri",
     "oklch",
     "topbar",
-    "Gapcursor",
-    "Dropcursor",
+    "gapcursor",
+    "dropcursor",
     "keymap",
     "homebase",
     "partialize",
     "eventsystem",
     "sonner",
     "focusables",
-    "Noninteractive"
+    "noninteractive",
+    "jumplist"
   ],
   "language": "en,cs-CZ",
   "ignorePaths": ["node_modules", "src-tauri", "pnpm-lock.yaml"]

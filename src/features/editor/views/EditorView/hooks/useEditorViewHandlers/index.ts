@@ -11,11 +11,24 @@ import { useEditorStatesRef } from "@/stores/useEditorStateStore/useEditorStates
 import { resetEditorContent } from "../../parts/Editor/utils/updateEditorContent";
 import { useEditorStateStore } from "@/stores/useEditorStateStore";
 import type { Note } from "../../types";
+import type { useJumplist } from "../useJumplist";
 
 // Create a type that represents all the returns from useFileExplorer
 type FileExplorerReturns = ReturnType<typeof useFileExplorer>;
+type UseJumplistReturns = Pick<
+  ReturnType<typeof useJumplist>,
+  | "addItemToJumplist"
+  | "setIndexByItem"
+  | "createNewItem"
+  | "jumplistRef"
+  | "moveJumplistOut"
+  | "moveJumplistIn"
+  | "isNodeCurrentJumplistItem"
+>;
 
-interface EditorViewHandlersProps extends FileExplorerReturns {
+interface EditorViewHandlersProps
+  extends FileExplorerReturns,
+    UseJumplistReturns {
   // Additional props not from FileExplorer
   editor: Editor | null;
   hiveName: string;
@@ -35,6 +48,13 @@ export const useEditorViewHandlers = ({
   initializeFileTree,
   editor,
   hiveName,
+  jumplistRef,
+  addItemToJumplist,
+  setIndexByItem,
+  createNewItem,
+  moveJumplistOut,
+  moveJumplistIn,
+  isNodeCurrentJumplistItem,
 }: EditorViewHandlersProps) => {
   const { t } = useTranslation("editorView");
   const editorStatesRef = useEditorStatesRef();
@@ -55,12 +75,22 @@ export const useEditorViewHandlers = ({
       // if it's just a directory, then end here
       if (node.value.isDirectory) return;
 
+      if (!isNodeCurrentJumplistItem(node)) {
+        const newJumplistItem = createNewItem(node);
+        addItemToJumplist(newJumplistItem);
+        setIndexByItem(newJumplistItem);
+      }
+
+      await loadNote(node);
+    },
+    [editor],
+  );
+
+  const loadNote = useCallback(
+    async (node: FileTreeNode) => {
       // search for state of this node already in the memory only storage first
       const noteState = editorStatesRef.current[node.value.path];
 
-      // TODO: there is some issue with state mismatch when the editor gets
-      // remounted, transaction and range errors are occurring, probably some
-      // state mismatches because of different instances
       if (noteState) {
         editor?.view.updateState(noteState);
         editor?.chain().setContent(noteState.doc.content).focus("end").run();
@@ -74,8 +104,20 @@ export const useEditorViewHandlers = ({
         resetEditorContent({ editor, newContent: noteContent.editorContent });
       }
     },
-    [editor, readNote, setSelectedNode, setSelectedNoteNode],
+    [editor],
   );
+
+  const handleMoveJumplistIn = async () => {
+    const nextNode = jumplistRef.current[moveJumplistIn()].node;
+    setSelectedNoteNode(nextNode);
+    await loadNote(nextNode);
+  };
+
+  const handleMoveJumplistOut = async () => {
+    const nextNode = jumplistRef.current[moveJumplistOut()].node;
+    setSelectedNoteNode(nextNode);
+    await loadNote(nextNode);
+  };
 
   const handleOnSave = useCallback(async () => {
     if (!selectedNoteNode) return;
@@ -174,5 +216,8 @@ export const useEditorViewHandlers = ({
     handleOnRefresh,
     handleOnMove,
     handleOnPaste,
+    setSelectedNoteNode,
+    handleMoveJumplistIn,
+    handleMoveJumplistOut,
   };
 };

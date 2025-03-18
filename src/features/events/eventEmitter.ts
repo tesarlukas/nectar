@@ -34,6 +34,8 @@ export enum ActionId {
   RenameNode = "rename_node",
   ToggleSettings = "toggle_settings",
   ToggleFloatingMenuExpansion = "toggle_floating_menu_expansion",
+  MoveJumpListOut = "move_jumplist_out",
+  MoveJumpListIn = "move_jumplist_in",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

@@ -44,7 +44,7 @@ export const EditorView = () => {
     fileExplorer;
 
   const { editor, handleEditorOnClick } = useEditor({
-    noteId: selectedNode?.value.path,
+    noteId: selectedNoteNode?.value.path,
   });
 
   const {

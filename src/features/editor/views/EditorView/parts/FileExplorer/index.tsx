@@ -108,6 +108,28 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       focusIndex.current = prevIndex;
     }, []);
 
+    const handleTopNav = useCallback((e: KeyboardEvent) => {
+      e.preventDefault();
+
+      updateFocusableElements();
+      if (focusableElementsRef.current.length === 0) return;
+
+      focusableElementsRef.current[0]?.focus();
+      focusIndex.current = 0;
+    }, []);
+
+    const handleBottomNav = useCallback((e: KeyboardEvent) => {
+      e.preventDefault();
+
+      updateFocusableElements();
+      if (focusableElementsRef.current.length === 0) return;
+
+      focusableElementsRef.current[
+        focusableElementsRef.current.length - 1
+      ]?.focus();
+      focusIndex.current = focusableElementsRef.current.length - 1;
+    }, []);
+
     const updateFocusableElements = useCallback(() => {
       if (!ref || typeof ref === "function" || !ref.current) return;
 
@@ -162,6 +184,8 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     // Register custom keyboard shortcuts
     useShortcuts(ActionId.MoveExplorerCursorDown, handleForwardNav);
     useShortcuts(ActionId.MoveExplorerCursorUp, handleBackwardNav);
+    useShortcuts(ActionId.MoveExplorerCursorTop, handleTopNav);
+    useShortcuts(ActionId.MoveExplorerCursorBottom, handleBottomNav);
 
     useShortcuts(NonAlphas.Escape, () => setClipboardNode(undefined));
     // turn off the tab and shift tab for this component

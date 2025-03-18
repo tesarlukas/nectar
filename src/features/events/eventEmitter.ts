@@ -20,6 +20,8 @@ export enum ActionId {
   FocusExplorer = "focus_explorer",
   MoveExplorerCursorUp = "move_explorer_cursor_up",
   MoveExplorerCursorDown = "move_explorer_cursor_down",
+  MoveExplorerCursorTop = "move_explorer_cursor_top",
+  MoveExplorerCursorBottom = "move_explorer_cursor_bottom",
   FocusExplorerToolbar = "focus_explorer_toolbar",
   RefreshExplorer = "refresh_explorer",
   ExpandExplorerLeft = "expand_explorer_left",

@@ -47,7 +47,7 @@ export const TopMenu = () => {
 
   return (
     <>
-      <Card className="rounded-b-none py-4 px-8 flex flex-row">
+      <Card className="rounded-b-none py-4 px-8 flex flex-row z-1">
         <div>
           <h1 className="text-4xl">{hiveName}</h1>
         </div>

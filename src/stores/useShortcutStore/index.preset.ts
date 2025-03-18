@@ -23,6 +23,8 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.FocusExplorer]: `${ShortcutContext.Global}:ctrl+h`,
   [ActionId.MoveExplorerCursorUp]: `${ShortcutContext.Global}:k`,
   [ActionId.MoveExplorerCursorDown]: `${ShortcutContext.Global}:j`,
+  [ActionId.MoveExplorerCursorTop]: `${ShortcutContext.Global}:g`,
+  [ActionId.MoveExplorerCursorBottom]: `${ShortcutContext.Global}:shift+g`,
   [ActionId.FocusExplorerToolbar]: `${ShortcutContext.Global}:ctrl+g`,
   [ActionId.RefreshExplorer]: `${ShortcutContext.Global}:ctrl+r`,
   [ActionId.ExpandExplorerLeft]: `${ShortcutContext.Global}:alt+h`,

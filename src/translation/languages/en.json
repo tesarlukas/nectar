@@ -23,7 +23,7 @@
     "shortcutsReset": "Shortcuts reset",
     "shortcuts": {
       "save_note": "Save note",
-      "create_new_note": "Creat new note",
+      "create_new_note": "Create new note",
       "create_new_dir": "Create New Directory",
       "search_replace": "Search & Replace",
       "next_search": "Next Search Result",
@@ -34,11 +34,22 @@
       "focus_explorer": "Focus Explorer",
       "move_explorer_cursor_up": "Move Explorer Cursor Up",
       "move_explorer_cursor_down": "Move Explorer Cursor Down",
+      "move_explorer_cursor_top": "Move to Top",
+      "move_explorer_cursor_bottom": "Move to Bottom",
       "focus_explorer_toolbar": "Focus Explorer Toolbar",
       "refresh_explorer": "Refresh Explorer",
       "expand_explorer_left": "Expand Explorer Left",
       "expand_explorer_right": "Expand Explorer Right",
-      "toggle_sort_order": "Toggle Sort Order"
+      "toggle_sort_order": "Toggle Sort Order",
+      "cut_node": "Cut Node",
+      "copy_node": "Copy Node",
+      "paste_node": "Paste Node",
+      "delete_node": "Delete Node",
+      "rename_node": "Rename Node",
+      "toggle_settings": "Toggle Settings",
+      "toggle_floating_menu_expansion": "Toggle Floating Menu Expansion",
+      "move_jumplist_out": "Move Jump List Out",
+      "move_jumplist_in": "Move Jump List In"
     }
   },
   "editorView": {

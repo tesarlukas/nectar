@@ -10,9 +10,11 @@ export type EditorStates = Record<string, EditorState>;
 
 export interface EditorStateStore {
   editorStates: EditorStates;
+  /* ids are in these cases the path of the node since it is unique */
   addEditorState: (id: string, editorState: EditorState) => void;
   removeEditorState: (id: string) => void;
   clearEditorStates: () => void;
+  setEditorStateSaved: (id: string, saved: boolean) => void;
 }
 
 export const useEditorStateStore = create<EditorStateStore>((set) => ({
@@ -28,4 +30,13 @@ export const useEditorStateStore = create<EditorStateStore>((set) => ({
       return { editorStates: newEditorStates };
     }),
   clearEditorStates: () => set(() => ({ editorStates: {} })),
+  setEditorStateSaved: (id: string, saved: boolean) =>
+    set((state) => {
+      const newEditorStates = {
+        ...state.editorStates,
+        [id]: { ...state.editorStates[id], saved },
+      };
+
+      return { editorStates: newEditorStates };
+    }),
 }));

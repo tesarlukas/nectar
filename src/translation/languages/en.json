@@ -49,6 +49,7 @@
     "replaceWith": "Replace With",
     "search": "Search",
     "explorerRefreshed": "Explorer Refreshed",
-    "directoriesCannotBeCopied": "Directories cannot be copied"
+    "directoriesCannotBeCopied": "Directories cannot be copied",
+    "noteSaved": "Note saved"
   }
 }

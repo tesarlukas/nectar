@@ -1,7 +1,7 @@
 import { EditorContent, type Editor as EditorType } from "@tiptap/react";
 import { BubbleMenu } from "./parts/BubbleMenu";
 import type { FileTreeNode } from "../FileExplorer/hooks/useFileExplorer";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
@@ -11,9 +11,12 @@ import {
   type SearchInputHandle,
   SearchReplaceComponent,
 } from "./parts/SearchAndReplace";
-import { useEditorEffect } from "./hooks/useEditorEffect";
 import { FloatingMenu } from "./parts/FloatingMenu";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
+import { useEditorStateStore } from "@/stores/useEditorStateStore";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -23,11 +26,19 @@ export interface EditorProps {
 
 export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
   const { t } = useTranslation();
-  const [isSaved, setIsSaved] = useState(true);
+  const editorStates = useEditorStateStore((state) => state.editorStates);
+  const setEditorStateSaved = useEditorStateStore(
+    (state) => state.setEditorStateSaved,
+  );
+  const emitter = useEventEmitter();
   const [isSearching, setIsSearching] = useState(false);
   const searchReplaceRef = useRef<SearchInputHandle>(null);
 
-  useEventListener(ActionId.SaveNote, () => setIsSaved(true));
+  useEventListener(ActionId.SaveNote, () => {
+    if (!selectedNoteNode) return;
+
+    setEditorStateSaved(selectedNoteNode?.value.path, true);
+  });
   useEventListener(ActionId.SearchReplace, () => {
     if (
       document.activeElement !== searchReplaceRef.current?.domElement &&
@@ -43,10 +54,6 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       return !prevState;
     });
   });
-
-  const handleOnUpdate = useCallback(() => {
-    setIsSaved(false);
-  }, []);
 
   useShortcuts(
     NonAlphas.Escape,
@@ -64,21 +71,30 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
     { enableOnContentEditable: true },
   );
 
-  useEditorEffect(editor, "update", handleOnUpdate, {
-    useDebounce: true,
-    debounceTime: 300,
-  });
-  useEffect(() => {
-    const handleOnUpdate = () => {
-      setIsSaved(false);
-    };
+  const renderUnsavedChangesStatus = useCallback(() => {
+    if (selectedNoteNode === undefined) return <></>;
 
-    editor?.on("update", handleOnUpdate);
+    if (editorStates[selectedNoteNode.value.path]?.saved) return <></>;
 
-    return () => {
-      editor?.off("update", handleOnUpdate);
-    };
-  });
+    if (editorStates[selectedNoteNode.value.path]?.saved === undefined)
+      return <></>;
+
+    return (
+      <Button
+        className="flex items-center gap-1.5 cursor-pointer"
+        onClick={() => {
+          emitter(ActionId.SaveNote);
+          toast.success(t("noteSaved"));
+        }}
+        variant="ghost"
+      >
+        <div className="h-2 w-2 rounded-full bg-foreground animate-pulse" />
+        <span className="text-foreground text-sm font-medium">
+          {t("unsavedChanges")}
+        </span>
+      </Button>
+    );
+  }, [selectedNoteNode, editorStates]);
 
   return (
     <>
@@ -86,14 +102,7 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
         <Typography variant="h2" weight="normal" className="no-underline">
           {stripJson(selectedNoteNode?.value.name)}
         </Typography>
-        {!isSaved && (
-          <div className="flex items-center gap-1.5">
-            <div className="h-2 w-2 rounded-full bg-foreground animate-pulse" />
-            <span className="text-foreground text-sm font-medium">
-              {t("unsavedChanges")}
-            </span>
-          </div>
-        )}
+        {renderUnsavedChangesStatus()}
       </div>
       <EditorContent
         editor={editor}

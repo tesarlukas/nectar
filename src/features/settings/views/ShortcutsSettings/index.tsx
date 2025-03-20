@@ -11,7 +11,7 @@ import { formatKeys } from "./utils/formatKeys";
 import { DEFAULT_SHORTCUTS } from "@/stores/useShortcutStore/index.preset";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Trash } from "lucide-react";
 import {
   FixedSizeList as List,
   type ListChildComponentProps,
@@ -49,7 +49,9 @@ export const ShortcutsSettings = () => {
     reset();
     toast.success(t("shortcutsReset"));
     setNewShortcuts(DEFAULT_SHORTCUTS);
-  }, [reset, t]);
+    stopRecording();
+    newKeysRef.current = "";
+  }, []);
 
   // Handle save
   const handleOnSave = () => updateShortcuts(newShortcuts);
@@ -71,6 +73,22 @@ export const ShortcutsSettings = () => {
       }
     },
     [recordedKeys],
+  );
+
+  const handleOnResetSingle = useCallback(
+    (actionId: ActionId) => {
+      updateShortcuts({
+        ...shortcuts,
+        [actionId]: DEFAULT_SHORTCUTS[actionId],
+      });
+      setNewShortcuts((prevShortcuts) => ({
+        ...prevShortcuts,
+        [actionId]: DEFAULT_SHORTCUTS[actionId],
+      }));
+      newKeysRef.current = "";
+      stopRecording();
+    },
+    [shortcuts],
   );
 
   // Escape key to cancel recording
@@ -120,19 +138,28 @@ export const ShortcutsSettings = () => {
       const [actionId, shortcut] = filteredShortcuts[index];
       return (
         <div style={style}>
-          <ShortcutItem
-            key={actionId}
-            t={t}
-            actionId={actionId}
-            shortcut={shortcut}
-            recordedKeys={getRecordedKeysForAction(actionId)}
-            newShortcut={newShortcuts[actionId]}
-            isRecording={
-              isRecording && actionId === recordedActionIdRef.current
-            }
-            isChanged={newShortcuts[actionId] !== shortcuts[actionId]}
-            onClick={handleShortcutItemOnClick}
-          />
+          <div className="flex flex-row items-center gap-x-2">
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={() => handleOnResetSingle(actionId)}
+            >
+              <Trash />
+            </Button>
+            <ShortcutItem
+              key={actionId}
+              t={t}
+              actionId={actionId}
+              shortcut={shortcut}
+              recordedKeys={getRecordedKeysForAction(actionId)}
+              newShortcut={newShortcuts[actionId]}
+              isRecording={
+                isRecording && actionId === recordedActionIdRef.current
+              }
+              isChanged={newShortcuts[actionId] !== shortcuts[actionId]}
+              onClick={handleShortcutItemOnClick}
+            />
+          </div>
         </div>
       );
     },

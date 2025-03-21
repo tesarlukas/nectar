@@ -21,6 +21,7 @@ import {
 } from "react-window";
 import { findDuplicates } from "./utils/findDuplicates";
 import { Card, CardTitle } from "@/components/ui/card";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 // Helper function to normalize text for search
 const normalizeText = (text: string): string => {
@@ -154,9 +155,10 @@ export const ShortcutsSettings = () => {
   const Row = useCallback(
     ({ index, style }: ListChildComponentProps) => {
       const [actionId, shortcut] = filteredShortcuts[index];
+
       return (
-        <div style={style}>
-          <div className="flex flex-row items-center gap-x-2">
+        <div style={style} className="pb-2">
+          <div className="flex flex-row items-center gap-x-2 h-full">
             <Button
               variant="outline"
               className="cursor-pointer"
@@ -192,9 +194,6 @@ export const ShortcutsSettings = () => {
     ],
   );
 
-  // Calculate list height based on number of items (with a max height)
-  const listHeight = Math.min(filteredShortcuts.length * 56, 400);
-
   return (
     <>
       <div className="px-4 py-0">
@@ -215,7 +214,7 @@ export const ShortcutsSettings = () => {
           <div className="my-4">
             <Card className="p-4 flex flex-row items-center bg-warning">
               <TriangleAlert className="mr-4" />
-              <CardTitle>{t("youHaveDuplicateShortcuts")}</CardTitle>
+              <CardTitle>{t("youCannotHaveDuplicateShortcuts")}</CardTitle>
             </Card>
           </div>
         )}
@@ -233,23 +232,29 @@ export const ShortcutsSettings = () => {
           />
         </div>
 
-        {/* Virtualized list */}
-        <div className="py-4">
-          {filteredShortcuts.length > 0 ? (
-            <List
-              ref={listRef}
-              height={listHeight}
-              width="100%"
-              itemCount={filteredShortcuts.length}
-              itemSize={56}
-            >
-              {Row}
-            </List>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              {t("noShortcutsFound", { defaultValue: "No shortcuts found" })}
-            </div>
-          )}
+        <div className="py-4 h-96">
+          {/* Virtualized list */}
+          <AutoSizer>
+            {({ height, width }) => {
+              return filteredShortcuts.length > 0 ? (
+                <List
+                  ref={listRef}
+                  height={height}
+                  width={width}
+                  itemCount={filteredShortcuts.length}
+                  itemSize={height / 6}
+                >
+                  {Row}
+                </List>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  {t("noShortcutsFound", {
+                    defaultValue: "No shortcuts found",
+                  })}
+                </div>
+              );
+            }}
+          </AutoSizer>
         </div>
       </div>
     </>

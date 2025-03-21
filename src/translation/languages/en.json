@@ -52,7 +52,7 @@
       "move_jumplist_in": "Move Jump List In"
     },
     "thereIsCollisionInYourNewBinds": "There is a collision in your new binds",
-    "youHaveDuplicateShortcuts": "You cannot have duplicate shortcuts",
+    "youCannotHaveDuplicateShortcuts": "You cannot have duplicate shortcuts",
     "successfullySavedShortcuts": "Successfully saved shortcuts"
   },
   "editorView": {

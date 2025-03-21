@@ -6,7 +6,7 @@ import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelp
 import { Typography } from "@/components/Typography";
 import { formatKeys } from "../../utils/formatKeys";
 import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, TriangleAlert } from "lucide-react";
 
 interface ShortcutItemProps {
   t: TFunction;
@@ -39,16 +39,19 @@ export const ShortcutItem = ({
       tabIndex={-1}
       className={cn(
         isDuplicate && "bg-warning/30",
-        "p-4 flex flex-row flex-1 justify-between items-center hover:bg-accent hover:text-accent-foreground cursor-pointer active:bg-accent/90 transition-all duration-200 active:scale-[0.98] border border-border focus:outline-none",
+        "h-full px-4 flex flex-row flex-1 justify-between items-center hover:bg-accent hover:text-accent-foreground cursor-pointer active:bg-accent/90 transition-all duration-200 active:scale-[0.98] border border-border focus:outline-none",
       )}
       onClick={() => onClick(actionId)}
     >
-      <div>
+      <div className="flex flex-row items-center">
         <CardTitle>{t(`shortcuts.${actionId}`)}</CardTitle>
         {isChanged && (
-          <Typography variant="subtle" className="text-warning font-bold">
-            unsaved changes
-          </Typography>
+          <>
+            <TriangleAlert size={16} className="ml-4 mr-1" />
+            <Typography variant="subtle" className="text-primary font-bold">
+              {t("unsavedChanges")}
+            </Typography>
+          </>
         )}
       </div>
 

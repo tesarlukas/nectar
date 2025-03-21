@@ -12,7 +12,14 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "ignore": ["./src-tauri/**", "./public/**", "./dist/**", "./pnpm-lock.yaml"]
+    "ignore": [
+      "./src-tauri/**",
+      "./public/**",
+      "./dist/**",
+      "./pnpm-lock.yaml"
+    ],
+    "lineWidth": 80,
+    "lineEnding": "lf"
   },
   "organizeImports": {
     "enabled": true

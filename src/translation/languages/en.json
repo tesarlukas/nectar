@@ -50,7 +50,10 @@
       "toggle_floating_menu_expansion": "Toggle Floating Menu Expansion",
       "move_jumplist_out": "Move Jump List Out",
       "move_jumplist_in": "Move Jump List In"
-    }
+    },
+    "thereIsCollisionInYourNewBinds": "There is a collision in your new binds",
+    "youHaveDuplicateShortcuts": "You cannot have duplicate shortcuts",
+    "successfullySavedShortcuts": "Successfully saved shortcuts"
   },
   "editorView": {
     "characterCount": "Character Count",

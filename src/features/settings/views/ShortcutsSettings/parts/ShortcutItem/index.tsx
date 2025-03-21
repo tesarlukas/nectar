@@ -2,11 +2,11 @@ import type { TFunction } from "i18next";
 import { Card, CardTitle } from "@/components/ui/card";
 import type { ActionId } from "@/features/events/eventEmitter";
 import type { KeyboardShortcut } from "@/stores/useShortcutStore/index.preset";
-import { splitShortcut } from "@/stores/useShortcutStore/utils/shortcutHelpers";
+import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
 import { Typography } from "@/components/Typography";
 import { formatKeys } from "../../utils/formatKeys";
-import { Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 interface ShortcutItemProps {
   t: TFunction;
@@ -17,6 +17,7 @@ interface ShortcutItemProps {
   recordedKeys?: Set<string>;
   isChanged?: boolean;
   newShortcut: KeyboardShortcut;
+  isDuplicate: boolean;
 }
 
 export const ShortcutItem = ({
@@ -28,28 +29,45 @@ export const ShortcutItem = ({
   recordedKeys,
   isChanged,
   newShortcut,
+  isDuplicate,
 }: ShortcutItemProps) => {
-  const shortcutKeys = splitShortcut(shortcut)[1];
+  const shortcutKeys = getShortcutKeyPart(shortcut);
+  const newShortcutKeys = isChanged && getShortcutKeyPart(newShortcut);
 
   return (
     <Card
       tabIndex={-1}
-      className="p-4 flex flex-row flex-1 justify-between hover:bg-accent
-        hover:text-accent-foreground cursor-pointer active:bg-accent/90
-        transition-all duration-200 active:scale-[0.98] border border-border
-        focus:outline-none"
+      className={cn(
+        isDuplicate && "bg-warning/30",
+        "p-4 flex flex-row flex-1 justify-between items-center hover:bg-accent hover:text-accent-foreground cursor-pointer active:bg-accent/90 transition-all duration-200 active:scale-[0.98] border border-border focus:outline-none",
+      )}
       onClick={() => onClick(actionId)}
     >
-      <CardTitle>{t(`shortcuts.${actionId}`)}</CardTitle>
-      {isChanged && <Typography variant="subtle">unsaved changes</Typography>}
+      <div>
+        <CardTitle>{t(`shortcuts.${actionId}`)}</CardTitle>
+        {isChanged && (
+          <Typography variant="subtle" className="text-warning font-bold">
+            unsaved changes
+          </Typography>
+        )}
+      </div>
+
       {isRecording && recordedKeys ? (
         <CardTitle className="capitalize text-primary animate-pulse">
           {formatKeys(recordedKeys)}
         </CardTitle>
+      ) : isChanged ? (
+        <div className="flex items-center gap-2">
+          <CardTitle className="capitalize bg-muted px-2 py-1 rounded">
+            {shortcutKeys}
+          </CardTitle>
+          <ArrowRight size={16} className="text-text-primary" />
+          <CardTitle className="capitalize bg-warning text-warning-foreground px-2 py-1 rounded">
+            {newShortcutKeys}
+          </CardTitle>
+        </div>
       ) : (
-        <CardTitle className="capitalize">
-          {shortcutKeys} {isChanged && `... ${splitShortcut(newShortcut)[1]}`}
-        </CardTitle>
+        <CardTitle className="capitalize">{shortcutKeys}</CardTitle>
       )}
     </Card>
   );

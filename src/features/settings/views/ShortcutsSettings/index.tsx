@@ -8,14 +8,19 @@ import { useRecordHotkeys } from "react-hotkeys-hook";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { NonAlphas, type ActionId } from "@/features/events/eventEmitter";
 import { formatKeys } from "./utils/formatKeys";
-import { DEFAULT_SHORTCUTS } from "@/stores/useShortcutStore/index.preset";
+import {
+  DEFAULT_SHORTCUTS,
+  type KeyboardShortcut,
+} from "@/stores/useShortcutStore/index.preset";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { Search, Trash } from "lucide-react";
+import { Search, Trash, TriangleAlert } from "lucide-react";
 import {
   FixedSizeList as List,
   type ListChildComponentProps,
 } from "react-window";
+import { findDuplicates } from "./utils/findDuplicates";
+import { Card, CardTitle } from "@/components/ui/card";
 
 // Helper function to normalize text for search
 const normalizeText = (text: string): string => {
@@ -44,6 +49,11 @@ export const ShortcutsSettings = () => {
   const newKeysRef = useRef("");
   const listRef = useRef<List>(null);
 
+  const duplicates = useMemo(
+    () => findDuplicates<KeyboardShortcut>(Object.values(newShortcuts)),
+    [newShortcuts],
+  );
+
   // Handle reset
   const handleOnReset = useCallback(() => {
     reset();
@@ -54,7 +64,15 @@ export const ShortcutsSettings = () => {
   }, []);
 
   // Handle save
-  const handleOnSave = () => updateShortcuts(newShortcuts);
+  const handleOnSave = () => {
+    if (duplicates.length > 0) {
+      toast.warning(t("thereIsCollisionInYourNewBinds"));
+      return;
+    }
+
+    updateShortcuts(newShortcuts);
+    toast.success(t("successfullySavedShortcuts"));
+  };
 
   // Handle shortcut item click
   const handleShortcutItemOnClick = useCallback(
@@ -158,6 +176,7 @@ export const ShortcutsSettings = () => {
               }
               isChanged={newShortcuts[actionId] !== shortcuts[actionId]}
               onClick={handleShortcutItemOnClick}
+              isDuplicate={duplicates.includes(newShortcuts[actionId])}
             />
           </div>
         </div>
@@ -165,7 +184,6 @@ export const ShortcutsSettings = () => {
     },
     [
       filteredShortcuts,
-      t,
       getRecordedKeysForAction,
       newShortcuts,
       shortcuts,
@@ -193,6 +211,14 @@ export const ShortcutsSettings = () => {
             </Button>
           </div>
         </div>
+        {duplicates.length > 0 && (
+          <div className="my-4">
+            <Card className="p-4 flex flex-row items-center bg-warning">
+              <TriangleAlert className="mr-4" />
+              <CardTitle>{t("youHaveDuplicateShortcuts")}</CardTitle>
+            </Card>
+          </div>
+        )}
 
         {/* Search input */}
         <div className="relative mt-4 mb-2">

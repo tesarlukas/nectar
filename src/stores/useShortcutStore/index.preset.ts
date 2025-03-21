@@ -2,6 +2,7 @@ import { ActionId } from "@/features/events/eventEmitter";
 
 export enum ShortcutContext {
   Global = "global",
+  Explorer = "explorer",
 }
 
 export type KeyboardShortcut = string;
@@ -26,10 +27,10 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.MoveExplorerCursorTop]: `${ShortcutContext.Global}:g`,
   [ActionId.MoveExplorerCursorBottom]: `${ShortcutContext.Global}:shift+g`,
   [ActionId.FocusExplorerToolbar]: `${ShortcutContext.Global}:ctrl+g`,
-  [ActionId.RefreshExplorer]: `${ShortcutContext.Global}:ctrl+r`,
+  [ActionId.RefreshExplorer]: `${ShortcutContext.Explorer}:ctrl+r`,
   [ActionId.ExpandExplorerLeft]: `${ShortcutContext.Global}:alt+h`,
   [ActionId.ExpandExplorerRight]: `${ShortcutContext.Global}:alt+l`,
-  [ActionId.ToggleSortOrder]: `${ShortcutContext.Global}:ctrl+s`,
+  [ActionId.ToggleSortOrder]: `${ShortcutContext.Explorer}:ctrl+s`,
   [ActionId.CutNode]: `${ShortcutContext.Global}:x`,
   [ActionId.CopyNode]: `${ShortcutContext.Global}:c`,
   [ActionId.PasteNode]: `${ShortcutContext.Global}:p`,

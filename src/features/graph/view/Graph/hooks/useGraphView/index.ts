@@ -7,8 +7,9 @@ import {
 import type { Note } from "@/features/editor/views/EditorView/types";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { readJson } from "@/utils/jsonHelpers";
+import { stripJson } from "@/utils/nodeHelpers";
 import { useEffect, useMemo, useState } from "react";
-//
+
 //interface GraphData {
 //  nodes: GraphFileNode[];
 //  links: GraphFileLink[];
@@ -16,6 +17,8 @@ import { useEffect, useMemo, useState } from "react";
 
 interface NoteReference {
   noteId: string;
+  noteName: string;
+  noteLocation: string;
   referenceIds: string[];
 }
 
@@ -37,6 +40,9 @@ const obtainReferencesWithNoteIds = async (
           if (noteContent) {
             results.push({
               noteId: noteContent.id,
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              noteName: stripJson(node.value.name)!,
+              noteLocation: node.value.dirPath,
               referenceIds: noteContent.referenceIds || [],
             });
           }
@@ -73,7 +79,7 @@ const obtainReferencesWithNoteIds = async (
 export const useGraphView = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
   const { nodes, initializeFileTree } = useFileExplorer();
-  const [references, setReferences] = useState();
+  const [references, setReferences] = useState<NoteReference[]>();
 
   const notesNode = useMemo(
     () => nodes.filter((node) => node.value.name === NOTES_PATH),
@@ -86,11 +92,13 @@ export const useGraphView = () => {
 
   useEffect(() => {
     const initReferences = async () => {
-      await obtainReferencesWithNoteIds(notesNode);
+      const generatedReferences = await obtainReferencesWithNoteIds(notesNode);
+
+      setReferences(generatedReferences);
     };
 
     initReferences();
-  }, [nodes]);
+  }, [notesNode]);
 
-  return { notesNode };
+  return { references, notesNode };
 };

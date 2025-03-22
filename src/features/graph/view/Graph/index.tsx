@@ -28,11 +28,11 @@ interface FileTypeColors {
 }
 
 export const GraphView = () => {
-  const { notesNode } = useGraphView();
-  console.log("notesNode", notesNode);
+  const { notesNode, references } = useGraphView();
+  console.log("references", references)
   // File type to color mapping using theme chart colors
   const fileTypeColors: FileTypeColors = {
-    js: "#ffff00",
+    js: "#344",
     ts: "var(--chart-1)",
     css: "var(--chart-2)",
     html: "var(--chart-3)",

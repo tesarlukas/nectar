@@ -56,7 +56,6 @@ export const useEditorViewHandlers = ({
   moveJumplistOut,
   moveJumplistIn,
   isNodeCurrentJumplistItem,
-  createNewNoteOrDir,
 }: EditorViewHandlersProps) => {
   const { t } = useTranslation("editorView");
   const editorStatesRef = useEditorStatesRef();

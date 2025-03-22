@@ -13,6 +13,7 @@ import { useEditorStateStore } from "@/stores/useEditorStateStore";
 import type { Note } from "../../types";
 import type { useJumplist } from "../useJumplist";
 import { exists } from "@tauri-apps/plugin-fs";
+import { ROOT_DIR } from "@/constants/rootDir";
 
 // Create a type that represents all the returns from useFileExplorer
 type FileExplorerReturns = ReturnType<typeof useFileExplorer>;
@@ -124,7 +125,7 @@ export const useEditorViewHandlers = ({
     if (!selectedNoteNode) return;
 
     try {
-      if (await exists(selectedNoteNode.value.path)) {
+      if (await exists(selectedNoteNode.value.path, { baseDir: ROOT_DIR })) {
         const noteContent = await readNote(selectedNoteNode.value.path);
 
         if (!noteContent) return;

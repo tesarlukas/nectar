@@ -19,7 +19,7 @@ export const useInitialize = () => {
     ): Promise<void> => {
       //const doesDirExist = await exists(hiveName, { baseDir });
       const hiddenFilesPath = await join(hiveName, HIDDEN_DIR);
-      const doesHiddenDirExist = await exists(hiddenFilesPath);
+      const doesHiddenDirExist = await exists(hiddenFilesPath, { baseDir: ROOT_DIR});
 
       if (doesHiddenDirExist) {
         const hiveInfo = await readJson<{ hiveName: string }>(

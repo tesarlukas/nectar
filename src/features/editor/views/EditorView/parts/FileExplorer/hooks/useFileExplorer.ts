@@ -48,8 +48,7 @@ export const useFileExplorer = () => {
   const initializeFileTree = useCallback(async (hiveName: string) => {
     if (hiveName === "") return;
 
-    const initPath = await join(hiveName);
-    const builtNodes = await buildDirectoryTree(initPath, ROOT_DIR);
+    const builtNodes = await buildDirectoryTree(hiveName, ROOT_DIR);
 
     setNodes(builtNodes);
   }, []);

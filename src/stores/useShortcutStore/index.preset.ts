@@ -36,6 +36,7 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.PasteNode]: `${ShortcutContext.Global}:p`,
   [ActionId.DeleteNode]: `${ShortcutContext.Global}:d`,
   [ActionId.RenameNode]: `${ShortcutContext.Global}:r`,
+  [ActionId.LinkNode]: `${ShortcutContext.Explorer}:l`,
   [ActionId.ToggleSettings]: `${ShortcutContext.Global}:ctrl+.`,
   [ActionId.ToggleFloatingMenuExpansion]: `${ShortcutContext.Global}:ctrl+/`,
   [ActionId.MoveJumpListOut]: `${ShortcutContext.Global}:ctrl+o`,

@@ -138,6 +138,7 @@ export const FileExplorerNode = ({
       ActionId.PasteNode,
       ActionId.DeleteNode,
       ActionId.RenameNode,
+      ActionId.LinkNode,
     ],
     async (_, { hotkey }) => {
       switch (hotkey) {
@@ -172,6 +173,10 @@ export const FileExplorerNode = ({
         case getShortcutKeyPart(shortcuts[ActionId.RenameNode]):
           setIsRenaming(true);
           break;
+        case getShortcutKeyPart(shortcuts[ActionId.LinkNode]):
+          emitter(ActionId.LinkNode, node);
+          break;
+        default:
       }
     },
   );

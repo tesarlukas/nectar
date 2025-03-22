@@ -326,12 +326,11 @@ export const useFileExplorer = () => {
         const linkingNoteContent = await readNote(linkingNode.value.path);
 
         if (!noteContent || !linkingNoteContent) {
-          toast.info(t("youHaveToHaveSelectedNoteForThisAction"));
           return;
         }
 
         if (noteContent.id === linkingNoteContent.id) {
-          toast.info("youCannotLinkNoteToItself");
+          toast.info(t("youCannotLinkNoteToItself"));
           return;
         }
 

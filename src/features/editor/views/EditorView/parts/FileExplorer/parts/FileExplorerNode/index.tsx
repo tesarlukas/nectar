@@ -9,6 +9,7 @@ import {
   FileEdit,
   ClipboardPaste,
   FilePlus,
+  Link,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -321,6 +322,13 @@ export const FileExplorerNode = ({
           >
             <ClipboardPaste className="mr-2 h-4 w-4" />
             Paste
+          </ContextMenuItem>
+          <ContextMenuItem
+            className="text-base"
+            onClick={() => emitter(ActionId.LinkNode, node)}
+          >
+            <Link className="mr-2 h-4 w-4" />
+            Link Note
           </ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem

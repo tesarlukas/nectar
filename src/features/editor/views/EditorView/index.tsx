@@ -22,10 +22,13 @@ import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useJumplist } from "./hooks/useJumplist";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const RESIZE_STEP = 5;
 
 export const EditorView = () => {
+  const { t } = useTranslation("editorView");
   const { hiveName, isHydrated } = useHiveStore();
   const navigate = useNavigate();
   const emitter = useEventEmitter();
@@ -127,9 +130,12 @@ export const EditorView = () => {
   useEventListener(ActionId.FocusExplorer, () => explorerRef.current?.focus());
 
   useEventListener(ActionId.LinkNode, async (value) => {
-    if (selectedNoteNode) {
-      await toggleReferenceLink(selectedNoteNode, value as FileTreeNode);
+    if (!selectedNoteNode) {
+      toast.info(t("youHaveToHaveSelectedNoteForThisAction"));
+      return;
     }
+
+    await toggleReferenceLink(selectedNoteNode, value as FileTreeNode);
   });
 
   useEffect(() => {

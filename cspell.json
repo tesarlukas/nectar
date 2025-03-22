@@ -14,7 +14,9 @@
     "sonner",
     "focusables",
     "noninteractive",
-    "jumplist"
+    "jumplist",
+    "bckgDimensions",
+    "cooldown"
   ],
   "language": "en,cs-CZ",
   "ignorePaths": ["node_modules", "src-tauri", "pnpm-lock.yaml"]

@@ -8,6 +8,7 @@ import { Homebase } from "@/features/homebase/views/Homebase";
 import { SettingsLayout } from "@/features/layout/views/SettingsLayout";
 import { ShortcutsSettings } from "@/features/settings/views/ShortcutsSettings";
 import { Toaster } from "@/components/ui/sonner";
+import { GraphView } from "@/features/graph/view/Graph";
 
 export default function App() {
   const { initializeTheme } = useColorTheme();
@@ -23,6 +24,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<EditorView />} />
+              <Route path="graph" element={<GraphView />} />
               <Route path="settings" element={<SettingsLayout />}>
                 <Route index element={<ShortcutsSettings />} />
               </Route>

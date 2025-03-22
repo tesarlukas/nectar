@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router";
-import { Settings, Pencil, Home } from "lucide-react";
+import { Settings, Pencil, Home, ChartNetwork } from "lucide-react";
 import { Card } from "../ui/card";
 import { ColorSchemeToggle } from "./parts/ColorSchemeToggle";
 import { Button } from "../ui/button";
@@ -11,6 +11,7 @@ export const TopMenu = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isInSettings = pathname.includes("settings");
+  const isInGraph = pathname.includes("graph");
 
   const renderNavHandler = useCallback(() => {
     if (isInSettings && hiveName)
@@ -29,21 +30,34 @@ export const TopMenu = () => {
       );
 
     return (
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() =>
-          isInSettings ? navigate("/homebase") : navigate("/settings")
-        }
-      >
-        {isInSettings ? (
-          <Home className="h-[1.2rem] w-[1.2rem]" />
-        ) : (
-          <Settings className="h-[1.2rem] w-[1.2rem]" />
-        )}
-      </Button>
+      <>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => (isInGraph ? navigate("/") : navigate("/graph"))}
+        >
+          {isInGraph ? (
+            <Pencil className="h-[1.2rem] w-[1.2rem]" />
+          ) : (
+            <ChartNetwork className="h-[1.2rem] w-[1.2rem]" />
+          )}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() =>
+            isInSettings ? navigate("/homebase") : navigate("/settings")
+          }
+        >
+          {isInSettings ? (
+            <Home className="h-[1.2rem] w-[1.2rem]" />
+          ) : (
+            <Settings className="h-[1.2rem] w-[1.2rem]" />
+          )}
+        </Button>
+      </>
     );
-  }, [hiveName, isInSettings]);
+  }, [hiveName, isInSettings, isInGraph]);
 
   return (
     <>

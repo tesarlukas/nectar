@@ -1,5 +1,5 @@
-import { copyFile, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
-import { join } from "@tauri-apps/api/path";
+import { copyFile, exists, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
+import { join, sep } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
 import { readJson, writeJson } from "@/utils/jsonHelpers";
@@ -14,7 +14,7 @@ import {
   changeNodeValues,
 } from "@/utils/treeHelpers";
 import { EMPTY_NOTE } from "../index.preset";
-import { appendJson } from "@/utils/nodeHelpers";
+import { appendJson, stripJson } from "@/utils/nodeHelpers";
 import { buildDirectoryTree, createFileNode } from "../utils";
 import type { Note } from "../../../types";
 import { nanoid } from "nanoid";
@@ -28,6 +28,32 @@ export interface FileInfo {
   isSymLink: boolean;
   isFile: boolean;
 }
+
+const getNewUniqueFilePath = async (
+  location: string,
+  name: string,
+  attempt = 1,
+) => {
+  const fullPath = await join(location, name);
+
+  if (await exists(fullPath, { baseDir: ROOT_DIR })) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const match = stripJson(name)!.match(/^(.*?)(?:\s*\((\d+)\))?$/);
+
+    if (match) {
+      const baseName = match[1].trim();
+      const currentNumber = match[2] ? Number.parseInt(match[2], 10) : 0;
+      const nextNumber = currentNumber + 1;
+      // NOTE: thanks to this here the attempt does not really matter but whatever
+      const newName = appendJson(`${baseName} (${nextNumber})`);
+      return getNewUniqueFilePath(location, newName, attempt + 1);
+    }
+
+    const newName = appendJson(`${stripJson(name)} (${attempt})`);
+    return getNewUniqueFilePath(location, newName, attempt + 1);
+  }
+  return fullPath;
+};
 
 // FileTreeNode now implements the generic TreeNode interface
 export type FileTreeNode = TreeNode<FileInfo>;
@@ -208,24 +234,22 @@ export const useFileExplorer = () => {
     options?: { isNewFile: boolean },
   ) => {
     try {
-      const targetNodePath = await join(
-        targetNode.value.isFile
-          ? targetNode.value.dirPath
-          : targetNode.value.path,
+      const locationPath = targetNode.value.isFile
+        ? targetNode.value.dirPath
+        : targetNode.value.path;
+
+      const targetNodePath = await getNewUniqueFilePath(
+        locationPath,
         node.value.name,
       );
+
       await copyFile(node.value.path, targetNodePath, {
         fromPathBaseDir: ROOT_DIR,
         toPathBaseDir: ROOT_DIR,
       });
 
       if (options?.isNewFile) {
-        await updateNoteMetadata(
-          targetNode.value.isFile
-            ? targetNode.value.dirPath
-            : targetNode.value.path,
-          node.value.name,
-        );
+        await updateNoteMetadata(locationPath, node.value.name);
       }
     } catch (errors) {
       console.error("Error copying the node: ", errors);
@@ -252,12 +276,6 @@ export const useFileExplorer = () => {
   };
 
   const pasteNote = async (node: FileTreeNode, targetNode: FileTreeNode) => {
-    if (
-      node.value.path === (await join(targetNode.value.path, node.value.name))
-    ) {
-      return;
-    }
-
     try {
       await copyNote(node, targetNode, { isNewFile: true });
       const newTreeNodes = await buildDirectoryTree(hiveName, ROOT_DIR);

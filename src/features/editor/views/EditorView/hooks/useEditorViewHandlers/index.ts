@@ -12,6 +12,7 @@ import { resetEditorContent } from "../../parts/Editor/utils/updateEditorContent
 import { useEditorStateStore } from "@/stores/useEditorStateStore";
 import type { Note } from "../../types";
 import type { useJumplist } from "../useJumplist";
+import { exists } from "@tauri-apps/plugin-fs";
 
 // Create a type that represents all the returns from useFileExplorer
 type FileExplorerReturns = ReturnType<typeof useFileExplorer>;
@@ -55,6 +56,7 @@ export const useEditorViewHandlers = ({
   moveJumplistOut,
   moveJumplistIn,
   isNodeCurrentJumplistItem,
+  createNewNoteOrDir,
 }: EditorViewHandlersProps) => {
   const { t } = useTranslation("editorView");
   const editorStatesRef = useEditorStatesRef();
@@ -123,17 +125,25 @@ export const useEditorViewHandlers = ({
     if (!selectedNoteNode) return;
 
     try {
-      const noteContent = await readNote(selectedNoteNode.value.path);
+      if (await exists(selectedNoteNode.value.path)) {
+        const noteContent = await readNote(selectedNoteNode.value.path);
 
-      if (!noteContent) return;
+        if (!noteContent) return;
 
-      const newNoteContent: Note = {
-        ...noteContent,
-        lastModifiedAt: new Date().toISOString(),
-        editorContent: editor?.getJSON() ?? EMPTY_NOTE,
-      };
+        const newNoteContent: Note = {
+          ...noteContent,
+          lastModifiedAt: new Date().toISOString(),
+          editorContent: editor?.getJSON() ?? EMPTY_NOTE,
+        };
 
-      await saveNote(selectedNoteNode, newNoteContent);
+        await saveNote(selectedNoteNode, newNoteContent);
+      } else {
+        addNewNode(
+          selectedNoteNode.value.dirPath,
+          selectedNoteNode.value.name,
+          { isDirectory: false, content: editor?.getJSON ?? EMPTY_NOTE },
+        );
+      }
     } catch (error) {
       toast.error(t(`failedToSaveNote: ${error}`));
     }

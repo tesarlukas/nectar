@@ -7,7 +7,10 @@ import { FileExplorer } from "./parts/FileExplorer";
 import { BottomMenu } from "@/components/BottomMenu";
 import { useEditor } from "./parts/Editor/hooks/useEditor";
 import { Editor } from "./parts/Editor";
-import { useFileExplorer } from "./parts/FileExplorer/hooks/useFileExplorer";
+import {
+  type FileTreeNode,
+  useFileExplorer,
+} from "./parts/FileExplorer/hooks/useFileExplorer";
 import { useEffect, useRef } from "react";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useNavigate } from "react-router";
@@ -40,8 +43,13 @@ export const EditorView = () => {
   } = useJumplist();
 
   const fileExplorer = useFileExplorer();
-  const { nodes, selectedNode, selectedNoteNode, initializeFileTree } =
-    fileExplorer;
+  const {
+    nodes,
+    selectedNode,
+    selectedNoteNode,
+    initializeFileTree,
+    toggleReferenceLink,
+  } = fileExplorer;
 
   const { editor, handleEditorOnClick } = useEditor({
     noteId: selectedNoteNode?.value.path,
@@ -117,6 +125,12 @@ export const EditorView = () => {
 
   useEventListener(ActionId.SaveNote, handleOnSave);
   useEventListener(ActionId.FocusExplorer, () => explorerRef.current?.focus());
+
+  useEventListener(ActionId.LinkNode, async (value) => {
+    if (selectedNoteNode) {
+      await toggleReferenceLink(selectedNoteNode, value as FileTreeNode);
+    }
+  });
 
   useEffect(() => {
     if (isHydrated && hiveName === "") {

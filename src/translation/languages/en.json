@@ -64,6 +64,10 @@
     "search": "Search",
     "explorerRefreshed": "Explorer Refreshed",
     "directoriesCannotBeCopied": "Directories cannot be copied",
-    "noteSaved": "Note saved"
+    "noteSaved": "Note saved",
+    "successfullyLinkedNotes": "Successfuly linked notes",
+    "successfullyUnlinkedNotes": "Successfully unlinked notes",
+    "youHaveToHaveSelectedNoteForThisAction": "You have to have selected note for this action",
+    "youCannotLinkNoteToItself": "You cannot link note to itself"
   }
 }

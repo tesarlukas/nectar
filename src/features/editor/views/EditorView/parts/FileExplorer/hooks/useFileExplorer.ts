@@ -23,6 +23,8 @@ import {
 import type { Note } from "../../../types";
 import { nanoid } from "nanoid";
 import type { JSONContent } from "@tiptap/react";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export interface FileInfo {
   name: string;
@@ -37,6 +39,7 @@ export interface FileInfo {
 export type FileTreeNode = TreeNode<FileInfo>;
 
 export const useFileExplorer = () => {
+  const { t } = useTranslation("editorView");
   const [nodes, setNodes] = useState<FileTreeNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<FileTreeNode>();
   const [selectedNoteNode, setSelectedNoteNode] = useState<FileTreeNode>();
@@ -317,6 +320,62 @@ export const useFileExplorer = () => {
     return stats;
   }, [nodes]);
 
+  const toggleReferenceLink = useCallback(
+    async (node: FileTreeNode, linkingNode: FileTreeNode) => {
+      try {
+        const noteContent = await readNote(node.value.path);
+        const linkingNoteContent = await readNote(linkingNode.value.path);
+
+        if (!noteContent || !linkingNoteContent) {
+          toast.info(t("youHaveToHaveSelectedNoteForThisAction"));
+          return;
+        }
+
+        if (noteContent.id === linkingNoteContent.id) {
+          toast.info("youCannotLinkNoteToItself");
+          return;
+        }
+
+        if (noteContent.referenceIds.includes(linkingNoteContent.id)) {
+          await removeReference(node, linkingNoteContent.id);
+          toast.success(t("successfullyUnlinkedNotes"));
+          return;
+        }
+
+        await saveNote(node, {
+          ...noteContent,
+          referenceIds: [...noteContent.referenceIds, linkingNoteContent.id],
+        });
+
+        toast.success(t("successfullyLinkedNotes"));
+      } catch (errors) {
+        console.error(`Error while adding references: ${errors}`);
+      }
+    },
+    [],
+  );
+
+  const removeReference = useCallback(
+    async (node: FileTreeNode, noteId: string) => {
+      try {
+        const noteContent = await readNote(node.value.path);
+        if (!noteContent) return;
+
+        const newNoteContent: Note = {
+          ...noteContent,
+          referenceIds: noteContent.referenceIds.filter(
+            (reference) => reference !== noteId,
+          ),
+        };
+
+        await saveNote(node, newNoteContent);
+      } catch (errors) {
+        console.error(`Error while adding references: ${errors}`);
+      }
+    },
+    [],
+  );
+
   return {
     nodes,
     setNodes,
@@ -337,5 +396,7 @@ export const useFileExplorer = () => {
     renameNodeAndNoteOrDir,
     moveNote,
     pasteNote,
+    toggleReferenceLink,
+    removeReference,
   };
 };

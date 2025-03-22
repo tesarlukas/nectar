@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 import { useGraphView } from "./hooks/useGraphView";
 
@@ -29,7 +29,33 @@ interface FileTypeColors {
 
 export const GraphView = () => {
   const { notesNode, references } = useGraphView();
-  console.log("references", references)
+  const referenceArray =
+    references?.map(
+      (reference) =>
+        ({
+          id: reference.noteId,
+          color: "#303",
+          group: "notes",
+        }) as GraphFileNode,
+    ) ?? [];
+  const linkArray =
+    references?.flatMap((reference) =>
+      reference.referenceIds.map((id) => ({
+        source: reference.noteId,
+        target: id,
+      })),
+    ) ?? [];
+
+  console.log("references", referenceArray);
+  console.log("links", linkArray);
+
+  const referenceIds = referenceArray.map((reference) => reference.id);
+  const linkSources = linkArray.map((link) => link.source);
+  console.log("ids", referenceIds);
+  console.log("sources", linkSources);
+  const overlap = linkSources.filter((source) => referenceIds.includes(source));
+  console.log("overlap", overlap);
+
   // File type to color mapping using theme chart colors
   const fileTypeColors: FileTypeColors = {
     js: "#344",
@@ -42,56 +68,40 @@ export const GraphView = () => {
     other: "var(--muted)",
   };
 
-  // Graph data state
-  const [graphData, setGraphData] = useState<GraphData>({
-    nodes: [
-      { id: "index.js", color: fileTypeColors.js, group: "js" },
-      { id: "styles.css", color: fileTypeColors.css, group: "css" },
-      { id: "App.js", color: fileTypeColors.js, group: "js" },
-      { id: "utils.js", color: fileTypeColors.js, group: "js" },
-      { id: "data.json", color: fileTypeColors.json, group: "json" },
-    ],
-    links: [
-      { source: "App.js", target: "styles.css" },
-      { source: "App.js", target: "utils.js" },
-      { source: "utils.js", target: "data.json" },
-    ],
-  });
+  //// Graph data state
+  //const [graphData, setGraphData] = useState<GraphData>({
+  //  nodes: [
+  //    { id: "index.js", color: fileTypeColors.js, group: "js" },
+  //    { id: "styles.css", color: fileTypeColors.css, group: "css" },
+  //    { id: "App.js", color: fileTypeColors.js, group: "js" },
+  //    { id: "utils.js", color: fileTypeColors.js, group: "js" },
+  //    { id: "data.json", color: fileTypeColors.json, group: "json" },
+  //  ],
+  //  links: [
+  //    { source: "App.js", target: "styles.css" },
+  //    { source: "App.js", target: "utils.js" },
+  //    { source: "utils.js", target: "data.json" },
+  //  ],
+  //});
 
-  // For keeping track of selected nodes/links
-  const [selectedNode, setSelectedNode] = useState<GraphFileNode | null>(null);
-  const [selectedLink, setSelectedLink] = useState<GraphFileLink | null>(null);
-
-  // For new node creation
-  const [newNodeName, setNewNodeName] = useState<string>("");
-  const [newNodeType, setNewNodeType] = useState<string>("js");
-
-  // For new link creation
-  const [linkSource, setLinkSource] = useState<string>("");
-  const [linkTarget, setLinkTarget] = useState<string>("");
-
-  // Reference to the graph component
-  const graphRef = useRef<any>(null);
-
-  // Get color based on file extension
-  const getNodeColor = (filename: string): string => {
-    const extension = filename.split(".").pop()?.toLowerCase() || "other";
-    return (
-      fileTypeColors[extension as keyof FileTypeColors] || fileTypeColors.other
-    );
+  const graphData = {
+    nodes:
+      references?.map(
+        (reference) =>
+          ({
+            id: reference.noteId,
+            color: "#303",
+            group: "notes",
+          }) as GraphFileNode,
+      ) ?? [],
+    links:
+      references?.flatMap((reference) =>
+        reference.referenceIds.map((id) => ({
+          source: reference.noteId,
+          target: id,
+        })),
+      ) ?? [],
   };
-
-  // Handle node click
-  const handleNodeClick = useCallback((node: GraphFileNode) => {
-    setSelectedNode(node);
-    setSelectedLink(null);
-  }, []);
-
-  // Handle link click
-  const handleLinkClick = useCallback((link: GraphFileLink) => {
-    setSelectedLink(link);
-    setSelectedNode(null);
-  }, []);
 
   return (
     <div className="flex flex-col h-screen">
@@ -102,7 +112,6 @@ export const GraphView = () => {
       {/* Graph Visualization */}
       <div className="flex-grow bg-primary-background">
         <ForceGraph2D
-          ref={graphRef}
           graphData={graphData}
           nodeLabel="id"
           nodeColor={(node: GraphFileNode) => node.color}
@@ -111,10 +120,10 @@ export const GraphView = () => {
           linkDirectionalArrowRelPos={1}
           linkCurvature={0.25}
           linkColor={() => "#ff0ff0"}
-          onNodeClick={handleNodeClick}
-          onLinkClick={handleLinkClick}
+          //onNodeClick={handleNodeClick}
+          //onLinkClick={handleLinkClick}
           cooldownTicks={100}
-          linkWidth={(link: GraphFileLink) => (selectedLink === link ? 3 : 1)}
+          //linkWidth={(link: GraphFileLink) => (selectedLink === link ? 3 : 1)}
           backgroundColor="var(--primary-background)"
           nodeCanvasObjectMode={() => "after"}
           nodeCanvasObject={(

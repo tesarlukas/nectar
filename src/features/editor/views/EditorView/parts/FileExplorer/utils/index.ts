@@ -1,8 +1,9 @@
-import { readDir, type BaseDirectory } from "@tauri-apps/plugin-fs";
+import { exists, readDir, type BaseDirectory } from "@tauri-apps/plugin-fs";
 import type { FileInfo, FileTreeNode } from "../hooks/useFileExplorer";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { join } from "@tauri-apps/api/path";
 import { nanoid } from "nanoid";
+import { appendJson, stripJson } from "@/utils/nodeHelpers";
 
 export const createFileNode = (
   info: FileInfo,
@@ -54,4 +55,30 @@ export const buildDirectoryTree = async (
     console.error("Error building directory tree:", error);
     return [];
   }
+};
+
+export const getNewUniqueFilePath = async (
+  location: string,
+  name: string,
+  attempt = 1,
+): Promise<string> => {
+  const fullPath = await join(location, name);
+
+  if (await exists(fullPath, { baseDir: ROOT_DIR })) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const match = stripJson(name)!.match(/^(.*?)(?:\s*\((\d+)\))?$/);
+
+    if (match) {
+      const baseName = match[1].trim();
+      const currentNumber = match[2] ? Number.parseInt(match[2], 10) : 0;
+      const nextNumber = currentNumber + 1;
+      // NOTE: thanks to this here the attempt does not really matter but whatever
+      const newName = appendJson(`${baseName} (${nextNumber})`);
+      return getNewUniqueFilePath(location, newName, attempt + 1);
+    }
+
+    const newName = appendJson(`${stripJson(name)} (${attempt})`);
+    return getNewUniqueFilePath(location, newName, attempt + 1);
+  }
+  return fullPath;
 };

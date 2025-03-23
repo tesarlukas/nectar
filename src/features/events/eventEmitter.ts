@@ -37,6 +37,7 @@ export enum ActionId {
   ToggleFloatingMenuExpansion = "toggle_floating_menu_expansion",
   MoveJumpListOut = "move_jumplist_out",
   MoveJumpListIn = "move_jumplist_in",
+  ThemeChanged = "theme_changed",
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: function needs to accept any arguments

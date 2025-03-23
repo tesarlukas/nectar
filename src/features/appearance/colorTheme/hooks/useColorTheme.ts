@@ -11,8 +11,12 @@ import { SETTINGS_PATH } from "@/constants/settingsPath";
 import { useCallback } from "react";
 import { colorThemes } from "../variants";
 import { join } from "@tauri-apps/api/path";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import { ActionId } from "@/features/events/eventEmitter";
 
 export const useColorTheme = () => {
+  const emitter = useEventEmitter();
+
   const readTheme = useCallback(async () => {
     return await readJson<StoredColorTheme>(
       await join(SETTINGS_PATH, "colorTheme"),
@@ -50,19 +54,19 @@ export const useColorTheme = () => {
 
     root.classList.remove(ColorScheme.Dark, ColorScheme.Light);
     root.classList.add(colorScheme);
+
+    emitter(ActionId.ThemeChanged, colorScheme);
   }, []);
 
   const toggleColorScheme = useCallback(async () => {
     const root = document.documentElement;
 
     if (root.classList.contains(ColorScheme.Light)) {
-      root.classList.remove(ColorScheme.Light);
-      root.classList.add(ColorScheme.Dark);
+      setColorScheme(ColorScheme.Dark);
 
       await writeTheme(undefined, undefined, ColorScheme.Dark);
     } else {
-      root.classList.remove(ColorScheme.Dark);
-      root.classList.add(ColorScheme.Light);
+      setColorScheme(ColorScheme.Light);
 
       await writeTheme(undefined, undefined, ColorScheme.Light);
     }

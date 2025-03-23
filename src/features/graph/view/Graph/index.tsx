@@ -1,18 +1,17 @@
-import ForceGraph2D from "react-force-graph-2d";
+import ForceGraph2D, { type NodeObject } from "react-force-graph-2d";
 import { useGraphView } from "./hooks/useGraphView";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {
   ColorScheme,
-  ColorThemeVariables,
   ThemeFlavour,
 } from "@/features/appearance/colorTheme/types";
-import { useEffect, useState } from "react";
-import {
-  colorThemes,
-  DEFAULT_COLOR_THEME,
-} from "@/features/appearance/colorTheme/variants";
+import { type ReactNode, useCallback, useState } from "react";
+import { colorThemes } from "@/features/appearance/colorTheme/variants";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
+import { useTranslation } from "react-i18next";
+import { renderToString } from "react-dom/server";
+import { TFunction } from "i18next";
 
 //const referenceArray =
 //  references?.map(
@@ -42,11 +41,12 @@ import { useEventListener } from "@/features/events/hooks/useEventListener";
 //const overlap = linkSources.filter((source) => referenceIds.includes(source));
 //console.log("overlap", overlap);
 
-// TypeScript interfaces
 interface GraphFileNode {
   id: string;
   name: string;
+  location: string;
   color: string;
+  references: string[];
   group: string;
   x?: number;
   y?: number;
@@ -64,8 +64,28 @@ interface GraphData {
   links: GraphFileLink[];
 }
 
+const NodeTooltip: React.FC<{
+  node: NodeObject<NodeObject<GraphFileNode>>;
+  t: TFunction;
+}> = ({ node, t }) => {
+  return (
+    <div className="flex flex-col bg-black bg-opacity-70 p-2 rounded text-white">
+      <span className="flex flex-row">
+        {t("noteName")}: {node.name}
+      </span>
+      <span className="flex flex-row">
+        {t("noteLocation")}: {node.name}
+      </span>
+      <span className="flex flex-row">
+        {t("numberOfLinks")}: {node.references.length}
+      </span>
+    </div>
+  );
+};
+
 export const GraphView = () => {
   const { references } = useGraphView();
+  const { t } = useTranslation();
   const [currentColorScheme, setCurrentColorScheme] = useState(
     document.documentElement.classList.contains("dark")
       ? ColorScheme.Dark
@@ -85,7 +105,9 @@ export const GraphView = () => {
           ({
             id: reference.noteId,
             name: reference.noteName,
+            location: reference.noteLocation,
             color: nodeColor,
+            references: reference.referenceIds,
             group: "notes",
           }) as GraphFileNode,
       ) ?? [],
@@ -102,6 +124,13 @@ export const GraphView = () => {
     setCurrentColorScheme(value);
   });
 
+  const nodeLabel = useCallback(
+    (node: NodeObject<NodeObject<GraphFileNode>>): string => {
+      return renderToString(<NodeTooltip node={node} t={t} />);
+    },
+    [],
+  );
+
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-background p-4 border-b">
@@ -116,7 +145,7 @@ export const GraphView = () => {
               graphData={graphData}
               width={width}
               height={height}
-              nodeLabel="id"
+              nodeLabel={nodeLabel}
               nodeColor={(node: GraphFileNode) => node.color}
               nodeRelSize={12}
               linkDirectionalArrowLength={6}

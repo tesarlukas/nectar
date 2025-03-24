@@ -69,5 +69,11 @@
     "successfullyUnlinkedNotes": "Successfully unlinked notes.",
     "youHaveToHaveSelectedNoteForThisAction": "You have to have selected note for this action.",
     "youCannotLinkNoteToItself": "You cannot link note to itself."
+  },
+  "graphView": {
+    "noteRelationshipGraph": "Note Relationship Graph",
+    "name": "Name",
+    "location": "Location",
+    "references": "References"
   }
 }

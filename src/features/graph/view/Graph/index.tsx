@@ -5,13 +5,13 @@ import {
   ColorScheme,
   ThemeFlavour,
 } from "@/features/appearance/colorTheme/types";
-import { type ReactNode, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { colorThemes } from "@/features/appearance/colorTheme/variants";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { useTranslation } from "react-i18next";
 import { renderToString } from "react-dom/server";
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 
 //const referenceArray =
 //  references?.map(
@@ -55,8 +55,8 @@ interface GraphFileNode {
 }
 
 interface GraphFileLink {
-  source: string | GraphFileNode;
-  target: string | GraphFileNode;
+  source: string;
+  target: string;
 }
 
 interface GraphData {
@@ -64,28 +64,9 @@ interface GraphData {
   links: GraphFileLink[];
 }
 
-const NodeTooltip: React.FC<{
-  node: NodeObject<NodeObject<GraphFileNode>>;
-  t: TFunction;
-}> = ({ node, t }) => {
-  return (
-    <div className="flex flex-col bg-black bg-opacity-70 p-2 rounded text-white">
-      <span className="flex flex-row">
-        {t("noteName")}: {node.name}
-      </span>
-      <span className="flex flex-row">
-        {t("noteLocation")}: {node.name}
-      </span>
-      <span className="flex flex-row">
-        {t("numberOfLinks")}: {node.references.length}
-      </span>
-    </div>
-  );
-};
-
 export const GraphView = () => {
   const { references } = useGraphView();
-  const { t } = useTranslation();
+  const { t } = useTranslation("graphView");
   const [currentColorScheme, setCurrentColorScheme] = useState(
     document.documentElement.classList.contains("dark")
       ? ColorScheme.Dark
@@ -133,8 +114,10 @@ export const GraphView = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="bg-background p-4 border-b">
-        <h1 className="text-2xl font-bold mb-4">File Relationship Graph</h1>
+      <div className="bg-background p-4">
+        <h1 className="text-2xl font-bold w-fit border-b">
+          {t("noteRelationshipGraph")}
+        </h1>
       </div>
 
       {/* Graph Visualization */}
@@ -192,6 +175,25 @@ export const GraphView = () => {
           )}
         </AutoSizer>
       </div>
+    </div>
+  );
+};
+
+const NodeTooltip: React.FC<{
+  node: NodeObject<NodeObject<GraphFileNode>>;
+  t: TFunction;
+}> = ({ node, t }) => {
+  return (
+    <div className="flex flex-col bg-black bg-opacity-70 p-2 rounded text-white">
+      <span className="flex flex-row">
+        {t("name")}: {node.name}
+      </span>
+      <span className="flex flex-row">
+        {t("location")}: {node.name}
+      </span>
+      <span className="flex flex-row">
+        {t("references")}: {node.references.length}
+      </span>
     </div>
   );
 };

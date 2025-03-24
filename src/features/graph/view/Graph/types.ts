@@ -12,12 +12,11 @@ export interface GraphFileNode {
 }
 
 export interface GraphFileLink {
-  source: string;
-  target: string;
+  source: GraphFileNode | string;
+  target: GraphFileNode | string;
 }
 
 export interface GraphData {
   nodes: GraphFileNode[];
   links: GraphFileLink[];
 }
-

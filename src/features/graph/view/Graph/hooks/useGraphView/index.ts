@@ -92,6 +92,8 @@ export const useGraphView = () => {
 
   useEffect(() => {
     const initReferences = async () => {
+      if (!notesNode) return;
+
       const generatedReferences = await obtainReferencesWithNoteIds(notesNode);
 
       setReferences(generatedReferences);

@@ -21,7 +21,6 @@ export function bfs(graphData: GraphData, startNodeId: string): string[] {
     sourceNeighbors.push(link.target);
     adjacencyList.set(link.source, sourceNeighbors);
   });
-  console.log("adjacency", adjacencyList);
 
   // Set to keep track of visited nodes
   const visited = new Set<string>();
@@ -58,8 +57,6 @@ export function bfs(graphData: GraphData, startNodeId: string): string[] {
       }
     }
   }
-
-  console.log("result", result);
 
   return result;
 }
@@ -177,10 +174,12 @@ export function findShortestPath(
     adjacencyList.set(node.id, []);
   });
 
-  graphData.links.forEach((link) => {
-    const sourceNeighbors = adjacencyList.get(link.source) || [];
-    sourceNeighbors.push(link.target);
-    adjacencyList.set(link.source, sourceNeighbors);
+  graphData.links.forEach(({ source, target }) => {
+    if (typeof source === "string" || typeof target === "string") return;
+
+    const sourceNeighbors = adjacencyList.get(source.id) || [];
+    sourceNeighbors.push(target.id);
+    adjacencyList.set(source.id, sourceNeighbors);
   });
 
   // Track visited nodes
@@ -200,6 +199,7 @@ export function findShortestPath(
   let found = false;
   while (queue.length > 0 && !found) {
     const currentId = queue.shift();
+
     if (currentId === undefined) {
       continue;
     }
@@ -210,6 +210,7 @@ export function findShortestPath(
     }
 
     const neighbors = adjacencyList.get(currentId) || [];
+
     for (const neighborId of neighbors) {
       if (!visited.has(neighborId)) {
         visited.add(neighborId);

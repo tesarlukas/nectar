@@ -19,10 +19,21 @@ import type { GraphData, GraphFileLink, GraphFileNode } from "./types";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/Typography";
 import { NodeTooltip } from "./parts/NodeTooltip";
+import { Button } from "@/components/ui/button";
+import { findShortestPath } from "./utils";
 
 enum Selection {
   Start = "start",
   End = "end",
+}
+
+function checkConsecutivePair(array: string[], pair: string[]) {
+  for (let i = 0; i < array.length - 1; i++) {
+    if (array[i] === pair[0] && array[i + 1] === pair[1]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export const GraphView = () => {
@@ -47,38 +58,45 @@ export const GraphView = () => {
   const nodeColor = colors["--muted"];
   const linkColor = colors["--foreground"];
   const textColor = colors["--foreground"];
+  const startNodeColor = "#0f0";
+  const endNodeColor = "#0ff";
 
-  const graphData: GraphData = useMemo(
-    () => ({
-      nodes:
-        references?.map(
-          (reference) =>
-            ({
-              id: reference.noteId,
-              name: reference.noteName,
-              location: reference.noteLocation,
-              color: nodeColor,
-              references: reference.referenceIds,
-              group: "notes",
-            }) as GraphFileNode,
-        ) ?? [],
-      links:
-        references?.flatMap((reference) =>
-          reference.referenceIds.map((id) => ({
-            source: reference.noteId,
-            target: id,
-          })),
-        ) ?? [],
-    }),
-    [references],
-  );
+  const graphData: GraphData = useMemo(() => {
+    const links =
+      references?.flatMap((reference) => {
+        return reference.referenceIds.flatMap((id) => ({
+          source: reference.noteId,
+          target: id,
+        }));
+      }) ?? [];
+
+    const nodes =
+      references?.map(
+        (reference) =>
+          ({
+            id: reference.noteId,
+            name: reference.noteName,
+            location: reference.noteLocation,
+            color: nodeColor,
+            references: reference.referenceIds,
+            group: "notes",
+          }) as GraphFileNode,
+      ) ?? [];
+
+    const data = {
+      nodes,
+      links,
+    };
+
+    return data;
+  }, [references]);
 
   const [startNode, setStartNode] = useState<GraphFileNode>();
   const [endNode, setEndNode] = useState<GraphFileNode>();
+  const [path, setPath] = useState<string[]>([]);
 
   const handleNodeClick = useCallback(
     (node: NodeObject<NodeObject<GraphFileNode>>) => {
-      console.log("is this hapenning", node);
       if (selectionMode === Selection.Start) {
         setStartNode(node);
         setSelectionMode(null);
@@ -89,6 +107,15 @@ export const GraphView = () => {
     },
     [selectionMode],
   );
+
+  const handleFind = () => {
+    if (!startNode || !endNode) {
+      return;
+    }
+
+    const path = findShortestPath(graphData, startNode?.id, endNode?.id);
+    setPath(path ?? []);
+  };
 
   useEventListener(ActionId.ThemeChanged, (value: ColorScheme) => {
     setCurrentColorScheme(value);
@@ -127,24 +154,31 @@ export const GraphView = () => {
                 <Typography>
                   {t("note")}: {startNode.name}
                 </Typography>
+                <Typography>
+                  {t("id")}: {startNode.id}
+                </Typography>
               </div>
             )}
           </CardContent>
         </Card>
+        <Button onClick={handleFind}>Find</Button>
 
         <Card
-          className={`p-4 h-32 w-32 transition-all duration-200 cursor-pointer
+          className={`p-4 transition-all duration-200 cursor-pointer
           ${selectionMode === Selection.End ? "bg-muted border-blue-500 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
           onClick={() => setSelectionMode(Selection.End)}
         >
           <CardTitle className="px-2 border-b-2">Start Node</CardTitle>
           <CardContent className="px-2">
             {endNode && (
-              <div className="flex flex-col items-start">
+              <>
                 <Typography>
                   {t("note")}: {endNode.name}
                 </Typography>
-              </div>
+                <Typography>
+                  {t("id")}: {endNode.id}
+                </Typography>
+              </>
             )}
           </CardContent>
         </Card>
@@ -159,14 +193,28 @@ export const GraphView = () => {
               width={width}
               height={height}
               nodeLabel={nodeLabel}
-              nodeColor={(node: GraphFileNode) => node.color}
+              nodeColor={(node: GraphFileNode) => {
+                if (path.includes(node.id)) {
+                  return "#f00";
+                }
+
+                return node.color;
+              }}
               nodeRelSize={12}
               maxZoom={2.5}
               onNodeClick={handleNodeClick}
               linkDirectionalArrowLength={6}
               linkDirectionalArrowRelPos={1}
               linkCurvature={0}
-              linkColor={() => linkColor}
+              linkColor={(link) => {
+                if (
+                  checkConsecutivePair(path, [link.source.id, link.target.id])
+                ) {
+                  return "#f00";
+                }
+
+                return linkColor;
+              }}
               cooldownTicks={100}
               backgroundColor={colors["--background"]}
               nodeCanvasObjectMode={() => "after"}
@@ -183,7 +231,14 @@ export const GraphView = () => {
                   (n) => n + fontSize * 0.2,
                 );
 
-                ctx.fillStyle = node.color;
+                if (node.id !== startNode?.id && node.id !== endNode?.id) {
+                  ctx.fillStyle = node.color;
+                } else if (node.id === startNode?.id) {
+                  ctx.fillStyle = startNodeColor;
+                } else {
+                  ctx.fillStyle = endNodeColor;
+                }
+
                 if (node?.x && node?.y) {
                   ctx.fillRect(
                     node.x - bckgDimensions[0] / 2,
@@ -207,3 +262,11 @@ export const GraphView = () => {
     </div>
   );
 };
+
+// NOTE: flatmap from before
+// references?.flatMap((reference) =>
+//  reference.referenceIds.map((id) => ({
+//    source: reference.noteId,
+//    target: id,
+//  })),
+// ) ?? [],

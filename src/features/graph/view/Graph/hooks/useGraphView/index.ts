@@ -100,5 +100,5 @@ export const useGraphView = () => {
     initReferences();
   }, [notesNode]);
 
-  return { references, notesNode };
+  return { references, notesNode, hiveName };
 };

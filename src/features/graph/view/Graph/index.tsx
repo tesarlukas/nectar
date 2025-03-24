@@ -1,7 +1,7 @@
 import ForceGraph2D, {
   type LinkObject,
   type NodeObject,
-  ForceGraphMethods,
+  type ForceGraphMethods,
 } from "react-force-graph-2d";
 import { useGraphView } from "./hooks/useGraphView";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -17,9 +17,11 @@ import { useTranslation } from "react-i18next";
 import { renderToString } from "react-dom/server";
 import type { TFunction } from "i18next";
 import type { GraphData, GraphFileLink, GraphFileNode } from "./types";
+import { sep } from "@tauri-apps/api/path";
+import { NOTES_PATH } from "@/constants/notesPath";
 
 export const GraphView = () => {
-  const { references } = useGraphView();
+  const { references, hiveName } = useGraphView();
   const { t } = useTranslation("graphView");
   const [currentColorScheme, setCurrentColorScheme] = useState(
     document.documentElement.classList.contains("dark")
@@ -68,7 +70,9 @@ export const GraphView = () => {
 
   const nodeLabel = useCallback(
     (node: NodeObject<NodeObject<GraphFileNode>>): string => {
-      return renderToString(<NodeTooltip node={node} t={t} />);
+      return renderToString(
+        <NodeTooltip node={node} t={t} hiveName={hiveName} />,
+      );
     },
     [],
   );
@@ -102,10 +106,7 @@ export const GraphView = () => {
               linkDirectionalArrowRelPos={1}
               linkCurvature={0}
               linkColor={() => linkColor}
-              //onNodeClick={handleNodeClick}
-              //onLinkClick={handleLinkClick}
               cooldownTicks={100}
-              //linkWidth={(link: GraphFileLink) => (selectedLink === link ? 3 : 1)}
               backgroundColor={colors["--background"]}
               nodeCanvasObjectMode={() => "after"}
               nodeCanvasObject={(
@@ -149,7 +150,8 @@ export const GraphView = () => {
 const NodeTooltip: React.FC<{
   node: NodeObject<NodeObject<GraphFileNode>>;
   t: TFunction;
-}> = ({ node, t }) => {
+  hiveName: string;
+}> = ({ node, t, hiveName }) => {
   return (
     <div className="flex flex-col bg-black bg-opacity-70 p-2 rounded text-white">
       <span className="flex flex-row">
@@ -159,7 +161,10 @@ const NodeTooltip: React.FC<{
         {t("name")}: {node.name}
       </span>
       <span className="flex flex-row">
-        {t("location")}: {node.name}
+        {t("location")}:{" "}
+        {node.location === `${hiveName}${sep()}${NOTES_PATH}`
+          ? t("root")
+          : node.location.replace(`${hiveName}${sep()}${NOTES_PATH}`, "")}
       </span>
       <span className="flex flex-row">
         {t("references")}: {node.references.length}

@@ -74,6 +74,7 @@
     "noteRelationshipGraph": "Note Relationship Graph",
     "name": "Name",
     "location": "Location",
-    "references": "References"
+    "references": "References",
+    "root": "Root"
   }
 }

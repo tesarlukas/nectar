@@ -1,68 +1,22 @@
-import ForceGraph2D, { type NodeObject } from "react-force-graph-2d";
+import ForceGraph2D, {
+  type LinkObject,
+  type NodeObject,
+  ForceGraphMethods,
+} from "react-force-graph-2d";
 import { useGraphView } from "./hooks/useGraphView";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {
   ColorScheme,
   ThemeFlavour,
 } from "@/features/appearance/colorTheme/types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { colorThemes } from "@/features/appearance/colorTheme/variants";
 import { ActionId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { useTranslation } from "react-i18next";
 import { renderToString } from "react-dom/server";
 import type { TFunction } from "i18next";
-
-//const referenceArray =
-//  references?.map(
-//    (reference) =>
-//      ({
-//        id: reference.noteId,
-//        name: reference.noteName,
-//        color: "#303",
-//        group: "notes",
-//      }) as GraphFileNode,
-//  ) ?? [];
-//const linkArray =
-//  references?.flatMap((reference) =>
-//    reference.referenceIds.map((id) => ({
-//      source: reference.noteId,
-//      target: id,
-//    })),
-//  ) ?? [];
-//
-//console.log("references", referenceArray);
-//console.log("links", linkArray);
-//
-//const referenceIds = referenceArray.map((reference) => reference.id);
-//const linkSources = linkArray.map((link) => link.source);
-//console.log("ids", referenceIds);
-//console.log("sources", linkSources);
-//const overlap = linkSources.filter((source) => referenceIds.includes(source));
-//console.log("overlap", overlap);
-
-interface GraphFileNode {
-  id: string;
-  name: string;
-  location: string;
-  color: string;
-  references: string[];
-  group: string;
-  x?: number;
-  y?: number;
-  fx?: number;
-  fy?: number;
-}
-
-interface GraphFileLink {
-  source: string;
-  target: string;
-}
-
-interface GraphData {
-  nodes: GraphFileNode[];
-  links: GraphFileLink[];
-}
+import type { GraphData, GraphFileLink, GraphFileNode } from "./types";
 
 export const GraphView = () => {
   const { references } = useGraphView();
@@ -72,6 +26,13 @@ export const GraphView = () => {
       ? ColorScheme.Dark
       : ColorScheme.Light,
   );
+  const graphRef =
+    useRef<
+      ForceGraphMethods<
+        NodeObject<GraphFileNode>,
+        LinkObject<GraphFileNode, GraphFileLink>
+      >
+    >(undefined);
 
   const colors = colorThemes[ThemeFlavour.Standard][currentColorScheme];
 
@@ -112,6 +73,10 @@ export const GraphView = () => {
     [],
   );
 
+  useEffect(() => {
+    graphRef.current?.d3Force("link")?.distance(50);
+  }, [graphRef.current]);
+
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-background p-4">
@@ -125,12 +90,14 @@ export const GraphView = () => {
         <AutoSizer>
           {({ width, height }) => (
             <ForceGraph2D
+              ref={graphRef}
               graphData={graphData}
               width={width}
               height={height}
               nodeLabel={nodeLabel}
               nodeColor={(node: GraphFileNode) => node.color}
               nodeRelSize={12}
+              maxZoom={2.5}
               linkDirectionalArrowLength={6}
               linkDirectionalArrowRelPos={1}
               linkCurvature={0}
@@ -185,6 +152,9 @@ const NodeTooltip: React.FC<{
 }> = ({ node, t }) => {
   return (
     <div className="flex flex-col bg-black bg-opacity-70 p-2 rounded text-white">
+      <span className="flex flex-row">
+        {t("id")}: {node.id}
+      </span>
       <span className="flex flex-row">
         {t("name")}: {node.name}
       </span>

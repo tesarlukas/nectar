@@ -16,7 +16,9 @@
     "noninteractive",
     "jumplist",
     "bckgDimensions",
-    "cooldown"
+    "cooldown",
+    "katex",
+    "mathml"
   ],
   "language": "en,cs-CZ",
   "ignorePaths": ["node_modules", "src-tauri", "pnpm-lock.yaml"]

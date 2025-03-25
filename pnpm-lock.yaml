@@ -59,6 +59,9 @@ dependencies:
   '@tiptap-pro/extension-file-handler':
     specifier: ^2.17.3
     version: 2.17.3(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)
+  '@tiptap-pro/extension-mathematics':
+    specifier: ^2.17.5
+    version: 2.17.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)(katex@0.16.21)
   '@tiptap/extension-blockquote':
     specifier: ^2.11.5
     version: 2.11.5(@tiptap/core@2.11.5)
@@ -158,6 +161,9 @@ dependencies:
   i18next:
     specifier: ^24.2.2
     version: 24.2.2(typescript@5.6.3)
+  katex:
+    specifier: ^0.16.21
+    version: 0.16.21
   lucide-react:
     specifier: ^0.474.0
     version: 0.474.0(react@19.0.0)
@@ -2370,6 +2376,18 @@ packages:
       '@tiptap/pm': 2.11.5
     dev: false
 
+  /@tiptap-pro/extension-mathematics@2.17.5(@tiptap/core@2.11.5)(@tiptap/pm@2.11.5)(katex@0.16.21):
+    resolution: {integrity: sha512-fjnu8Zp5IGwUOmaxexcEzGy/Q0GuArM0J16dNR0vB1BIj/6O+syrbJoVsJy701gz2FJXadlEH5T0S/kix2Sq5Q==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+      katex: ^0.16.4
+    dependencies:
+      '@tiptap/core': 2.11.5(@tiptap/pm@2.11.5)
+      '@tiptap/pm': 2.11.5
+      katex: 0.16.21
+    dev: false
+
   /@tiptap/core@2.11.5(@tiptap/pm@2.11.5):
     resolution: {integrity: sha512-jb0KTdUJaJY53JaN7ooY3XAxHQNoMYti/H6ANo707PsLXVeEqJ9o8+eBup1JU5CuwzrgnDc2dECt2WIGX9f8Jw==}
     peerDependencies:
@@ -2874,6 +2892,11 @@ packages:
     resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
     engines: {node: '>=18'}
     dev: true
+
+  /commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
+    dev: false
 
   /comment-json@4.2.5:
     resolution: {integrity: sha512-bKw/r35jR3HGt5PEPm1ljsQQGyCrR8sFGNiN5L+ykDHdpO8Smxkrkla9Yi6NkQyUrb8V54PGhfMs6NrIwtxtdw==}
@@ -3479,6 +3502,13 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       lodash-es: 4.17.21
+    dev: false
+
+  /katex@0.16.21:
+    resolution: {integrity: sha512-XvqR7FgOHtWupfMiigNzmh+MgUVmDGU2kXZm899ZkPfcuoPuFxyHmXsgATDpFZDAXCI8tvinaVcDo8PIIJSo4A==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
     dev: false
 
   /keyv@4.5.4:

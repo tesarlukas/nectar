@@ -35,6 +35,9 @@ import Table from "@tiptap/extension-table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
+import Mathematics, {
+  defaultShouldRender,
+} from "@tiptap-pro/extension-mathematics";
 
 const extensions = [
   // Nodes
@@ -221,6 +224,17 @@ const extensions = [
   TableCell.configure({
     HTMLAttributes: {
       class: "p-2 border border-border align-middle text-foreground",
+    },
+  }),
+  Mathematics.configure({
+    // Use the shouldRender function to control when math gets rendered
+    shouldRender: (state, pos, _) => {
+      return defaultShouldRender(state, pos);
+    },
+    katexOptions: {
+      // Provide specific KaTeX options if needed
+      throwOnError: false,
+      output: "mathml",
     },
   }),
 ];

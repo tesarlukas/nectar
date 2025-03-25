@@ -75,6 +75,9 @@
     "name": "Name",
     "location": "Location",
     "references": "References",
-    "root": "Root"
+    "root": "Root",
+    "startNode": "Start Node",
+    "endNode": "End Node",
+    "findShortestPath (BFS)": "Find Shortest Path (BFS)"
   }
 }

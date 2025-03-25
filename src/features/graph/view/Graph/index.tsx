@@ -17,7 +17,6 @@ import { useTranslation } from "react-i18next";
 import { renderToString } from "react-dom/server";
 import type { GraphData, GraphFileLink, GraphFileNode } from "./types";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Typography } from "@/components/Typography";
 import { NodeTooltip } from "./parts/NodeTooltip";
 import { Button } from "@/components/ui/button";
 import { findShortestPath } from "./utils";
@@ -58,8 +57,9 @@ export const GraphView = () => {
   const nodeColor = colors["--muted"];
   const linkColor = colors["--foreground"];
   const textColor = colors["--foreground"];
-  const startNodeColor = "#0f0";
-  const endNodeColor = "#0ff";
+  const startNodeColor = colors["--chart-2"];
+  const endNodeColor = colors["--chart-1"];
+  const pathColor = colors["--chart-5"];
 
   const graphData: GraphData = useMemo(() => {
     const links =
@@ -141,48 +141,54 @@ export const GraphView = () => {
           {t("noteRelationshipGraph")}
         </h1>
       </div>
-      <div className="flex-row flex gap-4 p-4">
-        <Card
-          className={`p-4 transition-all duration-200 cursor-pointer
-          ${selectionMode === Selection.Start ? "bg-bg-muted border-green-500 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
-          onClick={() => setSelectionMode(Selection.Start)}
-        >
-          <CardTitle className="px-2 border-b-2">Start Node</CardTitle>
-          <CardContent className="px-2">
-            {startNode && (
-              <div className="flex flex-col items-start">
-                <Typography>
-                  {t("note")}: {startNode.name}
-                </Typography>
-                <Typography>
-                  {t("id")}: {startNode.id}
-                </Typography>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        <Button onClick={handleFind}>Find</Button>
+      <Card className="gap-4 p-4 mx-4">
+        <CardTitle className="border-b-2 mb-4 w-fit">
+          {t("findShortestPath (BFS)")}
+        </CardTitle>
+        <CardContent className="flex flex-row px-0 gap-x-4 max-w-2/3">
+          <Card
+            className={`p-4 transition-all duration-200 cursor-pointer flex-1
+          ${selectionMode === Selection.Start ? "bg-bg-muted border-chart-2 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
+            onClick={() => setSelectionMode(Selection.Start)}
+          >
+            <CardTitle className="px-2 border-b-2">{t("startNode")}</CardTitle>
+            <CardContent className="px-2">
+              {startNode && (
+                <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
+                  <span className="border-b-2 border-chart-2">
+                    {t("note")}: {startNode.name}
+                  </span>
+                  <span>
+                    {t("id")}: {startNode.id}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-        <Card
-          className={`p-4 transition-all duration-200 cursor-pointer
-          ${selectionMode === Selection.End ? "bg-muted border-blue-500 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
-          onClick={() => setSelectionMode(Selection.End)}
-        >
-          <CardTitle className="px-2 border-b-2">Start Node</CardTitle>
-          <CardContent className="px-2">
-            {endNode && (
-              <>
-                <Typography>
-                  {t("note")}: {endNode.name}
-                </Typography>
-                <Typography>
-                  {t("id")}: {endNode.id}
-                </Typography>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          <Card
+            className={`p-4 transition-all duration-200 cursor-pointer flex-1
+          ${selectionMode === Selection.End ? "bg-muted border-chart-1 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
+            onClick={() => setSelectionMode(Selection.End)}
+          >
+            <CardTitle className="px-2 border-b-2">{t("endNode")}</CardTitle>
+            <CardContent className="px-2">
+              {endNode && (
+                <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
+                  <span className="border-b-2 border-chart-1">
+                    {t("note")}: {endNode.name}
+                  </span>
+                  <span>
+                    {t("id")}: {endNode.id}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Button onClick={handleFind}>Find</Button>
+        </CardContent>
+      </Card>
       {/* Graph Visualization */}
       <div className="flex flex-grow bg-primary-background">
         <AutoSizer>
@@ -194,11 +200,16 @@ export const GraphView = () => {
               height={height}
               nodeLabel={nodeLabel}
               nodeColor={(node: GraphFileNode) => {
-                if (path.includes(node.id)) {
-                  return "#f00";
+                switch (true) {
+                  case path.includes(node.id):
+                    return pathColor;
+                  case node.id === startNode?.id:
+                    return startNodeColor;
+                  case node.id === endNode?.id:
+                    return endNodeColor;
+                  default:
+                    return node.color;
                 }
-
-                return node.color;
               }}
               nodeRelSize={12}
               maxZoom={2.5}
@@ -208,9 +219,11 @@ export const GraphView = () => {
               linkCurvature={0}
               linkColor={(link) => {
                 if (
+                  typeof link.source !== "string" &&
+                  typeof link.target !== "string" &&
                   checkConsecutivePair(path, [link.source.id, link.target.id])
                 ) {
-                  return "#f00";
+                  return pathColor;
                 }
 
                 return linkColor;
@@ -231,12 +244,20 @@ export const GraphView = () => {
                   (n) => n + fontSize * 0.2,
                 );
 
-                if (node.id !== startNode?.id && node.id !== endNode?.id) {
-                  ctx.fillStyle = node.color;
-                } else if (node.id === startNode?.id) {
-                  ctx.fillStyle = startNodeColor;
-                } else {
-                  ctx.fillStyle = endNodeColor;
+                switch (true) {
+                  case node.id !== startNode?.id && node.id !== endNode?.id:
+                    if (path.includes(node.id)) {
+                      ctx.fillStyle = pathColor;
+                    } else {
+                      ctx.fillStyle = node.color;
+                    }
+                    break;
+                  case node.id === startNode?.id:
+                    ctx.fillStyle = startNodeColor;
+                    break;
+                  default:
+                    ctx.fillStyle = endNodeColor;
+                    break;
                 }
 
                 if (node?.x && node?.y) {

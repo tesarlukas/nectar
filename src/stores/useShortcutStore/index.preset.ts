@@ -7,7 +7,7 @@ export enum ShortcutContext {
 
 export type KeyboardShortcut = string;
 
-export type KeyboardShortcuts = Record<ActionId, KeyboardShortcut>;
+export type KeyboardShortcuts = Record<Exclude<ActionId, ActionId.ThemeChanged>, KeyboardShortcut>;
 
 export const SHORTCUTS_FILENAME = "shortcuts.json" as const;
 

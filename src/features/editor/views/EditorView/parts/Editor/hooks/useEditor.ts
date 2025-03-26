@@ -1,6 +1,7 @@
 import {
   type Editor,
   mergeAttributes,
+  ReactNodeViewRenderer,
   useEditor as useTiptapEditor,
 } from "@tiptap/react";
 import { Image } from "@tiptap/extension-image";
@@ -38,6 +39,7 @@ import TableRow from "@tiptap/extension-table-row";
 import Mathematics, {
   defaultShouldRender,
 } from "@tiptap-pro/extension-mathematics";
+import { TableCellNodeView, TestTableCell } from "../parts/TableCellNodeView";
 
 const extensions = [
   // Nodes
@@ -208,22 +210,24 @@ const extensions = [
   }),
   Table.configure({
     HTMLAttributes: {
-      class: "w-full my-4 border-collapse text-sm not-prose",
+      class: "w-full border-collapse text-sm not-prose",
     },
+    resizable: true,
   }),
   TableHeader.configure({
     HTMLAttributes: {
-      class: "bg-muted font-medium border border-border",
+      class: "bg-muted font-medium border border-border not-prose",
     },
   }),
   TableRow.configure({
     HTMLAttributes: {
-      class: "border-b border-border hover:bg-muted/30 transition-colors",
+      class:
+        "border-b border-border hover:bg-muted/30 transition-colors not-prose",
     },
   }),
   TableCell.configure({
     HTMLAttributes: {
-      class: "p-2 border border-border align-middle text-foreground",
+      class: "border border-border align-middle text-foreground not-prose",
     },
   }),
   Mathematics.configure({

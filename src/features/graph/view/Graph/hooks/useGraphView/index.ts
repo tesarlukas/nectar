@@ -10,11 +10,6 @@ import { readJson } from "@/utils/jsonHelpers";
 import { stripJson } from "@/utils/nodeHelpers";
 import { useEffect, useMemo, useState } from "react";
 
-//interface GraphData {
-//  nodes: GraphFileNode[];
-//  links: GraphFileLink[];
-//}
-
 interface NoteReference {
   noteId: string;
   noteName: string;

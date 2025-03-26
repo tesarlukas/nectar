@@ -243,9 +243,6 @@ export const useFileExplorer = () => {
     ) {
       return;
     }
-    console.log("moving", node);
-    console.log("into", targetNode);
-    console.log("hiveName", hiveName);
 
     try {
       await copyNote(node, targetNode);

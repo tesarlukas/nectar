@@ -17,6 +17,7 @@ import { useEditorStateStore } from "@/stores/useEditorStateStore";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { TableBubbleMenu } from "./parts/TableBubbleMenu";
 
 export interface EditorProps {
   selectedNoteNode?: FileTreeNode;
@@ -114,6 +115,7 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       </div>
       <div>
         <BubbleMenu editor={editor} />
+        <TableBubbleMenu editor={editor} />
       </div>
       {isSearching && (
         <SearchReplaceComponent editor={editor} ref={searchReplaceRef} />

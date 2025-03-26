@@ -41,8 +41,9 @@ export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
   }
 
   useShortcuts(NonAlphas.Escape, () => {
-    setIsExpanded((prev) => !prev);
+    setIsExpanded(() => false);
   });
+
   useShortcuts(
     ActionId.ToggleFloatingMenuExpansion,
     () => {

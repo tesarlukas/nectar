@@ -201,14 +201,17 @@ export const useEditorViewHandlers = ({
     async (node: FileTreeNode, targetNode: FileTreeNode) => {
       await moveNote(node, targetNode);
     },
-    [],
+    // NOTE: these call internally buildDirecetoryTree function which needs
+    // hiveName and they access it via the store, therefore it's needed to
+    // recreate
+    [hiveName],
   );
 
   const handleOnPaste = useCallback(
     async (clipboardNode: FileTreeNode, targetNode: FileTreeNode) => {
       await pasteNote(clipboardNode, targetNode);
     },
-    [],
+    [hiveName],
   );
 
   // very important otherwise the states get messed up

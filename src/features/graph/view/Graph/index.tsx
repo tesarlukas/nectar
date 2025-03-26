@@ -36,7 +36,7 @@ function checkConsecutivePair(array: string[], pair: string[]) {
 }
 
 export const GraphView = () => {
-  const { references, hiveName } = useGraphView();
+  const { references, hiveName, noteIdsRef } = useGraphView();
   const { t } = useTranslation("graphView");
   const [currentColorScheme, setCurrentColorScheme] = useState(
     document.documentElement.classList.contains("dark")
@@ -63,12 +63,20 @@ export const GraphView = () => {
 
   const graphData: GraphData = useMemo(() => {
     const links =
-      references?.flatMap((reference) => {
-        return reference.referenceIds.flatMap((id) => ({
-          source: reference.noteId,
-          target: id,
-        }));
-      }) ?? [];
+      references
+        ?.flatMap((reference) => {
+          return reference.referenceIds.flatMap((id) => ({
+            source: reference.noteId,
+            target: id,
+          }));
+        })
+        // TODO: This is far from optimal but when user deletes node, this way
+        // we eliminate links for it. Temporary fix
+        .filter(
+          (link) =>
+            noteIdsRef.current?.includes(link.source) &&
+            noteIdsRef.current?.includes(link.target),
+        ) ?? [];
 
     const nodes =
       references?.map(

@@ -8,7 +8,7 @@ import type { Note } from "@/features/editor/views/EditorView/types";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { readJson } from "@/utils/jsonHelpers";
 import { stripJson } from "@/utils/nodeHelpers";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface NoteReference {
   noteId: string;
@@ -19,8 +19,8 @@ interface NoteReference {
 
 const obtainReferencesWithNoteIds = async (
   nodes?: FileTreeNode[],
-): Promise<NoteReference[]> => {
-  if (!nodes) return [];
+): Promise<[NoteReference[], string[]]> => {
+  if (!nodes) return [[], []];
 
   try {
     const getNodeReferences = async (
@@ -64,10 +64,12 @@ const obtainReferencesWithNoteIds = async (
       allNoteReferences = [...allNoteReferences, ...nodeReferences];
     }
 
-    return allNoteReferences;
+    const allNoteIds = allNoteReferences.map((reference) => reference.noteId);
+
+    return [allNoteReferences, allNoteIds];
   } catch (errors) {
     console.error(`Error while obtaining references: ${errors}`);
-    return [];
+    return [[], []];
   }
 };
 
@@ -75,6 +77,7 @@ export const useGraphView = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
   const { nodes, initializeFileTree } = useFileExplorer();
   const [references, setReferences] = useState<NoteReference[]>();
+  const noteIdsRef = useRef<string[]>([]);
 
   const notesNode = useMemo(
     () => nodes.filter((node) => node.value.name === NOTES_PATH),
@@ -89,7 +92,9 @@ export const useGraphView = () => {
     const initReferences = async () => {
       if (!notesNode) return;
 
-      const generatedReferences = await obtainReferencesWithNoteIds(notesNode);
+      const [generatedReferences, noteIds] =
+        await obtainReferencesWithNoteIds(notesNode);
+      noteIdsRef.current = noteIds;
 
       setReferences(generatedReferences);
     };
@@ -97,5 +102,5 @@ export const useGraphView = () => {
     initReferences();
   }, [notesNode]);
 
-  return { references, notesNode, hiveName };
+  return { references, notesNode, hiveName, noteIdsRef };
 };

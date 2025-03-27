@@ -178,9 +178,7 @@ export const EditorView = () => {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <BottomMenu charCount={editor?.storage.characterCount.characters()}>
-          <Button onClick={() => clearJumplist()}>Clear jumplist</Button>
-        </BottomMenu>
+        <BottomMenu charCount={editor?.storage.characterCount.characters()} />
       </div>
     </>
   );

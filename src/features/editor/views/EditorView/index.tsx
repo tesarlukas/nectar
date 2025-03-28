@@ -21,9 +21,11 @@ import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useJumplist } from "./hooks/useJumplist";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import { Typography } from "@/components/Typography";
+import { Card } from "@/components/ui/card";
 
 const RESIZE_STEP = 5;
 
@@ -39,7 +41,6 @@ export const EditorView = () => {
     addItemToJumplist,
     setIndexByItem,
     createNewItem,
-    clearJumplist,
     moveJumplistOut,
     moveJumplistIn,
     isNodeCurrentJumplistItem,
@@ -169,12 +170,32 @@ export const EditorView = () => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={80} minSize={25}>
-            <div className="h-full p-4 min-h-0 flex flex-col max-h-full">
+            <div
+              className={cn(
+                "h-full p-4 min-h-0 flex flex-col max-h-full",
+                !selectedNoteNode && "hidden",
+              )}
+            >
               <Editor
                 editor={editor}
                 onClick={handleEditorOnClick}
                 selectedNoteNode={selectedNoteNode}
               />
+            </div>
+            <div
+              className={cn(
+                "h-full p-4 min-h-0 flex flex-col max-h-full justify-center items-center",
+                selectedNoteNode && "hidden",
+              )}
+            >
+              <Card className="flex flex-col justify-center items-center gap-y-4 p-6 py-12 ">
+                <Typography variant="h2" weight="normal">
+                  {t("youCurrentlyDoNotHaveAnOpenNote")}
+                </Typography>
+                <Typography variant="h3" weight="normal">
+                  {t("startWritingBySelectingAnExistingNoteOrCreatingNewOne")}
+                </Typography>
+              </Card>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

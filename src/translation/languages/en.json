@@ -68,7 +68,11 @@
     "successfullyLinkedNotes": "Successfuly linked notes.",
     "successfullyUnlinkedNotes": "Successfully unlinked notes.",
     "youHaveToHaveSelectedNoteForThisAction": "You have to have selected note for this action.",
-    "youCannotLinkNoteToItself": "You cannot link note to itself."
+    "youCannotLinkNoteToItself": "You cannot link note to itself.",
+    "youCurrentlyDoNotHaveAnOpenNote": "You currently do not have an open note",
+    "welcomeToNectar": "Welcome to Nectar",
+    "yourHelperInWritingNotes": "Your helper in writing notes!",
+    "startWritingBySelectingAnExistingNoteOrCreatingNewOne": "Start writing by selecting an existing note or creating new one"
   },
   "graphView": {
     "noteRelationshipGraph": "Note Relationship Graph",

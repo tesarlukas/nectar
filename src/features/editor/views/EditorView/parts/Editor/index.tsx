@@ -85,7 +85,7 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
         className="flex items-center gap-1.5 cursor-pointer"
         onClick={() => {
           emitter(ActionId.SaveNote);
-          toast.success(t("noteSaved"));
+          toast.success(t("noteSaved", { ns: "editorView" }));
         }}
         variant="ghost"
       >

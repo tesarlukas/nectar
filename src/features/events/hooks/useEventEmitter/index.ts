@@ -1,4 +1,5 @@
-import eventEmitter, { type ActionId } from "../../eventEmitter";
+import eventEmitter, { type EventId, type ActionId } from "../../eventEmitter";
 
-export const useEventEmitter = () => (actionId: ActionId, value?: unknown) =>
-  eventEmitter.emit(actionId, value);
+export const useEventEmitter =
+  () => (actionId: ActionId | EventId, value?: unknown) =>
+    eventEmitter.emit(actionId, value);

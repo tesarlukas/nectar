@@ -12,7 +12,7 @@ import { useCallback } from "react";
 import { colorThemes } from "../variants";
 import { join } from "@tauri-apps/api/path";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
-import { ActionId } from "@/features/events/eventEmitter";
+import { ActionId, EventId } from "@/features/events/eventEmitter";
 
 export const useColorTheme = () => {
   const emitter = useEventEmitter();
@@ -55,7 +55,7 @@ export const useColorTheme = () => {
     root.classList.remove(ColorScheme.Dark, ColorScheme.Light);
     root.classList.add(colorScheme);
 
-    emitter(ActionId.ThemeChanged, colorScheme);
+    emitter(EventId.ThemeChanged, colorScheme);
   }, []);
 
   const toggleColorScheme = useCallback(async () => {

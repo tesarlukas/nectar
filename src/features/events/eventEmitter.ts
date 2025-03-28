@@ -37,6 +37,9 @@ export enum ActionId {
   ToggleFloatingMenuExpansion = "toggle_floating_menu_expansion",
   MoveJumpListOut = "move_jumplist_out",
   MoveJumpListIn = "move_jumplist_in",
+}
+
+export enum EventId {
   ThemeChanged = "theme_changed",
 }
 

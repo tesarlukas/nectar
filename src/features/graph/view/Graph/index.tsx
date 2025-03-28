@@ -11,7 +11,7 @@ import {
 } from "@/features/appearance/colorTheme/types";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { colorThemes } from "@/features/appearance/colorTheme/variants";
-import { ActionId } from "@/features/events/eventEmitter";
+import { ActionId, EventId } from "@/features/events/eventEmitter";
 import { useEventListener } from "@/features/events/hooks/useEventListener";
 import { useTranslation } from "react-i18next";
 import { renderToString } from "react-dom/server";
@@ -125,7 +125,7 @@ export const GraphView = () => {
     setPath(path ?? []);
   };
 
-  useEventListener(ActionId.ThemeChanged, (value: ColorScheme) => {
+  useEventListener(EventId.ThemeChanged, (value: ColorScheme) => {
     setCurrentColorScheme(value);
   });
 

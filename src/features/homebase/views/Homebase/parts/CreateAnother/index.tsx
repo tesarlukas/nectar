@@ -29,7 +29,9 @@ export const CreateAnother = ({ t, error, onConfirm }: CreateAnotherProps) => {
       <CardHeader className="py-3">
         <div className="flex items-center space-x-2">
           <FolderPlus className="w-5 h-5 text-primary" />
-          <CardTitle className="text-lg">{t("addHive")}</CardTitle>
+          <CardTitle className="text-lg">
+            {t("addHive", { ns: "common" })}
+          </CardTitle>
         </div>
       </CardHeader>
       {isInput && (

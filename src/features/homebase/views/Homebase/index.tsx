@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { exists, type DirEntry } from "@tauri-apps/plugin-fs";
+import { useCallback, useEffect, useState } from "react";
+import { exists, remove, type DirEntry } from "@tauri-apps/plugin-fs";
 import { getHives } from "./utils/getHives";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useTranslation } from "react-i18next";
@@ -8,9 +8,10 @@ import { HiveListing } from "./parts/HiveListing";
 import { EmptyHives } from "./parts/EmptyHives";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useInitialize } from "@/hooks/useInitialize";
+import { cn } from "@/lib/utils";
 
 export const Homebase = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["homebase", "common"]);
   const setHiveName = useHiveStore((state) => state.setHiveName);
   const navigate = useNavigate();
   const { initHive, initNotes } = useInitialize();
@@ -53,8 +54,20 @@ export const Homebase = () => {
     }
   };
 
+  const handleOnDestroy = useCallback(async (hiveName: string) => {
+    await remove(hiveName, { baseDir: ROOT_DIR, recursive: true });
+
+    const newHives = await getHives();
+    setHives(newHives);
+  }, []);
+
   return (
-    <div className="p-4 flex flex-1 flex-col min-h-0 items-center w-full">
+    <div
+      className={cn(
+        "p-4 flex flex-1 flex-col min-h-0 items-center w-full",
+        hives.length !== 0 && "pt-16",
+      )}
+    >
       {hives.length === 0 ? (
         <EmptyHives t={t} onConfirm={handleOnConfirm} error={error} />
       ) : (
@@ -63,6 +76,7 @@ export const Homebase = () => {
           hives={hives}
           onHiveClick={handleOnHiveClick}
           onConfirm={handleOnConfirm}
+          onDestroy={handleOnDestroy}
           error={error}
         />
       )}

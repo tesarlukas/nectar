@@ -1,6 +1,8 @@
 import { Typography } from "@/components/Typography";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NonAlphas } from "@/features/events/eventEmitter";
+import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { cn } from "@/lib/utils";
 import type { TFunction } from "i18next";
 import { useRef } from "react";
@@ -22,10 +24,12 @@ export const HiveInput = ({
 }: HiveInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useShortcuts(NonAlphas.Escape, () => onCancel?.());
+
   return (
     <div className={cn("md:w-1/2 w-full", className)}>
       <Typography variant="p" weight="normal" className="mb-2">
-        {t("hiveName")}
+        {t("hiveName", { ns: "common" })}
       </Typography>
       <Input className="w-full" ref={inputRef} />
       {error && (
@@ -38,7 +42,7 @@ export const HiveInput = ({
           type="button"
           onClick={() => onConfirm(inputRef.current?.value)}
         >
-          {t("confirm")}
+          {t("confirm", { ns: "common" })}
         </Button>
         {onCancel && (
           <Button
@@ -48,7 +52,7 @@ export const HiveInput = ({
               onCancel();
             }}
           >
-            {t("cancel")}
+            {t("cancel", { ns: "common" })}
           </Button>
         )}
       </div>

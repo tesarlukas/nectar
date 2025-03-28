@@ -79,10 +79,12 @@ export function findNodesAtDistances(
     adjacencyList.set(node.id, []);
   });
 
-  graphData.links.forEach((link) => {
-    const sourceNeighbors = adjacencyList.get(link.source) || [];
-    sourceNeighbors.push(link.target);
-    adjacencyList.set(link.source, sourceNeighbors);
+  graphData.links.forEach(({ source, target }) => {
+    if (typeof source === "string" || typeof target === "string") return;
+
+    const sourceNeighbors = adjacencyList.get(source.id) || [];
+    sourceNeighbors.push(target.id);
+    adjacencyList.set(source.id, sourceNeighbors);
   });
 
   // Type for queue items

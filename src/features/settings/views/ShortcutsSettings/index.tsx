@@ -22,7 +22,6 @@ import {
 import { findDuplicates } from "./utils/findDuplicates";
 import { Card, CardTitle } from "@/components/ui/card";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { LanguageSelector } from "@/components/LanguageSelector";
 
 // Helper function to normalize text for search
 const normalizeText = (text: string): string => {

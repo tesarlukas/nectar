@@ -5,7 +5,6 @@ import { ColorSchemeToggle } from "./parts/ColorSchemeToggle";
 import { Button } from "../ui/button";
 import { useHiveStore } from "@/stores/useHiveStore";
 import { useCallback } from "react";
-import { LanguageSelector } from "../LanguageSelector";
 
 export const TopMenu = () => {
   const hiveName = useHiveStore((state) => state.hiveName);
@@ -69,7 +68,6 @@ export const TopMenu = () => {
         <div className="flex flex-row ml-auto gap-x-2 items-center">
           {renderNavHandler()}
           <ColorSchemeToggle />
-          <LanguageSelector />
         </div>
       </Card>
     </>

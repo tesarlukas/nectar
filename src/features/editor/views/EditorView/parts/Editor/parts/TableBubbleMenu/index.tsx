@@ -8,8 +8,6 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Delete,
-  Plus,
   Trash2,
   MoveHorizontal,
   MoveVertical,

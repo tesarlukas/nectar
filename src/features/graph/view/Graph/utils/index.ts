@@ -1,67 +1,6 @@
 import type { GraphData } from "../types";
 
 /**
- * Performs breadth-first search on a graph with string IDs
- * @param graphData The graph data structure
- * @param startNodeId The ID of the node to start from
- * @returns Array of node IDs in BFS order
- */
-export function bfs(graphData: GraphData, startNodeId: string): string[] {
-  // Create an adjacency list
-  const adjacencyList = new Map<string, string[]>();
-
-  // Initialize the adjacency list with empty arrays for all nodes
-  graphData.nodes.forEach((node) => {
-    adjacencyList.set(node.id, []);
-  });
-
-  // Fill the adjacency list based on the links
-  graphData.links.forEach((link) => {
-    const sourceNeighbors = adjacencyList.get(link.source) || [];
-    sourceNeighbors.push(link.target);
-    adjacencyList.set(link.source, sourceNeighbors);
-  });
-
-  // Set to keep track of visited nodes
-  const visited = new Set<string>();
-
-  // Queue for BFS - using an array for simplicity
-  const queue: string[] = [startNodeId];
-
-  // Array to store the order of visited nodes
-  const result: string[] = [];
-
-  // Mark the start node as visited
-  visited.add(startNodeId);
-
-  // Process nodes in BFS order
-  while (queue.length > 0) {
-    // Using array shift, which returns undefined if the array is empty
-    const currentNodeId = queue.shift();
-
-    // TypeScript safeguard - should never happen since we check queue.length
-    if (currentNodeId === undefined) {
-      continue;
-    }
-
-    result.push(currentNodeId);
-
-    // Get neighbors of the current node
-    const neighbors = adjacencyList.get(currentNodeId) || [];
-
-    // Add unvisited neighbors to the queue
-    for (const neighborId of neighbors) {
-      if (!visited.has(neighborId)) {
-        visited.add(neighborId);
-        queue.push(neighborId);
-      }
-    }
-  }
-
-  return result;
-}
-
-/**
  * Find nodes reachable from a start node up to a specified maximum distance
  * @param graphData The graph data
  * @param startNodeId Starting node ID

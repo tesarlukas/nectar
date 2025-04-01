@@ -12,7 +12,7 @@ import { useCallback } from "react";
 import { colorThemes } from "../variants";
 import { join } from "@tauri-apps/api/path";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
-import { ActionId, EventId } from "@/features/events/eventEmitter";
+import { EventId } from "@/features/events/eventEmitter";
 
 export const useColorTheme = () => {
   const emitter = useEventEmitter();

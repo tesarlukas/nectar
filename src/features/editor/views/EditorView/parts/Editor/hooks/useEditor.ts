@@ -1,7 +1,6 @@
 import {
   type Editor,
   mergeAttributes,
-  ReactNodeViewRenderer,
   useEditor as useTiptapEditor,
 } from "@tiptap/react";
 import { Image } from "@tiptap/extension-image";
@@ -39,7 +38,6 @@ import TableRow from "@tiptap/extension-table-row";
 import Mathematics, {
   defaultShouldRender,
 } from "@tiptap-pro/extension-mathematics";
-import { TableCellNodeView, TestTableCell } from "../parts/TableCellNodeView";
 
 const extensions = [
   // Nodes

@@ -257,13 +257,17 @@ export const useEditor = ({ noteId }: UseEditor) => {
   const debouncedUpdateEditorStates = useCallback(
     debounce((noteId: string, editor: Editor) => {
       addEditorState(noteId, { editorState: editor.view.state, saved: false });
-    }, 500),
+    }, 200),
     [noteId],
   );
 
   const handleEditorOnClick = () => {
     editor?.commands.focus();
   };
+
+  useEffect(() => {
+    debouncedUpdateEditorStates.cancel();
+  }, [noteId])
 
   useEffect(() => {
     return () => debouncedUpdateEditorStates.cancel();

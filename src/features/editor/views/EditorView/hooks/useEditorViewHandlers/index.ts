@@ -59,6 +59,7 @@ export const useEditorViewHandlers = ({
   isNodeCurrentJumplistItem,
 }: EditorViewHandlersProps) => {
   const { t } = useTranslation("editorView");
+  const addEditorState = useEditorStateStore((state) => state.addEditorState);
   const editorStatesRef = useEditorStatesRef();
   const clearEditorStates = useEditorStateStore(
     (state) => state.clearEditorStates,
@@ -110,12 +111,24 @@ export const useEditorViewHandlers = ({
   );
 
   const handleMoveJumplistIn = async () => {
+    if (selectedNoteNode?.value.path && editor) {
+      addEditorState(selectedNoteNode.value.path, {
+        editorState: editor.view.state,
+        saved: false,
+      });
+    }
     const nextNode = jumplistRef.current[moveJumplistIn()].node;
     setSelectedNoteNode(nextNode);
     await loadNote(nextNode);
   };
 
   const handleMoveJumplistOut = async () => {
+    if (selectedNoteNode?.value.path && editor) {
+      addEditorState(selectedNoteNode.value.path, {
+        editorState: editor.view.state,
+        saved: false,
+      });
+    }
     const nextNode = jumplistRef.current[moveJumplistOut()].node;
     setSelectedNoteNode(nextNode);
     await loadNote(nextNode);

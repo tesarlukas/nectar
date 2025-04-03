@@ -49,7 +49,7 @@ export const ShortcutItem = ({
           <>
             <TriangleAlert size={16} className="ml-4 mr-1" />
             <Typography variant="subtle" className="text-primary font-bold">
-              {t("unsavedChanges")}
+              {t("unsavedChanges", {ns: "common"})}
             </Typography>
           </>
         )}

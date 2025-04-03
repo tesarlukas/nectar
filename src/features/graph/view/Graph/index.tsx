@@ -97,7 +97,7 @@ export const GraphView = () => {
     };
 
     return data;
-  }, [references]);
+  }, [references, colors]);
 
   const [startNode, setStartNode] = useState<GraphFileNode>();
   const [endNode, setEndNode] = useState<GraphFileNode>();

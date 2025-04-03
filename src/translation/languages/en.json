@@ -9,6 +9,7 @@
     "theHiveNameCannotBeEmpty": "The Hive Name cannot be empty",
     "thisFolderAlreadyExists": "This folder already exists",
     "cancel": "Cancel",
+    "unsavedChanges": "Unsaved Changes",
     "addHive": "Add Hive"
   },
   "settings": {

@@ -26,7 +26,7 @@ export interface EditorProps {
 }
 
 export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const editorStates = useEditorStateStore((state) => state.editorStates);
   const setEditorStateSaved = useEditorStateStore(
     (state) => state.setEditorStateSaved,

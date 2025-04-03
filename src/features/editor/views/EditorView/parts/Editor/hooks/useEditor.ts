@@ -38,6 +38,7 @@ import TableRow from "@tiptap/extension-table-row";
 import Mathematics, {
   defaultShouldRender,
 } from "@tiptap-pro/extension-mathematics";
+import ImageResize from 'tiptap-extension-resize-image'
 
 const extensions = [
   // Nodes
@@ -239,6 +240,7 @@ const extensions = [
       output: "mathml",
     },
   }),
+  ImageResize,
 ];
 
 const TEMP_NOTE_ID = "temp";

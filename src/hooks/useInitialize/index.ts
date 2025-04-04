@@ -8,9 +8,12 @@ import { path } from "@tauri-apps/api";
 import { join } from "@tauri-apps/api/path";
 import { type BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
 import { useCallback } from "react";
+import { useShortcutsStore } from "@/stores/useShortcutStore";
+import { SHORTCUTS_FILENAME } from "@/stores/useShortcutStore/index.preset";
 
 export const useInitialize = () => {
   const { initializeTheme } = useColorTheme();
+  const reset = useShortcutsStore((state) => state.resetToDefault);
 
   const initHive = useCallback(
     async (
@@ -30,7 +33,7 @@ export const useInitialize = () => {
         );
 
         if (hiveInfo?.hiveName) {
-          console.info("Hive has already been initialized");
+          console.warn("Hive has already been initialized");
           return;
         }
 
@@ -57,7 +60,7 @@ export const useInitialize = () => {
     const doesDirExist = await exists(notesDirLocation, { baseDir });
 
     if (doesDirExist) {
-      console.info("Notes are already initialized");
+      console.warn("Notes are already initialized");
       return;
     }
 
@@ -69,16 +72,25 @@ export const useInitialize = () => {
   const initSettings = async (
     baseDir: BaseDirectory = APP_CONFIG_DIR,
   ): Promise<void> => {
-    const doesSettingsDirExist = await exists(SETTINGS_PATH, { baseDir });
+    try {
+      const doesSettingsDirExist = await exists(SETTINGS_PATH, { baseDir });
 
-    if (!doesSettingsDirExist) {
-      await mkdir(SETTINGS_PATH, {
-        baseDir,
-      });
+      if (!doesSettingsDirExist) {
+        await mkdir(SETTINGS_PATH, {
+          baseDir,
+        });
+      }
+    } catch (error) {
+      console.warn("Error while creating:", error);
     }
 
     await initializeTheme();
-    // TODO: check if keymap.json exists, if not, initialize it
+
+    const shortcutsLocation = await join(SETTINGS_PATH, SHORTCUTS_FILENAME);
+
+    if (!(await exists(shortcutsLocation, { baseDir }))) {
+      reset();
+    }
   };
 
   return { initHive, initNotes, initSettings };

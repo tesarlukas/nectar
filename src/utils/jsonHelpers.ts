@@ -53,6 +53,6 @@ export const readJson = async <T>(
 
     return jsonContent;
   } catch (errors) {
-    console.error("Failed to read the json file", errors);
+    console.warn("Failed to read the json file", errors);
   }
 };

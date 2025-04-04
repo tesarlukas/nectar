@@ -75,7 +75,7 @@ export const useColorTheme = () => {
   const initializeTheme = useCallback(async () => {
     const storedTheme = await readTheme();
 
-    setColorScheme(storedTheme?.colorScheme ?? ColorScheme.Dark);
+    setColorScheme(storedTheme?.colorScheme ?? ColorScheme.Light);
 
     if (!storedTheme) {
       await writeTheme();

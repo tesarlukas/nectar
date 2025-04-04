@@ -28,7 +28,7 @@ export const EmptyHives = ({ t, onConfirm, error }: EmptyHivesProps) => {
             <Typography variant="h1" className="text-center" weight="normal">
               {t("noHivesFound")}
             </Typography>
-            <Typography variant="p">
+            <Typography variant="p" className="text-center">
               {t("getStartedByCreatingYourFirstHive")}
             </Typography>
           </div>

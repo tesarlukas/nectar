@@ -23,6 +23,7 @@ import {
   Table,
   Minus,
   Plus,
+  X,
 } from "lucide-react";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
@@ -385,6 +386,15 @@ export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
               </div>
             )}
           </div>
+        )}
+        {isExpanded && (
+          <Button
+            variant="ghost"
+            className="absolute right-1 bottom-1 w-8 h-8 rounded-lg m-0 p-0"
+            onClick={() => setIsExpanded(false)}
+          >
+            <X />
+          </Button>
         )}
       </div>
     </TiptapFloatingMenu>

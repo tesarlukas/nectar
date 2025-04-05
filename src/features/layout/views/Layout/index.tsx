@@ -11,7 +11,16 @@ export const Layout = () => {
     pathname === "/settings" ? navigate("/") : navigate("/settings");
   };
 
+  const handleGraphNavigation = () => {
+    pathname === "/graph" ? navigate("/") : navigate("/graph");
+  }
+
   useShortcuts(ActionId.ToggleSettings, () => handleNavigation(), {
+    enableOnContentEditable: true,
+    enableOnFormTags: ["INPUT"],
+  });
+
+  useShortcuts(ActionId.ToggleGraphView, () => handleGraphNavigation(), {
     enableOnContentEditable: true,
     enableOnFormTags: ["INPUT"],
   });

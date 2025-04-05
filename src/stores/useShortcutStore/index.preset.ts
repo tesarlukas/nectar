@@ -3,7 +3,7 @@ import { ActionId } from "@/features/events/eventEmitter";
 export enum ShortcutContext {
   Global = "global",
   Explorer = "explorer",
-  Search = "search"
+  Search = "search",
 }
 
 export type KeyboardShortcut = string;
@@ -17,10 +17,10 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.CreateNewNote]: `${ShortcutContext.Global}:ctrl+a`,
   [ActionId.CreateNewDir]: `${ShortcutContext.Global}:ctrl+shift+a`,
   [ActionId.SearchReplace]: `${ShortcutContext.Global}:ctrl+f`,
-  [ActionId.NextSearch]: `${ShortcutContext.Global}:ctrl+n`,
-  [ActionId.PreviousSearch]: `${ShortcutContext.Global}:ctrl+shift+n`,
-  [ActionId.ToggleCaseSensitiveSearch]: `${ShortcutContext.Global}:ctrl+c`,
-  [ActionId.ToggleReplace]: `${ShortcutContext.Global}:ctrl+r`,
+  [ActionId.NextSearch]: `${ShortcutContext.Search}:ctrl+n`,
+  [ActionId.PreviousSearch]: `${ShortcutContext.Search}:ctrl+shift+n`,
+  [ActionId.ToggleCaseSensitiveSearch]: `${ShortcutContext.Search}:ctrl+c`,
+  [ActionId.ToggleReplace]: `${ShortcutContext.Search}:ctrl+r`,
   [ActionId.FocusEditor]: `${ShortcutContext.Global}:ctrl+l`,
   [ActionId.FocusExplorer]: `${ShortcutContext.Global}:ctrl+h`,
   [ActionId.MoveExplorerCursorUp]: `${ShortcutContext.Global}:k`,
@@ -44,5 +44,6 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.MoveJumpListIn]: `${ShortcutContext.Global}:ctrl+p`,
   [ActionId.RemoveAllFormatting]: `${ShortcutContext.Global}:ctrl+shift+x`,
   [ActionId.Replace]: `${ShortcutContext.Search}:enter`,
-  [ActionId.ReplaceAll]: `${ShortcutContext.Search}:shift+enter`
+  [ActionId.ReplaceAll]: `${ShortcutContext.Search}:shift+enter`,
+  [ActionId.ToggleGraphView]: `${ShortcutContext.Global}:ctrl+;`,
 } as const;

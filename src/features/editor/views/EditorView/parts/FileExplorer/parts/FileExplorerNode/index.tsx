@@ -29,6 +29,7 @@ import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelp
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import { useEventListener } from "@/features/events/hooks/useEventListener";
 
 export interface FileExplorerNodeProps {
   node: FileTreeNode;
@@ -181,6 +182,12 @@ export const FileExplorerNode = ({
       }
     },
   );
+
+  useEventListener(ActionId.ExpandAll, () => {
+    if (node.value.isDirectory) {
+      setIsExpanded((prev) => !prev);
+    }
+  });
 
   const [isRenaming, setIsRenaming] = useState(false);
 

@@ -94,10 +94,17 @@ export const EditorView = () => {
     enableOnContentEditable: true,
     enableOnFormTags: ["INPUT"],
   });
-  useShortcuts(ActionId.SaveNote, emitSaveNote, {
-    enableOnContentEditable: true,
-    enableOnFormTags: ["INPUT"],
-  });
+  useShortcuts(
+    ActionId.SaveNote,
+    () => {
+      if (!editor?.view.hasFocus()) return;
+      emitSaveNote();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: ["INPUT"],
+    },
+  );
   useShortcuts(ActionId.CreateNewNote, () => emitter(ActionId.CreateNewNote));
   useShortcuts(ActionId.SearchReplace, () => emitter(ActionId.SearchReplace), {
     enableOnContentEditable: true,

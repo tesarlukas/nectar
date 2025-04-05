@@ -41,6 +41,7 @@ export enum ActionId {
   Replace = "replace",
   ReplaceAll = "replace_all",
   ToggleGraphView = "toggle_graph_view",
+  ExpandAll = "expand_all",
 }
 
 export enum EventId {

@@ -17,6 +17,7 @@ import { sortFileTreeRecursive } from "@/utils/nodeHelpers";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
 
 interface FileExplorerProps
   extends Pick<
@@ -50,6 +51,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     }: FileExplorerProps,
     ref,
   ) => {
+    const emitter = useEventEmitter();
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const focusableElementsRef = useRef<HTMLElement[]>([]);
     const focusIndex = useRef<number>(1);
@@ -186,6 +188,9 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     useShortcuts(ActionId.MoveExplorerCursorUp, handleBackwardNav);
     useShortcuts(ActionId.MoveExplorerCursorTop, handleTopNav);
     useShortcuts(ActionId.MoveExplorerCursorBottom, handleBottomNav);
+
+    useShortcuts(ActionId.MoveExplorerCursorBottom, handleBottomNav);
+    useShortcuts(ActionId.ExpandAll, () => emitter(ActionId.ExpandAll));
 
     useShortcuts(NonAlphas.Escape, () => setClipboardNode(undefined));
     // turn off the tab and shift tab for this component

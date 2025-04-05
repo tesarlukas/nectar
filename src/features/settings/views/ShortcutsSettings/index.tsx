@@ -22,6 +22,7 @@ import {
 import { findDuplicates } from "./utils/findDuplicates";
 import { Card, CardTitle } from "@/components/ui/card";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
 
 // Helper function to normalize text for search
 const normalizeText = (text: string): string => {
@@ -137,15 +138,17 @@ export const ShortcutsSettings = () => {
     const normalizedQuery = normalizeText(searchQuery);
 
     return (Object.entries(shortcuts) as [ActionId, string][]).filter(
-      ([actionId]) => {
+      ([actionId, shortcutWithContext]) => {
         const normalizedActionId = normalizeText(actionId);
         const translatedAction = normalizeText(
           t(`actions.${actionId}`, { defaultValue: actionId }),
         );
+        const shortcutPart = getShortcutKeyPart(shortcutWithContext);
 
         return (
           normalizedActionId.includes(normalizedQuery) ||
-          translatedAction.includes(normalizedQuery)
+          translatedAction.includes(normalizedQuery) ||
+          shortcutPart.includes(normalizedQuery)
         );
       },
     );

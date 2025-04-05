@@ -217,14 +217,19 @@ export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
               >
                 <Code className="h-4 w-4" />
               </Button>
+
               <Button
                 variant="ghost"
                 size="sm"
                 className="w-8 h-8 p-0"
-                title="Media Options"
-                onClick={() => setShowMediaOptions(!showMediaOptions)}
+                title="Horizontal Rule"
+                onClick={() =>
+                  handleButtonClick(() =>
+                    editor.chain().focus().setHorizontalRule().run(),
+                  )
+                }
               >
-                <ImageIcon className="h-4 w-4" />
+                <Minus className="h-4 w-4" />
               </Button>
             </div>
 
@@ -246,19 +251,6 @@ export const FloatingMenu: React.FC<FloatingMenuProps> = ({ editor }) => {
                 }
               >
                 <Table className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-8 h-8 p-0"
-                title="Horizontal Rule"
-                onClick={() =>
-                  handleButtonClick(() =>
-                    editor.chain().focus().setHorizontalRule().run(),
-                  )
-                }
-              >
-                <Minus className="h-4 w-4" />
               </Button>
             </div>
 

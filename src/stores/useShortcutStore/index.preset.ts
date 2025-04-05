@@ -41,4 +41,5 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.ToggleFloatingMenuExpansion]: `${ShortcutContext.Global}:ctrl+/`,
   [ActionId.MoveJumpListOut]: `${ShortcutContext.Global}:ctrl+o`,
   [ActionId.MoveJumpListIn]: `${ShortcutContext.Global}:ctrl+p`,
+  [ActionId.RemoveAllFormatting]: `${ShortcutContext.Global}:ctrl+shift+x`,
 } as const;

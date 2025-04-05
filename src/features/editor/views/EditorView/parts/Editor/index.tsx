@@ -26,7 +26,7 @@ export interface EditorProps {
 }
 
 export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
   const editorStates = useEditorStateStore((state) => state.editorStates);
   const setEditorStateSaved = useEditorStateStore(
     (state) => state.setEditorStateSaved,
@@ -68,6 +68,14 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
       const toPosition = ranges[0]?.$to;
 
       editor?.commands.setTextSelection(toPosition.pos);
+    },
+    { enableOnContentEditable: true },
+  );
+
+  useShortcuts(
+    ActionId.RemoveAllFormatting,
+    () => {
+      editor?.chain().focus().unsetAllMarks().run();
     },
     { enableOnContentEditable: true },
   );

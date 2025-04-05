@@ -37,6 +37,7 @@ export enum ActionId {
   ToggleFloatingMenuExpansion = "toggle_floating_menu_expansion",
   MoveJumpListOut = "move_jumplist_out",
   MoveJumpListIn = "move_jumplist_in",
+  RemoveAllFormatting = "remove_all_formatting",
 }
 
 export enum EventId {

@@ -271,36 +271,32 @@ export const FileExplorerNode = ({
           className="w-48 text-xl"
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
-          {node.value.isDirectory && (
-            <>
-              <ContextMenuItem
-                className="text-base"
-                onClick={() => {
-                  setCreateInput({
-                    isOpen: true,
-                    type: "file",
-                  });
-                }}
-              >
-                <FilePlus className="mr-2 h-4 w-4" />
-                New File
-              </ContextMenuItem>
+          <ContextMenuItem
+            className="text-base"
+            onClick={() => {
+              setCreateInput({
+                isOpen: true,
+                type: "file",
+              });
+            }}
+          >
+            <FilePlus className="mr-2 h-4 w-4" />
+            New File
+          </ContextMenuItem>
 
-              <ContextMenuItem
-                className="text-base"
-                onClick={() => {
-                  setCreateInput({
-                    isOpen: true,
-                    type: "directory",
-                  });
-                }}
-              >
-                <FilePlus className="mr-2 h-4 w-4" />
-                New Folder
-              </ContextMenuItem>
-              <ContextMenuSeparator />
-            </>
-          )}
+          <ContextMenuItem
+            className="text-base"
+            onClick={() => {
+              setCreateInput({
+                isOpen: true,
+                type: "directory",
+              });
+            }}
+          >
+            <FilePlus className="mr-2 h-4 w-4" />
+            New Folder
+          </ContextMenuItem>
+          <ContextMenuSeparator />
           <ContextMenuItem
             className="text-base"
             onClick={() => setIsRenaming(true)}
@@ -323,13 +319,16 @@ export const FileExplorerNode = ({
             <ClipboardPaste className="mr-2 h-4 w-4" />
             Paste
           </ContextMenuItem>
-          <ContextMenuItem
-            className="text-base"
-            onClick={() => emitter(ActionId.LinkNode, node)}
-          >
-            <Link className="mr-2 h-4 w-4" />
-            Link Note
-          </ContextMenuItem>
+          {node.value.isFile && (
+            <ContextMenuItem
+              className="text-base"
+              onClick={() => emitter(ActionId.LinkNode, node)}
+            >
+              <Link className="mr-2 h-4 w-4" />
+              Link Note
+            </ContextMenuItem>
+          )}
+
           <ContextMenuSeparator />
           <ContextMenuItem
             className="text-destructive text-base font-bold data-[highlighted]:bg-destructive"

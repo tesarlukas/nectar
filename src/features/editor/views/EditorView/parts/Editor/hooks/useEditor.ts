@@ -141,7 +141,7 @@ const extensions = [
       class: "max-w-full h-auto rounded-lg my-4 border border-border",
     },
   }),
-  CharacterCount,
+  CharacterCount.configure(),
   History,
   FileHandler.configure({
     allowedMimeTypes: ["image/png", "image/jpeg", "image/gif", "image/webp"],

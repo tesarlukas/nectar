@@ -3,7 +3,6 @@
     "save": "Save",
     "nectar": "Nectar",
     "helloWorld": "Hello World!",
-    "characterCount": "Character Count",
     "hiveName": "Hive Name",
     "confirm": "Confirm",
     "theHiveNameCannotBeEmpty": "The Hive Name cannot be empty",
@@ -53,7 +52,8 @@
     "successfullySavedShortcuts": "Successfully saved shortcuts"
   },
   "editorView": {
-    "characterCount": "Character Count",
+    "characters": "Characters",
+    "words": "Words",
     "replace": "Replace",
     "replaceAll": "Replace All",
     "hideReplace": "Hide Replace",

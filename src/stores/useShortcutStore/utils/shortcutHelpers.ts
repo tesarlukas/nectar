@@ -20,3 +20,9 @@ export const getShortcutKeyPart = (fullShortcut: KeyboardShortcut) => {
 
   return shortcut;
 };
+
+export const getContextPart = (fullShortcut: KeyboardShortcut) => {
+  const [context, _] = splitShortcut(fullShortcut);
+
+  return context;
+};

@@ -2,7 +2,10 @@ import type { TFunction } from "i18next";
 import { Card, CardTitle } from "@/components/ui/card";
 import type { ActionId } from "@/features/events/eventEmitter";
 import type { KeyboardShortcut } from "@/stores/useShortcutStore/index.preset";
-import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
+import {
+  getContextPart,
+  getShortcutKeyPart,
+} from "@/stores/useShortcutStore/utils/shortcutHelpers";
 import { Typography } from "@/components/Typography";
 import { formatKeys } from "../../utils/formatKeys";
 import { cn } from "@/lib/utils";
@@ -32,6 +35,7 @@ export const ShortcutItem = ({
   isDuplicate,
 }: ShortcutItemProps) => {
   const shortcutKeys = getShortcutKeyPart(shortcut);
+  const context = getContextPart(shortcut);
   const newShortcutKeys = isChanged && getShortcutKeyPart(newShortcut);
 
   return (
@@ -45,11 +49,17 @@ export const ShortcutItem = ({
     >
       <div className="flex flex-row items-center">
         <CardTitle>{t(`shortcuts.${actionId}`)}</CardTitle>
-        {isChanged && (
+        {isChanged ? (
           <>
             <TriangleAlert size={16} className="ml-4 mr-1" />
             <Typography variant="subtle" className="text-primary font-bold">
-              {t("unsavedChanges", {ns: "common"})}
+              {t("unsavedChanges", { ns: "common" })}
+            </Typography>
+          </>
+        ) : (
+          <>
+            <Typography variant="subtle" className="text-primary/60 font-bold capitalize ml-4">
+              {context}
             </Typography>
           </>
         )}

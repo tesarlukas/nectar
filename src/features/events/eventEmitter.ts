@@ -38,6 +38,8 @@ export enum ActionId {
   MoveJumpListOut = "move_jumplist_out",
   MoveJumpListIn = "move_jumplist_in",
   RemoveAllFormatting = "remove_all_formatting",
+  Replace = "replace",
+  ReplaceAll = "replace_all"
 }
 
 export enum EventId {

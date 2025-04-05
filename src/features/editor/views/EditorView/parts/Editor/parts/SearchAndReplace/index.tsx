@@ -173,6 +173,30 @@ export const SearchReplaceComponent = forwardRef<
     enableOnFormTags: ["INPUT"],
   });
 
+  useShortcuts(
+    ActionId.Replace,
+    () => {
+      if (document.activeElement === replaceInputRef.current) {
+        handleReplace();
+      }
+    },
+    {
+      enableOnFormTags: ["INPUT"],
+    },
+  );
+
+  useShortcuts(
+    ActionId.ReplaceAll,
+    () => {
+      if (document.activeElement === replaceInputRef.current) {
+        handleReplaceAll();
+      }
+    },
+    {
+      enableOnFormTags: ["INPUT"],
+    },
+  );
+
   useEffect(() => {
     return () => {
       editor?.commands.setSearchTerm("");

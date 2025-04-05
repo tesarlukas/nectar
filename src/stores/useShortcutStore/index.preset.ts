@@ -3,6 +3,7 @@ import { ActionId } from "@/features/events/eventEmitter";
 export enum ShortcutContext {
   Global = "global",
   Explorer = "explorer",
+  Search = "search"
 }
 
 export type KeyboardShortcut = string;
@@ -42,4 +43,6 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.MoveJumpListOut]: `${ShortcutContext.Global}:ctrl+o`,
   [ActionId.MoveJumpListIn]: `${ShortcutContext.Global}:ctrl+p`,
   [ActionId.RemoveAllFormatting]: `${ShortcutContext.Global}:ctrl+shift+x`,
+  [ActionId.Replace]: `${ShortcutContext.Search}:enter`,
+  [ActionId.ReplaceAll]: `${ShortcutContext.Search}:shift+enter`
 } as const;

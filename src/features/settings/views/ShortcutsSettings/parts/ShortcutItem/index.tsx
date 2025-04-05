@@ -58,7 +58,10 @@ export const ShortcutItem = ({
           </>
         ) : (
           <>
-            <Typography variant="subtle" className="text-primary/60 font-bold capitalize ml-4">
+            <Typography
+              variant="subtle"
+              className="text-primary/60 font-bold capitalize ml-4"
+            >
               {context}
             </Typography>
           </>

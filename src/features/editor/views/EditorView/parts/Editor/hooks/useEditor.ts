@@ -38,7 +38,7 @@ import TableRow from "@tiptap/extension-table-row";
 import Mathematics, {
   defaultShouldRender,
 } from "@tiptap-pro/extension-mathematics";
-import ImageResize from 'tiptap-extension-resize-image'
+import ImageResize from "tiptap-extension-resize-image";
 
 const extensions = [
   // Nodes
@@ -269,7 +269,7 @@ export const useEditor = ({ noteId }: UseEditor) => {
 
   useEffect(() => {
     debouncedUpdateEditorStates.cancel();
-  }, [noteId])
+  }, [noteId]);
 
   useEffect(() => {
     return () => debouncedUpdateEditorStates.cancel();

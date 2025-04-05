@@ -13,7 +13,7 @@ export const Layout = () => {
 
   const handleGraphNavigation = () => {
     pathname === "/graph" ? navigate("/") : navigate("/graph");
-  }
+  };
 
   useShortcuts(ActionId.ToggleSettings, () => handleNavigation(), {
     enableOnContentEditable: true,

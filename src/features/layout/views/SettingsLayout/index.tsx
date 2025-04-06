@@ -10,8 +10,8 @@ export const SettingsLayout = () => {
 
   return (
     <>
-      <div className="p-4 flex flex-row w-full">
-        <div className="flex flex-col gap-2 w-1/5">
+      <div className="p-4 flex flex-row w-full justify-between">
+        <div className="flex flex-col gap-2 w-48">
           <Button onClick={() => navigate("/settings")}>{t("settings")}</Button>
           {hiveName && (
             <Button onClick={() => navigate("/homebase")}>
@@ -19,7 +19,7 @@ export const SettingsLayout = () => {
             </Button>
           )}
         </div>
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 max-w-2xl">
           <Outlet />
         </div>
       </div>

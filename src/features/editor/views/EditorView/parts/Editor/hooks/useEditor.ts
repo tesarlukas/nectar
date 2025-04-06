@@ -245,9 +245,7 @@ const extensions = [
 
 const TEMP_NOTE_ID = "temp";
 
-const content = `
-<h1>Hello, welcome to the app Nectar!</h1> 
-`;
+const content = "";
 
 interface UseEditor {
   noteId?: string;

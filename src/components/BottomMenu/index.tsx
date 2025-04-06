@@ -31,12 +31,16 @@ export const BottomMenu = ({
       <Card className="flex flex-row rounded-t-none h-12 py-2 px-8 bottom-0 w-full">
         <div className="ml-auto gap-x-4 flex-row flex items-center">
           {children}
-          <span>
-            {t("words")}: {editorState?.wordCount}
-          </span>
-          <span>
-            {t("characters")}: {editorState?.characterCount}
-          </span>
+          {editorState?.wordCount !== 0 && (
+            <span>
+              {t("words")}: {editorState?.wordCount}
+            </span>
+          )}
+          {editorState?.characterCount !== 0 && (
+            <span>
+              {t("characters")}: {editorState?.characterCount}
+            </span>
+          )}
         </div>
       </Card>
     </>

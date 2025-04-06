@@ -41,19 +41,22 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
     setEditorStateSaved(selectedNoteNode?.value.path, true);
   });
   useEventListener(ActionId.SearchReplace, () => {
-    if (
-      document.activeElement !== searchReplaceRef.current?.domElement &&
-      isSearching
-    ) {
+    const isSearchReplaceFocused =
+      document.activeElement === searchReplaceRef.current?.domElement;
+
+    if (!isSearchReplaceFocused && isSearching) {
       searchReplaceRef.current?.focus();
       return;
     }
-    setIsSearching((prevState) => {
-      if (prevState) {
-        editor?.commands.focus();
-      }
-      return !prevState;
-    });
+
+    if (editor?.view.hasFocus() || isSearchReplaceFocused) {
+      setIsSearching((prevState) => {
+        if (prevState) {
+          editor?.commands.focus();
+        }
+        return !prevState;
+      });
+    }
   });
 
   useShortcuts(

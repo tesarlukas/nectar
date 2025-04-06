@@ -2,15 +2,11 @@ import {
   FilePlus,
   FolderPlus,
   RefreshCcw,
-  //Search,
   SortAsc,
   SortDesc,
-  //Grid,
-  //List,
+  Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-//import { Input } from "@/components/ui/input";
-//import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Tooltip,
   TooltipContent,
@@ -19,9 +15,11 @@ import {
 } from "@/components/ui/tooltip";
 import type { FileTreeNode } from "../../hooks/useFileExplorer";
 import { forwardRef, useState } from "react";
-import { CreateNodeInput } from "../NodeInput";
+import { CreateNodeInput, FilterNodeInput } from "../NodeInput";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId } from "@/features/events/eventEmitter";
+import { cn } from "@/lib/utils";
+import { useEventListener } from "@/features/events/hooks/useEventListener";
 
 export interface FileExplorerToolbar {
   notesNode: FileTreeNode;
@@ -30,6 +28,9 @@ export interface FileExplorerToolbar {
   onCreateDir?: (parentNode: FileTreeNode, name: string) => void;
   sortOrder: "asc" | "desc";
   onToggleSortOrder: () => void;
+  onFilter?: (query: string) => void;
+  isFilterQuery: boolean;
+  setFilterQuery: (query: string) => void;
 }
 
 export const FileExplorerToolbar = forwardRef<
@@ -44,16 +45,19 @@ export const FileExplorerToolbar = forwardRef<
       onCreateDir,
       sortOrder,
       onToggleSortOrder,
+      onFilter,
+      isFilterQuery,
+      setFilterQuery,
     }: FileExplorerToolbar,
     ref,
   ) => {
-    const [createInput, setCreateInput] = useState<{
+    const [input, setInput] = useState<{
       isOpen: boolean;
-      type: "file" | "directory";
+      type: "file" | "directory" | "filter";
     } | null>(null);
 
-    const handleCreateInput = (type: "file" | "directory") => {
-      setCreateInput({
+    const handleCreateInput = (type: "file" | "directory" | "filter") => {
+      setInput({
         isOpen: true,
         type,
       });
@@ -76,6 +80,9 @@ export const FileExplorerToolbar = forwardRef<
     useShortcuts(ActionId.ToggleSortOrder, () => onToggleSortOrder?.(), {
       enabled: isToolbarFocused,
     });
+    useEventListener(ActionId.FilterNodes, () =>
+      setInput({ type: "filter", isOpen: true }),
+    );
 
     return (
       <>
@@ -95,7 +102,7 @@ export const FileExplorerToolbar = forwardRef<
                     size="icon"
                     className="h-8 w-8"
                     onClick={() =>
-                      setCreateInput({
+                      setInput({
                         isOpen: true,
                         type: "file",
                       })
@@ -115,7 +122,7 @@ export const FileExplorerToolbar = forwardRef<
                     size="icon"
                     className="h-8 w-8"
                     onClick={() =>
-                      setCreateInput({
+                      setInput({
                         isOpen: true,
                         type: "directory",
                       })
@@ -126,6 +133,30 @@ export const FileExplorerToolbar = forwardRef<
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>New Folder</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", isFilterQuery && "bg-highlight")}
+                    onClick={() => {
+                      if (isFilterQuery) {
+                        setFilterQuery("");
+                      } else {
+                        setInput({
+                          type: "filter",
+                          isOpen: true,
+                        });
+                      }
+                    }}
+                    tabIndex={-1}
+                  >
+                    <Filter className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Filter Files</TooltipContent>
               </Tooltip>
 
               <Tooltip>
@@ -190,14 +221,22 @@ export const FileExplorerToolbar = forwardRef<
       */}
         </div>
 
-        {createInput && (
+        {input && input.type !== "filter" && (
           <CreateNodeInput
-            type={createInput.type}
+            type={input.type}
             parentNode={notesNode}
             depth={0}
-            onClose={() => setCreateInput(null)}
+            onClose={() => setInput(null)}
             onCreateFile={onCreateFile}
             onCreateDir={onCreateDir}
+          />
+        )}
+
+        {input && input.type === "filter" && (
+          <FilterNodeInput
+            depth={0}
+            onClose={() => setInput(null)}
+            onFilter={onFilter}
           />
         )}
       </>

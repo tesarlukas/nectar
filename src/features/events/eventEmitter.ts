@@ -42,6 +42,7 @@ export enum ActionId {
   ReplaceAll = "replace_all",
   ToggleGraphView = "toggle_graph_view",
   ExpandAll = "expand_all",
+  FilterNodes = "filter_nodes"
 }
 
 export enum EventId {

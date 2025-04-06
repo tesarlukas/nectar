@@ -13,7 +13,7 @@ import {
   useState,
 } from "react";
 import { NOTES_PATH } from "@/constants/notesPath";
-import { sortFileTreeRecursive } from "@/utils/nodeHelpers";
+import { filterFileTree, sortFileTreeRecursive } from "@/utils/nodeHelpers";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -53,6 +53,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
   ) => {
     const emitter = useEventEmitter();
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const [filterQuery, setFilterQuery] = useState<string>("");
     const focusableElementsRef = useRef<HTMLElement[]>([]);
     const focusIndex = useRef<number>(1);
     const toolbarRef = useRef<HTMLDivElement>(null);
@@ -181,6 +182,10 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
       toolbarRef.current?.focus();
     };
 
+    const handleOnFilter = useCallback((query: string) => {
+      setFilterQuery(query);
+    }, []);
+
     useShortcuts(ActionId.FocusExplorerToolbar, handleFocusToolbar);
 
     // Register custom keyboard shortcuts
@@ -191,6 +196,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
 
     useShortcuts(ActionId.MoveExplorerCursorBottom, handleBottomNav);
     useShortcuts(ActionId.ExpandAll, () => emitter(ActionId.ExpandAll));
+    useShortcuts(ActionId.FilterNodes, () => emitter(ActionId.FilterNodes));
 
     useShortcuts(NonAlphas.Escape, () => setClipboardNode(undefined));
     // turn off the tab and shift tab for this component
@@ -198,26 +204,29 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     useShortcuts(NonAlphas.ShiftTab, () => {});
 
     const renderNodes = useCallback(() => {
-      return sortFileTreeRecursive(notesNode?.children ?? [], sortOrder).map(
-        (node) => (
-          <FileExplorerNode
-            key={node.value.path}
-            node={node}
-            selectedPath={selectedNode?.value.path}
-            onNodeClick={onNodeClick}
-            onRename={onRename}
-            onDelete={onDelete}
-            onCreateFile={onCreateFile}
-            onCreateDir={onCreateDir}
-            onMove={onMove}
-            onCopy={handleOnCopy}
-            onPaste={onPaste}
-            clipboardNode={clipboardNode}
-            setClipboardNode={setClipboardNode}
-          />
+      return sortFileTreeRecursive(
+        filterFileTree(notesNode?.children ?? [], (node) =>
+          node.value.name.includes(filterQuery),
         ),
-      );
-    }, [notesNode, sortOrder, selectedNode, clipboardNode]);
+        sortOrder,
+      ).map((node) => (
+        <FileExplorerNode
+          key={node.value.path}
+          node={node}
+          selectedPath={selectedNode?.value.path}
+          onNodeClick={onNodeClick}
+          onRename={onRename}
+          onDelete={onDelete}
+          onCreateFile={onCreateFile}
+          onCreateDir={onCreateDir}
+          onMove={onMove}
+          onCopy={handleOnCopy}
+          onPaste={onPaste}
+          clipboardNode={clipboardNode}
+          setClipboardNode={setClipboardNode}
+        />
+      ));
+    }, [notesNode, sortOrder, selectedNode, clipboardNode, filterQuery]);
 
     return (
       <div className="h-full sticky top-0" ref={ref} tabIndex={-1}>
@@ -231,6 +240,9 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
           onToggleSortOrder={() =>
             setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
           }
+          isFilterQuery={filterQuery.length > 0}
+          setFilterQuery={setFilterQuery}
+          onFilter={handleOnFilter}
         />
         <ScrollArea className="h-full pb-10" thumbClassName="w-1">
           {renderNodes()}

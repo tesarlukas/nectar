@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { stripJson } from "@/utils/nodeHelpers";
 
 interface NodeInputProps {
-  type: "file" | "directory";
+  type: "file" | "directory" | "filter";
   depth: number;
   onClose: () => void;
   onSubmit: (name: string) => void;
@@ -137,6 +137,32 @@ export const RenameNodeInput = ({
       onClose={onClose}
       onSubmit={handleOnSubmit}
       defaultValue={stripJson(node.value.name)}
+    />
+  );
+};
+
+interface FilterNodeInputProps
+  extends Omit<NodeInputProps, "onSubmit" | "type"> {
+  onFilter?: (name: string) => void;
+}
+
+export const FilterNodeInput = ({
+  depth,
+  onClose,
+  onFilter,
+}: FilterNodeInputProps) => {
+  const handleOnSubmit = (name: string) => {
+    if (name.trim()) {
+      onFilter?.(name);
+    }
+  };
+
+  return (
+    <NodeInput
+      type="filter"
+      depth={depth}
+      onClose={onClose}
+      onSubmit={handleOnSubmit}
     />
   );
 };

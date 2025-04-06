@@ -47,4 +47,5 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.ReplaceAll]: `${ShortcutContext.Search}:shift+enter`,
   [ActionId.ToggleGraphView]: `${ShortcutContext.Global}:ctrl+;`,
   [ActionId.ExpandAll]: `${ShortcutContext.Global}:shift+e`,
+  [ActionId.FilterNodes]: `${ShortcutContext.Explorer}:ctrl+f`,
 } as const;

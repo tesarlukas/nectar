@@ -101,7 +101,7 @@ const extensions = [
   }),
   Paragraph.configure({
     HTMLAttributes: {
-      class: "leading-7 [&:not(:first-child)]:mt-6 text-foreground",
+      class: "leading-7 [&:not(:first-child)]:mt-6 text-foreground text-base",
     },
   }),
   Text,

@@ -120,7 +120,7 @@ export const ShortcutsSettings = () => {
   // Enter key to confirm new shortcut
   useShortcuts(NonAlphas.Enter, () => {
     if (recordedKeys.size === 0) {
-      newKeysRef.current = 'global:enter';
+      newKeysRef.current = "global:enter";
     } else {
       newKeysRef.current = `global:${formatKeys(recordedKeys)}`;
     }

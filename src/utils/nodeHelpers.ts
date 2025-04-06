@@ -96,18 +96,18 @@ export const sortFileTreeRecursive = (
 /**
  * Filters a file tree structure using DFS while preserving the tree hierarchy.
  * Nodes that match the filter function are kept, along with their ancestors to maintain structure.
- * 
+ *
  * @param tree - The file tree to filter
  * @param filterFn - Function that determines if a node should be included in the results
  * @returns A new filtered tree with the same structure
  */
 export function filterFileTree(
-  tree: FileTreeNode[], 
-  filterFn: (node: FileTreeNode) => boolean
+  tree: FileTreeNode[],
+  filterFn: (node: FileTreeNode) => boolean,
 ): FileTreeNode[] {
   // Clone the tree to avoid modifying the original
   const result: FileTreeNode[] = [];
-  
+
   // Process each root node
   for (const rootNode of tree) {
     const filteredNode = filterNodeDFS(rootNode, filterFn);
@@ -115,31 +115,31 @@ export function filterFileTree(
       result.push(filteredNode);
     }
   }
-  
+
   return result;
 }
 
 /**
  * Helper function to recursively filter a single node and its descendants using DFS
- * 
+ *
  * @param node - The current node to process
  * @param filterFn - Function that determines if a node should be included
  * @returns A new filtered node or null if the node and its descendants don't match
  */
 function filterNodeDFS(
-  node: FileTreeNode, 
-  filterFn: (node: FileTreeNode) => boolean
+  node: FileTreeNode,
+  filterFn: (node: FileTreeNode) => boolean,
 ): FileTreeNode | null {
   // Create a new node to avoid modifying the original
   const newNode: FileTreeNode = {
     nodeId: node.nodeId,
     value: { ...node.value },
   };
-  
+
   // If the node has children, process them recursively
   if (node.children && node.children.length > 0) {
     const filteredChildren: FileTreeNode[] = [];
-    
+
     // Process each child recursively using DFS
     for (const child of node.children) {
       const filteredChild = filterNodeDFS(child, filterFn);
@@ -147,19 +147,19 @@ function filterNodeDFS(
         filteredChildren.push(filteredChild);
       }
     }
-    
+
     // Only add children if there are any that matched
     if (filteredChildren.length > 0) {
       newNode.children = filteredChildren;
       return newNode; // Return the node since it has matching descendants
     }
   }
-  
+
   // If no children matched but this node matches, return it
   if (filterFn(node)) {
     return newNode;
   }
-  
+
   // If neither the node nor any descendants match, return null
   return null;
 }

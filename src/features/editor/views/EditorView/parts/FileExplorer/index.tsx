@@ -18,6 +18,7 @@ import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { ActionId, NonAlphas } from "@/features/events/eventEmitter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEventEmitter } from "@/features/events/hooks/useEventEmitter";
+import { normalizeText } from "@/utils/normalizeText";
 
 interface FileExplorerProps
   extends Pick<
@@ -58,6 +59,8 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     const focusIndex = useRef<number>(1);
     const toolbarRef = useRef<HTMLDivElement>(null);
     const [clipboardNode, setClipboardNode] = useState<FileTreeNode>();
+
+    const isFilterQuery = filterQuery.length > 0;
 
     const notesNode = useMemo(
       () => nodes.filter((node) => node.value.name === NOTES_PATH)[0],
@@ -196,7 +199,14 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
 
     useShortcuts(ActionId.MoveExplorerCursorBottom, handleBottomNav);
     useShortcuts(ActionId.ExpandAll, () => emitter(ActionId.ExpandAll));
-    useShortcuts(ActionId.FilterNodes, () => emitter(ActionId.FilterNodes));
+    useShortcuts(ActionId.FilterNodes, () => {
+      if (isFilterQuery) {
+        setFilterQuery("");
+        return;
+      }
+
+      emitter(ActionId.FilterNodes);
+    });
 
     useShortcuts(NonAlphas.Escape, () => setClipboardNode(undefined));
     // turn off the tab and shift tab for this component
@@ -206,7 +216,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
     const renderNodes = useCallback(() => {
       return sortFileTreeRecursive(
         filterFileTree(notesNode?.children ?? [], (node) =>
-          node.value.name.includes(filterQuery),
+          normalizeText(node.value.name).includes(normalizeText(filterQuery)),
         ),
         sortOrder,
       ).map((node) => (
@@ -240,7 +250,7 @@ export const FileExplorer = forwardRef<HTMLDivElement, FileExplorerProps>(
           onToggleSortOrder={() =>
             setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
           }
-          isFilterQuery={filterQuery.length > 0}
+          isFilterQuery={isFilterQuery}
           setFilterQuery={setFilterQuery}
           onFilter={handleOnFilter}
         />

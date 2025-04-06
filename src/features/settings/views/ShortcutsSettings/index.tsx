@@ -23,18 +23,7 @@ import { findDuplicates } from "./utils/findDuplicates";
 import { Card, CardTitle } from "@/components/ui/card";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { getShortcutKeyPart } from "@/stores/useShortcutStore/utils/shortcutHelpers";
-
-// Helper function to normalize text for search
-const normalizeText = (text: string): string => {
-  return (
-    text
-      .toLowerCase()
-      .normalize("NFD")
-      // biome-ignore lint/suspicious/noMisleadingCharacterClass: not really miss leading
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim()
-  );
-};
+import { normalizeText } from "@/utils/normalizeText";
 
 export const ShortcutsSettings = () => {
   const { t } = useTranslation(["settings", "common"]);

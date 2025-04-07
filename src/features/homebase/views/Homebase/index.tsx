@@ -35,14 +35,17 @@ export const Homebase = () => {
 
   const handleOnConfirm = async (newHiveName?: string) => {
     setError(null);
+    let error: { message: string } | null = null;
 
     if (newHiveName?.length === undefined || newHiveName?.length <= 0) {
-      setError({ message: t("theHiveNameCannotBeEmpty") });
+      error = { message: t("theHiveNameCannotBeEmpty", { ns: "common" }) };
+      setError(error);
       return;
     }
 
     if (await exists(newHiveName, { baseDir: ROOT_DIR })) {
-      setError({ message: t("thisFolderAlreadyExists") });
+      error = { message: t("thisFolderAlreadyExists", { ns: "common" }) };
+      setError(error);
       return;
     }
 

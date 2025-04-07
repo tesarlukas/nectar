@@ -52,7 +52,8 @@
       "replace_all": "Replace All",
       "toggle_graph_view": "Toggle Graph View",
       "expand_all": "Expand All",
-      "filter_nodes": "Filter Notes/Dirs"
+      "filter_nodes": "Filter Notes/Dirs",
+      "insert_task_item": "Insert Task Item"
     },
     "thereIsCollisionInYourNewBinds": "There is a collision in your new binds",
     "youCannotHaveDuplicateShortcuts": "You cannot have duplicate shortcuts",

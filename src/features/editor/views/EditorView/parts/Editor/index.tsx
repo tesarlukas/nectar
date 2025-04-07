@@ -82,6 +82,13 @@ export const Editor = ({ editor, onClick, selectedNoteNode }: EditorProps) => {
     },
     { enableOnContentEditable: true },
   );
+  useShortcuts(
+    ActionId.InsertTaskItem,
+    () => {
+      editor?.chain().focus().toggleTaskList().run();
+    },
+    { enableOnContentEditable: true, enabled: editor?.view.hasFocus() },
+  );
 
   const renderUnsavedChangesStatus = useCallback(() => {
     if (selectedNoteNode === undefined) return <></>;

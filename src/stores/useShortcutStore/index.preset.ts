@@ -4,6 +4,7 @@ export enum ShortcutContext {
   Global = "global",
   Explorer = "explorer",
   Search = "search",
+  Editor = "editor",
 }
 
 export type KeyboardShortcut = string;
@@ -48,4 +49,5 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.ToggleGraphView]: `${ShortcutContext.Global}:ctrl+;`,
   [ActionId.ExpandAll]: `${ShortcutContext.Global}:shift+e`,
   [ActionId.FilterNodes]: `${ShortcutContext.Explorer}:ctrl+f`,
+  [ActionId.InsertTaskItem]: `${ShortcutContext.Editor}:ctrl+[`,
 } as const;

@@ -43,6 +43,7 @@ export enum ActionId {
   ToggleGraphView = "toggle_graph_view",
   ExpandAll = "expand_all",
   FilterNodes = "filter_nodes",
+  InsertTaskItem = "insert_task_item",
 }
 
 export enum EventId {

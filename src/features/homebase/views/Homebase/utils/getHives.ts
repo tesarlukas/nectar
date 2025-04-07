@@ -9,7 +9,7 @@ export const getHives = async () => {
 
   for (const entry of dirEntries) {
     if (entry.isFile) {
-      break;
+      continue;
     }
 
     if (await isHive(entry.name)) {

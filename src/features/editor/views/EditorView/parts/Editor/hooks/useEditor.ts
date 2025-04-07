@@ -191,7 +191,7 @@ const extensions = [
       });
     },
   }),
-  Link,
+  Link.configure({ HTMLAttributes: { class: "text-blue-500!" } }),
   SearchAndReplace.configure({
     searchResultClass: "search-result",
     disableRegex: false,

@@ -15,6 +15,7 @@ export interface EditorStateStore {
   removeEditorState: (id: string) => void;
   clearEditorStates: () => void;
   setEditorStateSaved: (id: string, saved: boolean) => void;
+  reassignEditorState: (oldId: string, newId: string) => void;
 }
 
 export const useEditorStateStore = create<EditorStateStore>((set) => ({
@@ -27,6 +28,21 @@ export const useEditorStateStore = create<EditorStateStore>((set) => ({
     set((state) => {
       const newEditorStates = { ...state.editorStates };
       delete newEditorStates[id];
+      return { editorStates: newEditorStates };
+    }),
+  reassignEditorState: (oldId: string, newId: string) =>
+    set((state) => {
+      const newEditorStates = { ...state.editorStates };
+
+      // Check if the old ID exists in the editor states
+      if (newEditorStates[oldId]) {
+        // Copy the editor state from the old ID to the new ID
+        newEditorStates[newId] = newEditorStates[oldId];
+
+        // Remove the old ID entry
+        delete newEditorStates[oldId];
+      }
+
       return { editorStates: newEditorStates };
     }),
   clearEditorStates: () => set(() => ({ editorStates: {} })),

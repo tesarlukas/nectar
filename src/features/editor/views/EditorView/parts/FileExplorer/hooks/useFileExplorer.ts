@@ -1,4 +1,4 @@
-import { copyFile, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
+import { copyFile, exists, mkdir, remove, rename } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 import { ROOT_DIR } from "@/constants/rootDir";
 import { useCallback, useState } from "react";
@@ -159,6 +159,11 @@ export const useFileExplorer = () => {
       const newPath = await join(node.value.dirPath, newName);
 
       try {
+        if (await exists(newPath, { baseDir: ROOT_DIR })) {
+          toast.info("This file already exists.");
+          return;
+        }
+
         await rename(oldPath, newPath, {
           oldPathBaseDir: ROOT_DIR,
           newPathBaseDir: ROOT_DIR,

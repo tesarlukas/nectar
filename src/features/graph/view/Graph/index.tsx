@@ -17,9 +17,10 @@ import { useTranslation } from "react-i18next";
 import { renderToString } from "react-dom/server";
 import type { GraphData, GraphFileLink, GraphFileNode } from "./types";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { NodeTooltip } from "./parts/NodeTooltip";
+import { formatLocation, NodeTooltip } from "./parts/NodeTooltip";
 import { Button } from "@/components/ui/button";
 import { findShortestPath } from "./utils";
+import { ArrowRight } from "lucide-react";
 
 enum Selection {
   Start = "start",
@@ -138,27 +139,40 @@ export const GraphView = () => {
     [],
   );
 
+  const renderPath = useCallback(() => {
+    return path.map((id, index) => {
+      return index !== path.length - 1 ? (
+        <div key={id} className="flex flex-row gap-x-2">
+          <span>
+            {references?.find((reference) => reference.noteId === id)?.noteName}
+          </span>
+          <ArrowRight />
+        </div>
+      ) : (
+        <span key={id}>
+          {references?.find((reference) => reference.noteId === id)?.noteName}
+        </span>
+      );
+    });
+  }, [path, references]);
+
   useEffect(() => {
     graphRef.current?.d3Force("link")?.distance(50);
-    graphRef.current?.d3Force("center")?.strength(.05);
-  }, [graphRef.current]);useEffect(() => {
-  // Configure the force simulation when the graph is initialized or data changes
-  if (graphRef.current) {
-    // Make links stronger to keep connected nodes together
-    graphRef.current.d3Force('link')
-      ?.distance(50)
-      .strength(1);
-    
-    // Adjust charge force to prevent spreading
-    graphRef.current.d3Force('charge')
-      ?.strength(-120)
-      .distanceMax(100);
-    
-    // Add a center force to keep nodes from drifting off-screen
-    graphRef.current.d3Force('center')
-      ?.strength(0.05);
-  }
-}, [graphData, graphRef.current]);
+    graphRef.current?.d3Force("center")?.strength(0.05);
+  }, [graphRef.current]);
+  useEffect(() => {
+    // Configure the force simulation when the graph is initialized or data changes
+    if (graphRef.current) {
+      // Make links stronger to keep connected nodes together
+      graphRef.current.d3Force("link")?.distance(50).strength(1);
+
+      // Adjust charge force to prevent spreading
+      graphRef.current.d3Force("charge")?.strength(-120).distanceMax(100);
+
+      // Add a center force to keep nodes from drifting off-screen
+      graphRef.current.d3Force("center")?.strength(0.05);
+    }
+  }, [graphData, graphRef.current]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -167,7 +181,7 @@ export const GraphView = () => {
           {t("noteRelationshipGraph")}
         </h1>
       </div>
-      <Card className="gap-4 p-4 mx-4">
+      <Card className="gap-4 p-4 mx-4 max-w-4xl">
         <CardTitle className="border-b-2 mb-4 w-fit">
           {t("findShortestPath (BFS)")}
         </CardTitle>
@@ -178,15 +192,23 @@ export const GraphView = () => {
             onClick={() => setSelectionMode(Selection.Start)}
           >
             <CardTitle className="px-2 border-b-2">{t("startNode")}</CardTitle>
-            <CardContent className="px-2">
+            <CardContent className="px-2 text-sm">
               {startNode && (
                 <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
-                  <span className="border-b-2 border-chart-2">
-                    {t("note")}: {startNode.name}
-                  </span>
-                  <span>
-                    {t("id")}: {startNode.id}
-                  </span>
+                  {startNode && (
+                    <>
+                      <span className="border-b-2 border-chart-2">
+                        {t("note")}: {startNode.name}
+                      </span>
+                      <span>
+                        {t("id")}: {startNode.id}
+                      </span>
+                      <span>
+                        {t("location")}:{" "}
+                        {formatLocation(startNode.location, hiveName, t)}
+                      </span>
+                    </>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -198,21 +220,28 @@ export const GraphView = () => {
             onClick={() => setSelectionMode(Selection.End)}
           >
             <CardTitle className="px-2 border-b-2">{t("endNode")}</CardTitle>
-            <CardContent className="px-2">
-              {endNode && (
-                <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
-                  <span className="border-b-2 border-chart-1">
-                    {t("note")}: {endNode.name}
-                  </span>
-                  <span>
-                    {t("id")}: {endNode.id}
-                  </span>
-                </div>
-              )}
+            <CardContent className="px-2 text-sm">
+              <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
+                {endNode && (
+                  <>
+                    <span className="border-b-2 border-chart-1">
+                      {t("note")}: {endNode.name}
+                    </span>
+                    <span>
+                      {t("id")}: {endNode.id}
+                    </span>
+                    <span>
+                      {t("location")}:{" "}
+                      {formatLocation(endNode.location, hiveName, t)}
+                    </span>
+                  </>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           <Button onClick={handleFind}>Find</Button>
+          <div className="flex flex-row gap-x-2 flex-wrap">{renderPath()}</div>
         </CardContent>
       </Card>
       {/* Graph Visualization */}
@@ -310,11 +339,3 @@ export const GraphView = () => {
     </div>
   );
 };
-
-// NOTE: flatmap from before
-// references?.flatMap((reference) =>
-//  reference.referenceIds.map((id) => ({
-//    source: reference.noteId,
-//    target: id,
-//  })),
-// ) ?? [],

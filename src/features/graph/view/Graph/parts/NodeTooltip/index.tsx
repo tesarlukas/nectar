@@ -10,6 +10,16 @@ interface NodeTooltipProps {
   hiveName: string;
 }
 
+export function formatLocation(
+  location: string,
+  hiveName: string,
+  t: TFunction,
+) {
+  const rootPath = `${hiveName}${sep()}${NOTES_PATH}`;
+
+  return location === rootPath ? t("root") : location.replace(rootPath, "");
+}
+
 export const NodeTooltip = ({ node, t, hiveName }: NodeTooltipProps) => {
   return (
     <div className="flex flex-col bg-black bg-opacity-70 p-2 rounded text-white">
@@ -20,10 +30,7 @@ export const NodeTooltip = ({ node, t, hiveName }: NodeTooltipProps) => {
         {t("name")}: {node.name}
       </span>
       <span className="flex flex-row">
-        {t("location")}:{" "}
-        {node.location === `${hiveName}${sep()}${NOTES_PATH}`
-          ? t("root")
-          : node.location.replace(`${hiveName}${sep()}${NOTES_PATH}`, "")}
+        {t("location")}: {formatLocation(node.location, hiveName, t)}
       </span>
       <span className="flex flex-row">
         {t("references")}: {node.references.length}

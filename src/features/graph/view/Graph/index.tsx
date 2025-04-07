@@ -21,6 +21,12 @@ import { formatLocation, NodeTooltip } from "./parts/NodeTooltip";
 import { Button } from "@/components/ui/button";
 import { findShortestPath } from "./utils";
 import { toast } from "sonner";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronsUpDown } from "lucide-react";
 
 enum Selection {
   Start = "start",
@@ -184,73 +190,87 @@ export const GraphView = () => {
           {t("noteRelationshipGraph")}
         </h1>
       </div>
-      <Card className="gap-4 p-4 mx-4 max-w-4xl">
-        <CardTitle className="mb-4 w-fit flex flex-row items-center">
-          <span className="border-b-2 mr-4">{t("findShortestPath (BFS)")}</span>
-          <div className="mr-4 gap-x-2 flex flex-row">
-            <Button onClick={handleFind}>Find</Button>
-            <Button onClick={() => setPath([])}>Reset</Button>
-          </div>
-        </CardTitle>
-        <CardContent className="flex flex-row px-0 gap-x-4">
-          <Card
-            className={`p-4 transition-all duration-200 cursor-pointer flex-1 h-40
+      <Collapsible>
+        <Card className="gap-4 p-4 mx-4 max-w-4xl">
+          <CardTitle className="mb-4 flex flex-row items-center w-full">
+            <span className="border-b-2 mr-4 flex-shrink-0">
+              {t("findShortestPath (BFS)")}
+            </span>
+            <div className="mr-4 gap-x-2 flex flex-row w-full">
+              <Button onClick={handleFind}>Find</Button>
+              <Button onClick={() => setPath([])}>Reset</Button>
+              <CollapsibleTrigger className="ml-auto">
+                <ChevronsUpDown />
+              </CollapsibleTrigger>
+            </div>
+          </CardTitle>
+          <CollapsibleContent>
+            <CardContent className="flex flex-row px-0 gap-x-4 py-0">
+              <Card
+                className={`p-4 transition-all duration-200 cursor-pointer flex-1 h-40
           ${selectionMode === Selection.Start ? "bg-bg-muted border-chart-2 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
-            onClick={() => setSelectionMode(Selection.Start)}
-          >
-            <CardTitle className="px-2 border-b-2">{t("startNode")}</CardTitle>
-            <CardContent className="px-2 text-xs">
-              {startNode && (
-                <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
+                onClick={() => setSelectionMode(Selection.Start)}
+              >
+                <CardTitle className="px-2 border-b-2">
+                  {t("startNode")}
+                </CardTitle>
+                <CardContent className="px-2 text-xs">
                   {startNode && (
-                    <>
-                      <span className="border-b-2 border-chart-2 ">
-                        {t("note")}: {startNode.name}
-                      </span>
-                      <span>
-                        {t("id")}: {startNode.id}
-                      </span>
-                      <span>
-                        {t("location")}:{" "}
-                        {formatLocation(startNode.location, hiveName, t)}
-                      </span>
-                    </>
+                    <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
+                      {startNode && (
+                        <>
+                          <span className="border-b-2 border-chart-2 ">
+                            {t("note")}: {startNode.name}
+                          </span>
+                          <span>
+                            {t("id")}: {startNode.id}
+                          </span>
+                          <span>
+                            {t("location")}:{" "}
+                            {formatLocation(startNode.location, hiveName, t)}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
 
-          <Card
-            className={`p-4 transition-all duration-200 cursor-pointer flex-1 h-40
+              <Card
+                className={`p-4 transition-all duration-200 cursor-pointer flex-1 h-40
           ${selectionMode === Selection.End ? "bg-muted border-chart-1 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
-            onClick={() => setSelectionMode(Selection.End)}
-          >
-            <CardTitle className="px-2 border-b-2">{t("endNode")}</CardTitle>
-            <CardContent className="px-2 text-xs">
-              <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
-                {endNode && (
-                  <>
-                    <span className="border-b-2 border-chart-1">
-                      {t("note")}: {endNode.name}
-                    </span>
-                    <span>
-                      {t("id")}: {endNode.id}
-                    </span>
-                    <span>
-                      {t("location")}:{" "}
-                      {formatLocation(endNode.location, hiveName, t)}
-                    </span>
-                  </>
-                )}
-              </div>
+                onClick={() => setSelectionMode(Selection.End)}
+              >
+                <CardTitle className="px-2 border-b-2">
+                  {t("endNode")}
+                </CardTitle>
+                <CardContent className="px-2 text-xs">
+                  <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
+                    {endNode && (
+                      <>
+                        <span className="border-b-2 border-chart-1">
+                          {t("note")}: {endNode.name}
+                        </span>
+                        <span>
+                          {t("id")}: {endNode.id}
+                        </span>
+                        <span>
+                          {t("location")}:{" "}
+                          {formatLocation(endNode.location, hiveName, t)}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+              {/* <div className="text-sm flex-1 flex flex-row flex-wrap"> */}
+              {/*   {renderPath()} */}
+              {/* </div> */}
             </CardContent>
-          </Card>
-          {/* <div className="text-sm flex-1 flex flex-row flex-wrap"> */}
-          {/*   {renderPath()} */}
-          {/* </div> */}
-        </CardContent>
-      </Card>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
+
       {/* Graph Visualization */}
       <div className="flex flex-grow bg-primary-background">
         <AutoSizer>

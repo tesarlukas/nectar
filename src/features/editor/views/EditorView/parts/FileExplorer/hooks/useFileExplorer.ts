@@ -11,7 +11,7 @@ import {
   //findNode,
   //traverseDFS,
   filterNodes,
-  changeNodeValues,
+  findNode,
 } from "@/utils/treeHelpers";
 import { EMPTY_NOTE } from "../index.preset";
 import { appendJson } from "@/utils/nodeHelpers";
@@ -153,7 +153,11 @@ export const useFileExplorer = () => {
   };
 
   const renameNodeAndNoteOrDir = useCallback(
-    async (node: FileTreeNode, name: string) => {
+    async (
+      node: FileTreeNode,
+      name: string,
+      reassignEditorState: (oldId: string, newId: string) => void,
+    ) => {
       const oldPath = node.value.path;
       const newName = node.value.isDirectory ? name : appendJson(name);
       const newPath = await join(node.value.dirPath, newName);
@@ -173,19 +177,20 @@ export const useFileExplorer = () => {
         throw errors;
       }
 
-      setNodes((currentNodes) =>
-        changeNodeValues(
-          currentNodes,
-          (info) => info.name === node.value.name,
-          {
-            ...node.value,
-            name: newName,
-            path: newPath,
-          },
-        ),
-      );
+      const newTreeNodes = await buildDirectoryTree(hiveName, ROOT_DIR);
+      setNodes(() => newTreeNodes);
+
+      const newNode = findNode(newTreeNodes, (node) => node.path === newPath);
+
+      if (
+        newNode?.value.isFile &&
+        node.value.name === selectedNoteNode?.value.name
+      ) {
+        setSelectedNoteNode(newNode);
+        reassignEditorState(node.value.path, newPath);
+      }
     },
-    [],
+    [hiveName, selectedNode],
   );
 
   const updateNoteMetadata = useCallback(

@@ -140,7 +140,25 @@ export const GraphView = () => {
 
   useEffect(() => {
     graphRef.current?.d3Force("link")?.distance(50);
-  }, [graphRef.current]);
+    graphRef.current?.d3Force("center")?.strength(.05);
+  }, [graphRef.current]);useEffect(() => {
+  // Configure the force simulation when the graph is initialized or data changes
+  if (graphRef.current) {
+    // Make links stronger to keep connected nodes together
+    graphRef.current.d3Force('link')
+      ?.distance(50)
+      .strength(1);
+    
+    // Adjust charge force to prevent spreading
+    graphRef.current.d3Force('charge')
+      ?.strength(-120)
+      .distanceMax(100);
+    
+    // Add a center force to keep nodes from drifting off-screen
+    graphRef.current.d3Force('center')
+      ?.strength(0.05);
+  }
+}, [graphData, graphRef.current]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -237,6 +255,7 @@ export const GraphView = () => {
                 return linkColor;
               }}
               cooldownTicks={100}
+              cooldownTime={5000}
               backgroundColor={colors["--background"]}
               nodeCanvasObjectMode={() => "after"}
               nodeCanvasObject={(

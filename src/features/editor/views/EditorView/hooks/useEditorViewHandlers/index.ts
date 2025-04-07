@@ -26,6 +26,7 @@ type UseJumplistReturns = Pick<
   | "moveJumplistOut"
   | "moveJumplistIn"
   | "isNodeCurrentJumplistItem"
+  | "clearJumplist"
 >;
 
 interface EditorViewHandlersProps
@@ -57,9 +58,13 @@ export const useEditorViewHandlers = ({
   moveJumplistOut,
   moveJumplistIn,
   isNodeCurrentJumplistItem,
+  clearJumplist,
 }: EditorViewHandlersProps) => {
   const { t } = useTranslation("editorView");
   const editorStatesRef = useEditorStatesRef();
+  const reassignEditorState = useEditorStateStore(
+    (state) => state.reassignEditorState,
+  );
   const clearEditorStates = useEditorStateStore(
     (state) => state.clearEditorStates,
   );
@@ -186,9 +191,10 @@ export const useEditorViewHandlers = ({
 
   const handleOnRename = useCallback(
     async (node: FileTreeNode, name: string) => {
-      await renameNodeAndNoteOrDir(node, name);
+      await renameNodeAndNoteOrDir(node, name, reassignEditorState);
+      clearJumplist();
     },
-    [renameNodeAndNoteOrDir],
+    [hiveName],
   );
 
   const handleOnRefresh = useCallback(async () => {
@@ -200,8 +206,9 @@ export const useEditorViewHandlers = ({
   const handleOnMove = useCallback(
     async (node: FileTreeNode, targetNode: FileTreeNode) => {
       await moveNote(node, targetNode);
+      clearJumplist();
     },
-    // NOTE: these call internally buildDirecetoryTree function which needs
+    // NOTE: these call internally buildDirectoryTree function which needs
     // hiveName and they access it via the store, therefore it's needed to
     // recreate
     [hiveName],

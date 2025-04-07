@@ -44,6 +44,7 @@ export const EditorView = () => {
     moveJumplistOut,
     moveJumplistIn,
     isNodeCurrentJumplistItem,
+    clearJumplist,
   } = useJumplist();
 
   const fileExplorer = useFileExplorer();
@@ -82,6 +83,7 @@ export const EditorView = () => {
     moveJumplistIn,
     moveJumplistOut,
     isNodeCurrentJumplistItem,
+    clearJumplist,
   });
 
   const emitSaveNote = () => emitter(ActionId.SaveNote);

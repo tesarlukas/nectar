@@ -142,22 +142,22 @@ export const GraphView = () => {
     [],
   );
 
-  const renderPath = useCallback(() => {
-    return path.map((id, index) => {
-      return index !== path.length - 1 ? (
-        <div key={id} className="flex flex-row gap-x-2">
-          <span>
-            {references?.find((reference) => reference.noteId === id)?.noteName}{" "}
-            {">"}
-          </span>
-        </div>
-      ) : (
-        <span key={id}>
-          {references?.find((reference) => reference.noteId === id)?.noteName}
-        </span>
-      );
-    });
-  }, [path, references]);
+  // const renderPath = useCallback(() => {
+  //   return path.map((id, index) => {
+  //     return index !== path.length - 1 ? (
+  //       <div key={id} className="flex flex-row gap-x-2">
+  //         <span>
+  //           {references?.find((reference) => reference.noteId === id)?.noteName}{" "}
+  //           {">"}
+  //         </span>
+  //       </div>
+  //     ) : (
+  //       <span key={id}>
+  //         {references?.find((reference) => reference.noteId === id)?.noteName}
+  //       </span>
+  //     );
+  //   });
+  // }, [path, references]);
 
   useEffect(() => {
     graphRef.current?.d3Force("link")?.distance(50);

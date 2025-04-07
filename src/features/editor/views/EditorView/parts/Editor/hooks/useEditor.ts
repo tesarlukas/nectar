@@ -47,11 +47,6 @@ const extensions = [
       class: "border-l-4 border-muted pl-4 my-4 text-muted-foreground",
     },
   }),
-  BulletList.configure({
-    HTMLAttributes: {
-      class: "list-disc ml-6 space-y-2 text-foreground",
-    },
-  }),
   CodeBlock.configure({
     HTMLAttributes: {
       class: "bg-muted rounded-md p-4 font-mono text-sm my-4 text-foreground",
@@ -89,14 +84,19 @@ const extensions = [
       class: "my-4 border-border",
     },
   }),
+  BulletList.configure({
+    HTMLAttributes: {
+      class: "list-disc ml-2 space-y-2 text-foreground",
+    },
+  }),
   ListItem.configure({
     HTMLAttributes: {
-      class: "ml-2 text-foreground",
+      class: "text-foreground",
     },
   }),
   OrderedList.configure({
     HTMLAttributes: {
-      class: "list-decimal ml-6 space-y-2 text-foreground",
+      class: "list-decimal ml-2 text-foreground",
     },
   }),
   Paragraph.configure({
@@ -198,12 +198,12 @@ const extensions = [
   }),
   TaskList.configure({
     HTMLAttributes: {
-      class: "not-prose pl-2 list-none",
+      class: "not-prose ml-4 list-none",
     },
   }),
   TaskItem.configure({
     HTMLAttributes: {
-      class: "flex items-start gap-2 p-2",
+      class: "flex items-start gap-2 leading-normal",
     },
     nested: true,
   }),

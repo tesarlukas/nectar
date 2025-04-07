@@ -311,16 +311,22 @@ export const FileExplorerNode = ({
             <FileEdit className="mr-2 h-4 w-4" />
             Rename
           </ContextMenuItem>
-          <ContextMenuItem className="text-base" onClick={() => onCopy?.(node)}>
-            <Copy className="mr-2 h-4 w-4" />
-            Copy
-          </ContextMenuItem>
+          {!node.value.isDirectory && (
+            <ContextMenuItem
+              className="text-base"
+              onClick={() => onCopy?.(node)}
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copy
+            </ContextMenuItem>
+          )}
           <ContextMenuItem
             className="text-base"
             disabled={!clipboardNode}
-            onClick={() => {
+            onClick={async() => {
               if (!clipboardNode) return;
-              onPaste?.(clipboardNode, node);
+              await onPaste?.(clipboardNode, node);
+              setClipboardNode?.();
             }}
           >
             <ClipboardPaste className="mr-2 h-4 w-4" />

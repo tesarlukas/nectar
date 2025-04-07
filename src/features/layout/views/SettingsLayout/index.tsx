@@ -12,7 +12,6 @@ export const SettingsLayout = () => {
     <>
       <div className="p-4 flex flex-row w-full justify-between">
         <div className="flex flex-col gap-2 w-48">
-          <Button onClick={() => navigate("/settings")}>{t("settings")}</Button>
           {hiveName && (
             <Button onClick={() => navigate("/homebase")}>
               {t("homebase")}

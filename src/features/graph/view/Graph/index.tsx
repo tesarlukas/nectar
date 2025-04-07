@@ -20,7 +20,6 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { formatLocation, NodeTooltip } from "./parts/NodeTooltip";
 import { Button } from "@/components/ui/button";
 import { findShortestPath } from "./utils";
-import { ArrowRight } from "lucide-react";
 
 enum Selection {
   Start = "start",
@@ -144,9 +143,9 @@ export const GraphView = () => {
       return index !== path.length - 1 ? (
         <div key={id} className="flex flex-row gap-x-2">
           <span>
-            {references?.find((reference) => reference.noteId === id)?.noteName}
+            {references?.find((reference) => reference.noteId === id)?.noteName}{" "}
+            {">"}
           </span>
-          <ArrowRight />
         </div>
       ) : (
         <span key={id}>
@@ -182,22 +181,26 @@ export const GraphView = () => {
         </h1>
       </div>
       <Card className="gap-4 p-4 mx-4 max-w-4xl">
-        <CardTitle className="border-b-2 mb-4 w-fit">
-          {t("findShortestPath (BFS)")}
+        <CardTitle className="mb-4 w-fit flex flex-row items-center">
+          <span className="border-b-2 mr-4">{t("findShortestPath (BFS)")}</span>
+          <div className="mr-4 gap-x-2 flex flex-row">
+            <Button onClick={handleFind}>Find</Button>
+            <Button onClick={() => setPath([])}>Reset</Button>
+          </div>
         </CardTitle>
-        <CardContent className="flex flex-row px-0 gap-x-4 max-w-2/3">
+        <CardContent className="flex flex-row px-0 gap-x-4">
           <Card
-            className={`p-4 transition-all duration-200 cursor-pointer flex-1
+            className={`p-4 transition-all duration-200 cursor-pointer flex-1 h-40
           ${selectionMode === Selection.Start ? "bg-bg-muted border-chart-2 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
             onClick={() => setSelectionMode(Selection.Start)}
           >
             <CardTitle className="px-2 border-b-2">{t("startNode")}</CardTitle>
-            <CardContent className="px-2 text-sm">
+            <CardContent className="px-2 text-xs">
               {startNode && (
                 <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
                   {startNode && (
                     <>
-                      <span className="border-b-2 border-chart-2">
+                      <span className="border-b-2 border-chart-2 ">
                         {t("note")}: {startNode.name}
                       </span>
                       <span>
@@ -215,12 +218,12 @@ export const GraphView = () => {
           </Card>
 
           <Card
-            className={`p-4 transition-all duration-200 cursor-pointer flex-1
+            className={`p-4 transition-all duration-200 cursor-pointer flex-1 h-40
           ${selectionMode === Selection.End ? "bg-muted border-chart-1 border-2 shadow-md scale-105" : "hover:bg-muted hover:shadow-md hover:scale-102 active:bg-accent active:scale-98"}`}
             onClick={() => setSelectionMode(Selection.End)}
           >
             <CardTitle className="px-2 border-b-2">{t("endNode")}</CardTitle>
-            <CardContent className="px-2 text-sm">
+            <CardContent className="px-2 text-xs">
               <div className="flex flex-col items-start gap-y-4 spacing-0 py-4">
                 {endNode && (
                   <>
@@ -239,9 +242,9 @@ export const GraphView = () => {
               </div>
             </CardContent>
           </Card>
-
-          <Button onClick={handleFind}>Find</Button>
-          <div className="flex flex-row gap-x-2 flex-wrap">{renderPath()}</div>
+          {/* <div className="text-sm flex-1 flex flex-row flex-wrap"> */}
+          {/*   {renderPath()} */}
+          {/* </div> */}
         </CardContent>
       </Card>
       {/* Graph Visualization */}

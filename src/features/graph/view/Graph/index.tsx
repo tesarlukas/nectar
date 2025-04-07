@@ -20,6 +20,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { formatLocation, NodeTooltip } from "./parts/NodeTooltip";
 import { Button } from "@/components/ui/button";
 import { findShortestPath } from "./utils";
+import { toast } from "sonner";
 
 enum Selection {
   Start = "start",
@@ -122,6 +123,9 @@ export const GraphView = () => {
     }
 
     const path = findShortestPath(graphData, startNode?.id, endNode?.id);
+    if (path === null) {
+      toast.info("There is not path between these notes");
+    }
     setPath(path ?? []);
   };
 

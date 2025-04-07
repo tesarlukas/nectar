@@ -323,7 +323,7 @@ export const FileExplorerNode = ({
           <ContextMenuItem
             className="text-base"
             disabled={!clipboardNode}
-            onClick={async() => {
+            onClick={async () => {
               if (!clipboardNode) return;
               await onPaste?.(clipboardNode, node);
               setClipboardNode?.();

@@ -84,8 +84,10 @@ export const useEditorViewHandlers = ({
 
       if (!isNodeCurrentJumplistItem(node)) {
         const newJumplistItem = createNewItem(node);
-        addItemToJumplist(newJumplistItem);
-        setIndexByItem(newJumplistItem);
+        if (newJumplistItem) {
+          addItemToJumplist(newJumplistItem);
+          setIndexByItem(newJumplistItem);
+        }
       }
 
       await loadNote(node);

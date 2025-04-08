@@ -200,8 +200,12 @@ export const useEditorViewHandlers = ({
   );
 
   const handleOnRename = async (node: FileTreeNode, name: string) => {
-    await renameNodeAndNoteOrDir(node, name, reassignEditorState);
-    clearJumplist();
+    await renameNodeAndNoteOrDir(
+      node,
+      name,
+      reassignEditorState,
+      clearJumplist,
+    );
   };
 
   const handleOnRefresh = useCallback(async () => {

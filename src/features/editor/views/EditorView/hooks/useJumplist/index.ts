@@ -11,7 +11,9 @@ export const useJumplist = () => {
   const jumplistRef = useRef<JumplistItem[]>([]);
   const jumplistIndexRef = useRef<number>(0);
 
-  const createNewItem = (node: FileTreeNode): JumplistItem => {
+  const createNewItem = (node?: FileTreeNode): JumplistItem | undefined => {
+    if (!node) return;
+
     return { id: nanoid(), node: node };
   };
 
@@ -55,8 +57,10 @@ export const useJumplist = () => {
     );
   };
 
-  const clearJumplist = () => {
-    jumplistRef.current = [];
+  const clearJumplist = (baseNode?: FileTreeNode) => {
+    const baseItem = createNewItem(baseNode);
+
+    jumplistRef.current = baseItem ? [baseItem] : [];
     jumplistIndexRef.current = 0;
   };
 

@@ -157,6 +157,7 @@ export const useFileExplorer = () => {
       node: FileTreeNode,
       name: string,
       reassignEditorState: (oldId: string, newId: string) => void,
+      clearJumplist: (baseNode?: FileTreeNode) => void,
     ) => {
       const oldPath = node.value.path;
       const newName = node.value.isDirectory ? name : appendJson(name);
@@ -188,6 +189,7 @@ export const useFileExplorer = () => {
       ) {
         setSelectedNoteNode(newNode);
         reassignEditorState(node.value.path, newPath);
+        clearJumplist(newNode);
       }
     },
     [hiveName, selectedNoteNode],

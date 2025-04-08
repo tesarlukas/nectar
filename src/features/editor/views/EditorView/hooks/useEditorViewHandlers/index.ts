@@ -116,12 +116,22 @@ export const useEditorViewHandlers = ({
 
   const handleMoveJumplistIn = async () => {
     const nextNode = jumplistRef.current[moveJumplistIn()].node;
+    if (!nextNode) {
+      return;
+    }
+
+    setSelectedNode(nextNode);
     setSelectedNoteNode(nextNode);
     await loadNote(nextNode);
   };
 
   const handleMoveJumplistOut = async () => {
     const nextNode = jumplistRef.current[moveJumplistOut()].node;
+    if (!nextNode) {
+      return;
+    }
+
+    setSelectedNode(nextNode);
     setSelectedNoteNode(nextNode);
     await loadNote(nextNode);
   };
@@ -189,13 +199,10 @@ export const useEditorViewHandlers = ({
     [addNewNode],
   );
 
-  const handleOnRename = useCallback(
-    async (node: FileTreeNode, name: string) => {
-      await renameNodeAndNoteOrDir(node, name, reassignEditorState);
-      clearJumplist();
-    },
-    [hiveName],
-  );
+  const handleOnRename = async (node: FileTreeNode, name: string) => {
+    await renameNodeAndNoteOrDir(node, name, reassignEditorState);
+    clearJumplist();
+  };
 
   const handleOnRefresh = useCallback(async () => {
     await initializeFileTree(hiveName);

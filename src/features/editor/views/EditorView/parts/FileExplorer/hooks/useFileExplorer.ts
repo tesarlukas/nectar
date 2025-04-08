@@ -190,7 +190,7 @@ export const useFileExplorer = () => {
         reassignEditorState(node.value.path, newPath);
       }
     },
-    [hiveName, selectedNode],
+    [hiveName, selectedNoteNode],
   );
 
   const updateNoteMetadata = useCallback(

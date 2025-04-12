@@ -15,8 +15,8 @@ export const SHORTCUTS_FILENAME = "shortcuts.json" as const;
 
 export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.SaveNote]: `${ShortcutContext.Global}:ctrl+s`,
-  [ActionId.CreateNewNote]: `${ShortcutContext.Global}:ctrl+a`,
-  [ActionId.CreateNewDir]: `${ShortcutContext.Global}:ctrl+shift+a`,
+  [ActionId.CreateNewNote]: `${ShortcutContext.Global}:a`,
+  [ActionId.CreateNewDir]: `${ShortcutContext.Global}:ctrl+a`,
   [ActionId.SearchReplace]: `${ShortcutContext.Global}:ctrl+f`,
   [ActionId.NextSearch]: `${ShortcutContext.Search}:ctrl+n`,
   [ActionId.PreviousSearch]: `${ShortcutContext.Search}:ctrl+shift+n`,
@@ -50,4 +50,5 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcuts = {
   [ActionId.ExpandAll]: `${ShortcutContext.Global}:shift+e`,
   [ActionId.FilterNodes]: `${ShortcutContext.Explorer}:ctrl+f`,
   [ActionId.InsertTaskItem]: `${ShortcutContext.Editor}:ctrl+[`,
+  [ActionId.ToggleTheme]: `${ShortcutContext.Editor}:ctrl+t`,
 } as const;

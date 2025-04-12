@@ -44,6 +44,7 @@ export enum ActionId {
   ExpandAll = "expand_all",
   FilterNodes = "filter_nodes",
   InsertTaskItem = "insert_task_item",
+  ToggleTheme = "toggle_theme",
 }
 
 export enum EventId {

@@ -208,7 +208,7 @@ const extensions = [
   }),
   Table.configure({
     HTMLAttributes: {
-      class: "w-full border-collapse text-sm not-prose",
+      class: "w-full border-collapse text-sm not-prose table-fixed",
     },
     resizable: true,
   }),
@@ -225,7 +225,7 @@ const extensions = [
   }),
   TableCell.configure({
     HTMLAttributes: {
-      class: "border border-border align-middle text-foreground not-prose",
+      class: "border border-border align-middle text-foreground not-prose p-2 min-w-32",
     },
   }),
   Mathematics.configure({

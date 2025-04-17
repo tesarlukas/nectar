@@ -9,14 +9,16 @@ import {
   AlignCenter,
   AlignRight,
   Trash2,
-  MoveHorizontal,
-  MoveVertical,
-  GripHorizontal,
-  GripVertical,
   AlignJustify,
   TableProperties,
   Merge,
   Split,
+  Heading,
+  PanelRightDashed,
+  PanelLeftDashed,
+  PanelBottomDashed,
+  PanelTopDashed,
+  TicketX,
 } from "lucide-react";
 import { useShortcuts } from "@/features/shortcuts/hooks/useShortcuts";
 import { NonAlphas } from "@/features/events/eventEmitter";
@@ -132,7 +134,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <GripVertical className="h-4 w-4" />
+                <Heading className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -158,7 +160,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <GripVertical className="h-4 w-4 rotate-90" />
+                <PanelLeftDashed className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -171,7 +173,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <GripVertical className="h-4 w-4" />
+                <PanelRightDashed className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -184,7 +186,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <MoveVertical className="h-4 w-4" />
+                <TicketX className="h-4 w-4 rotate-90" />
               </Button>
             </div>
 
@@ -201,7 +203,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <GripHorizontal className="h-4 w-4 rotate-90" />
+                <PanelTopDashed className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -214,7 +216,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <GripHorizontal className="h-4 w-4" />
+                <PanelBottomDashed className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -227,7 +229,7 @@ export const TableBubbleMenu = ({ editor, ...rest }: TableBubbleMenuProps) => {
                   )
                 }
               >
-                <MoveHorizontal className="h-4 w-4" />
+                <TicketX className="h-4 w-4" />
               </Button>
             </div>
 

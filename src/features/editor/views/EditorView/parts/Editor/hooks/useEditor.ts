@@ -225,7 +225,8 @@ const extensions = [
   }),
   TableCell.configure({
     HTMLAttributes: {
-      class: "border border-border align-middle text-foreground not-prose p-2 min-w-32",
+      class:
+        "border border-border align-middle text-foreground not-prose p-2 min-w-32",
     },
   }),
   Mathematics.configure({

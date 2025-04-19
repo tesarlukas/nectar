@@ -290,7 +290,6 @@ export const FileExplorerNode = ({
             <FilePlus className="mr-2 h-4 w-4" />
             New File
           </ContextMenuItem>
-
           <ContextMenuItem
             className="text-base"
             onClick={() => {
@@ -311,15 +310,19 @@ export const FileExplorerNode = ({
             <FileEdit className="mr-2 h-4 w-4" />
             Rename
           </ContextMenuItem>
-          {!node.value.isDirectory && (
-            <ContextMenuItem
-              className="text-base"
-              onClick={() => onCopy?.(node)}
-            >
-              <Copy className="mr-2 h-4 w-4" />
-              Copy
-            </ContextMenuItem>
-          )}
+          <ContextMenuItem
+            className="text-base"
+            onClick={() => {
+              if (node.value.isDirectory) {
+                toast.warning(t("directoriesCannotBeCopied"));
+                return;
+              }
+              onCopy?.(node);
+            }}
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Copy
+          </ContextMenuItem>
           <ContextMenuItem
             className="text-base"
             disabled={!clipboardNode}
@@ -341,7 +344,6 @@ export const FileExplorerNode = ({
               Link Note
             </ContextMenuItem>
           )}
-
           <ContextMenuSeparator />
           <ContextMenuItem
             className="text-destructive text-base font-bold data-[highlighted]:bg-destructive"

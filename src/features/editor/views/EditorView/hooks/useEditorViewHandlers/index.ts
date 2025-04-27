@@ -14,6 +14,8 @@ import type { Note } from "../../types";
 import type { useJumplist } from "../useJumplist";
 import { exists } from "@tauri-apps/plugin-fs";
 import { ROOT_DIR } from "@/constants/rootDir";
+import { join } from "@tauri-apps/api/path";
+import { appendJson } from "@/utils/nodeHelpers";
 
 // Create a type that represents all the returns from useFileExplorer
 type FileExplorerReturns = ReturnType<typeof useFileExplorer>;
@@ -179,6 +181,13 @@ export const useEditorViewHandlers = ({
         ? parentNode.value.dirPath
         : parentNode.value.path;
 
+      if (
+        await exists(await join(path, appendJson(name)), { baseDir: ROOT_DIR })
+      ) {
+        toast.info("This file already exists");
+        return;
+      }
+
       await addNewNode(path, name, {
         isDirectory: false,
         content: EMPTY_NOTE,
@@ -192,6 +201,11 @@ export const useEditorViewHandlers = ({
       const path = parentNode.value.isFile
         ? parentNode.value.dirPath
         : parentNode.value.path;
+
+      if (await exists(await join(path, name), { baseDir: ROOT_DIR })) {
+        toast.info("This directory already exists");
+        return;
+      }
 
       await addNewNode(path, name, {
         isDirectory: true,

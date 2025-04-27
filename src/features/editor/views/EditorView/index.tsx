@@ -149,10 +149,12 @@ export const EditorView = () => {
   });
 
   useEffect(() => {
-    if (isHydrated && hiveName === "") {
-      navigate("/homebase");
-    } else {
-      initializeFileTree(hiveName);
+    if (isHydrated) {
+      if (hiveName.length === 0) {
+        navigate("/homebase");
+      } else {
+        initializeFileTree(hiveName);
+      }
     }
   }, [isHydrated, hiveName, initializeFileTree, navigate]);
 

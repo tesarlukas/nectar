@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { Typography } from "@/components/Typography";
 import { Card } from "@/components/ui/card";
+import { platform } from "@tauri-apps/plugin-os";
 
 const RESIZE_STEP = 5;
 
@@ -147,6 +148,14 @@ export const EditorView = () => {
 
     await toggleReferenceLink(selectedNoteNode, value as FileTreeNode);
   });
+
+  useEffect(() => {
+    const currentPlatform = platform();
+
+    if (currentPlatform === "windows" && hiveName.length === 0) {
+      navigate("/homebase");
+    }
+  }, []);
 
   useEffect(() => {
     if (isHydrated) {

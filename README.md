@@ -87,4 +87,4 @@ pnpm tauri build
 - **Rust Backend**: See `src-tauri/Cargo.toml` for dependencies and plugin configuration.
 - **Frontend**: See `package.json` for JS/TS dependencies.
 
-*This project was developed as part of a diploma thesis to demonstrate advanced desktop application development and knowledge management techniques.*
+*This project was developed as part of a diploma thesis to demonstrate advanced desktop application development and graph theory practical usage.*

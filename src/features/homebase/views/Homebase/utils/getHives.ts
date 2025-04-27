@@ -8,7 +8,7 @@ export const getHives = async () => {
   const hives = [];
 
   for (const entry of dirEntries) {
-    if (entry.isFile) {
+    if (entry.isFile || entry.isSymlink) {
       continue;
     }
 
